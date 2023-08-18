@@ -88,19 +88,23 @@ export default {
             this.messageFailure = '';
             this.validate(this.inforUser);
             if (this.isValid) {
-                const response = await userService.login(this.inforUser);
-                if (response.status == 200) {
-                    if (response.data.status) {
-                        this.inforUser = {};
-                        this.messageSuccess = response.data.mes;
-                        this.messageFailure = '';
-                        const user= JSON.stringify(response.data.user.user)
-                        sessionStorage.setItem('user', user)
-                        this.$router.push('/')
-                    } else {
-                        this.messageSuccess = '';
-                        this.messageFailure = response.data.mes;
+                try {
+                    const response = await userService.login(this.inforUser);
+                    if (response.status == 200) {
+                        if (response.data.status) {
+                            this.inforUser = {};
+                            this.messageSuccess = response.data.mes;
+                            this.messageFailure = '';
+                            const user = JSON.stringify(response.data.user.user);
+                            sessionStorage.setItem('user', user);
+                            this.$router.push('/');
+                        } else {
+                            this.messageSuccess = '';
+                            this.messageFailure = response.data.mes;
+                        }
                     }
+                } catch (error) {
+                    console.log(error);
                 }
             } else {
                 console.log('chauw đúng thông tin');
