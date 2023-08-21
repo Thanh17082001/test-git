@@ -13,6 +13,18 @@ class userService{
     async logout(){
         return await this.api.get('/logout')
     }
+    async getInfo(){
+        return await this.api.get('/info-user')
+    }
+    async forget(email){
+        return await this.api.post('/forget', email)
+    }
+    async confirm(data){
+        return await this.api.post('/confirm-pass', data)
+    }
+    async reset(data){
+        return await this.api.post('/reset-pass',data)
+    }
 }
 
 export default new userService();

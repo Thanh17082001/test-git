@@ -25,7 +25,7 @@ export default {
         getItem(){
             const user = JSON.parse(sessionStorage.getItem('user'))
             if(sessionStorage.getItem('user')){
-                this.name=user.fullName
+                this.name=user.user.fullName
             }else{
                 this.name=''
             }
@@ -38,10 +38,21 @@ export default {
             } catch (error) {
                 console.log(error);
             }
+        },
+        async getInfoUser(){
+            try {
+                const response = await userService.getInfo()
+                const user = JSON.stringify(response.data);
+                sessionStorage.setItem('user', user);
+                this.getItem()
+            } catch (error) {
+                console.log(error);
+            }
         }
      },
-     created(){
+     mounted(){
         this.getItem()
+        this.getInfoUser()
      }
      
      

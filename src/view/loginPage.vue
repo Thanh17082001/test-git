@@ -3,7 +3,7 @@
         <form action="" class="form" @submit.prevent.stop="login">
             <div class="form-head">
                 <h2 class="title">Đăng nhập</h2>
-                <span>Đăng nhập tài khoản tại đây</span>
+                <span class="description">Đăng nhập tài khoản tại đây</span>
                 <span class="mes-success" v-if="!!messageSuccess">{{ messageSuccess }}</span>
                 <span class="mes-failed" v-if="!!messageFailure">{{ messageFailure }}</span>
             </div>
@@ -26,9 +26,9 @@
                 />
                 <span class="err-pass" v-if="!!valid.password">{{ valid.password }}</span>
             </div>
-            <div class="forget-pass"><span>Quên mật khẩu</span></div>
+            <div class="forget-pass" @click="openForm"><span>Quên mật khẩu</span></div>
             <button type="submit" class="form-submit">Đăng nhập</button>
-            <button class="login-google">
+            <a class="login-google" href="http://localhost:3000/user/google">
                 <svg width="40" height="40" role="img" class="google-icon">
                     <g id="Google-Button" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                         <rect x="0" y="0" width="40" height="40" rx="2"></rect>
@@ -58,18 +58,27 @@
                     </g>
                 </svg>
                 <span> Google</span>
-            </button>
+            </a>
             <div class="change">
                 Chưa có tài khoản chọn
                 <RouterLink to="/register" class="change-link">Đăng ký</RouterLink>
             </div>
         </form>
+
+        <!-- quen mat khau -->
+        <forgetPassVue :activeFormForget="activeFormForget" @closeFormFG="closeForm"></forgetPassVue>
+
+       
     </div>
 </template>
 
 <script>
 import userService from '@/service/user.service';
+import forgetPassVue from '@/components/user/forgetPass.vue';
 export default {
+    components:{
+        forgetPassVue
+    },
     data() {
         return {
             inforUser: {},
@@ -80,6 +89,7 @@ export default {
             isValid: false,
             messageSuccess: '',
             messageFailure: '',
+            activeFormForget:false
         };
     },
     methods: {
@@ -95,7 +105,7 @@ export default {
                             this.inforUser = {};
                             this.messageSuccess = response.data.mes;
                             this.messageFailure = '';
-                            const user = JSON.stringify(response.data.user.user);
+                            const user = JSON.stringify(response.data.user);
                             sessionStorage.setItem('user', user);
                             this.$router.push('/');
                         } else {
@@ -137,6 +147,16 @@ export default {
                 this.valid.password = false;
             }
             this.isValid = this.hasFalseValue(this.valid);
+        },
+        openForm() {
+            this.activeFormForget = true;
+            this.messageFailure=''
+            this.messageSuccess=''
+        },
+        closeForm() {
+            this.activeFormForget = false;
+            this.messageFailure=''
+            this.messageSuccess=''
         },
     },
     mounted() {
