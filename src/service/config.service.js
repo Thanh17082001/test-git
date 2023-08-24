@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const createApiClient = (baseURL) =>{
+const createApiClient = (baseURL, headers) =>{
     const commonConfig = {
         withCredentials: true,
-        headers: {
+        headers:headers || {
             "Content-Type": "application/json",
             Accept: "application/json",
         },

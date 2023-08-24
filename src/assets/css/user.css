@@ -1,18 +1,19 @@
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400");
 .background-form{
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
 }
-.form, .form-forget{
-    width: 320px;
+.form, .form-forget, .brand-form{
+    width: 360px;
     min-height: 0px;
     padding: 20px;
     background-color: #2c3338;
     border-top: 10px solid #0c787d;
     border-bottom: 10px solid #0c787d;
 }
-input{
+.form input{
     width: calc(100% - 20px);
     margin-top: 20px;
     border: none;
@@ -126,10 +127,11 @@ input{
 
 .form-forget{
     position: absolute;
-    top: 26%;
-    left: 39.6%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     border: none;
-    width: 280px;
+    width: 300px;
     background-color: #fbfeff;
     border-radius: 5px;
     z-index: 1000;
@@ -146,6 +148,16 @@ input{
 }
 .form-forget input{
     background-color: #292b2c;
+    width: 100%;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    height: 40px;
+    padding-left: 10px;
+    color: #fff;
+}
+.form-forget input:focus{
+    background-color: #292b2c;
 }
 .form-forget .description{
     color: #2d2d2d;
@@ -153,6 +165,7 @@ input{
 
 .form-forget input::placeholder{
     color: #fff;
+    background-color: #292b2c;
 }
 .lds-dual-ring {
     display: inline-block;
@@ -178,8 +191,9 @@ input{
     }
   }
   .code-input{
-    width: 18px;
+    width: 35px;
     margin-left: 8px;
+    color: #fff;
   }
   .login-again{
     display: block;

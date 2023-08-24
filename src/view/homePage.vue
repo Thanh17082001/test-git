@@ -24,7 +24,7 @@ export default {
      methods:{
         getItem(){
             const user = JSON.parse(sessionStorage.getItem('user'))
-            if(sessionStorage.getItem('user')){
+            if(user){
                 this.name=user.user.fullName
             }else{
                 this.name=''

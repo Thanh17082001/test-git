@@ -12,13 +12,13 @@
                     <span class="mes-failed" v-if="!!messageFailure">{{ messageFailure }}</span>
                     <div class="lds-dual-ring" v-if="loading"></div>
                 </div>
-                <div class="form-group">
+                <div class="form-group1">
                     <input
                         v-model="forgetEmail"
                         name="email"
                         type="email"
                         ref="inputRef"
-                        class="form-emai"
+                        class="form-email"
                         placeholder="Email của bạn"
                     />
                     <span class="err-pass" v-if="!!valid.email">{{ valid.email }}</span>
