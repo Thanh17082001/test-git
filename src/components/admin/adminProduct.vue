@@ -6,6 +6,9 @@
                 <tr>
                     <th class="column1-th text-center">
                       <div class="admin-table-title">
+                        <span v-if="isSort" @click="offSort" class="active-sort">
+                          Lọc
+                        </span>
                         <p>Tên sản phẩm</p> 
                         <div class="admin-sort">
                           <i class="fa-solid fa-sort"></i>
@@ -77,7 +80,16 @@
                       </div>
                     </div>
                     </th>
-                    <th class="column4-th">Lịch sử</th>
+                    <th class="column4-th"><div class="admin-table-title">
+                      <p>lịch sử</p> 
+                      <div class="admin-sort">
+                        <i class="fa-solid fa-sort"></i>
+                        <ul class="admin-sort-list">
+                           <li @click="sort(-1, 'createdAt')">Mới nhất</li>
+                          <li @click="sort(1, 'createdAt')">Cũ</li>
+                        </ul>
+                      </div>
+                    </div></th>
                     <th class="column5-th">
                         <span class="me-3 ms-3 text-left">Xem</span>
                         <span class="me-3 ms-2 text-left">Sửa</span>
@@ -115,14 +127,14 @@
         </table>
         <div class="product-pagination">
           <ul class="pagination">
-              <li><span><i class="fa-solid fa-angles-left"></i></span></li>
+              <li><span @click="previousPage"><i class="fa-solid fa-angles-left"></i></span></li>
               <li><span>...</span></li>
               <li v-for="index in lengthPage" :key="index">
                 <span :class="{active_page:activePage === index}" @click="handlePage(index)">{{ index }}</span>
               </li>
              
               <li><span>...</span></li>
-              <li><span><i class="fa-solid fa-angles-right"></i></span></li>
+              <li><span @click="nextPage"><i class="fa-solid fa-angles-right"></i></span></li>
             </ul>
         </div>
         <!--  product detail -->
@@ -153,7 +165,8 @@ export default {
       isActiveSpe:false,
       id:'',
       pageNumber:1,
-      pageSize:8
+      pageSize:8,
+      isSort:false
     }
   },
   methods:{
@@ -170,9 +183,33 @@ export default {
       this.isActiveSpe=true
       this.id=id
     },
+    nextPage(){
+      if(this.pageNumber>=this.lengthPage){
+        alert('Trang cuối')
+      }
+      else{
+        this.pageNumber+=1
+        this.activePage+=1
+        this.getproducts()
+      }
+    },
+    previousPage(){
+      if(this.pageNumber<= 1){
+        alert('Trang đầu')
+      }
+      else{
+        this.pageNumber-=1
+        this.activePage-=1
+        this.getproducts()
+      }
+    },
     closeProductDetail(){
       this.activeProductDetail=false
       this.id=''
+    },
+    offSort(){
+      this.getproducts()
+      this.isSort=false
     },
     async getproducts(){
         try {
@@ -202,7 +239,7 @@ export default {
               product.updatedAt=format.formatDate(product.updatedAt)
             });
             this.products=response.data
-            console.log(this.products);
+            this.isSort=true
       } catch (error) {
         console.log(error);
       }

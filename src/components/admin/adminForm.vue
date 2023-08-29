@@ -4,7 +4,11 @@
         <form class="form-product row" action="" @submit.prevent.stop="addProduct" enctype="multipart/form-data">
             <span class="mes mess-success" v-if="!!addProductSuccess">{{ addProductSuccess }}</span>
             <span class="mes mes-failded" v-if="!!addProductFail">{{ addProductFail }}</span>
-            <div class="lds-dual-ring" v-if="loadingProduct"></div>
+            <div class="overlay" v-if="loadingProduct">
+                <div class="loading-add-product">
+                    <div class="lds-dual-ring"></div>
+                </div>
+            </div>
             <div class="group col-lg-6">
                 <label for="">Tên Sản phẩm <span class="required">*</span> </label>
                 <input name="name-product" v-model="infoProduct.name" required placeholder="Nhập tên sản phẩm" type="text" class="product-input">
