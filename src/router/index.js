@@ -9,6 +9,7 @@ import adminProduct from "@/components/admin/adminProduct.vue"
 import adminProductForm from "@/components/admin/adminForm.vue"
 import headerVue from '@/components/layout/headerVue.vue'
 import footerVue from '@/components/layout/footerVue.vue'
+import adminFormEdit from '@/components/admin/adminFormEdit.vue'
 
 const routes =[
     { path: '/', components:{
@@ -23,7 +24,6 @@ const routes =[
         name: "admin",
         beforeEnter:(to, from, next)=>{
             const getAdmin = JSON.parse(sessionStorage.getItem('user'))
-            console.log(getAdmin);
             if(getAdmin){
               if(getAdmin.user.isAdmin){
                 return next()
@@ -37,8 +37,9 @@ const routes =[
           },
         component: adminPage,
         children:[
-            { path: "product", component: adminProduct, meta: { title: "Admin" } },
-            { path: "add", component: adminProductForm, meta: { title: "Admin" } },
+          { path: "add", component: adminProductForm, meta: { title: "Admin" } },
+          { path: "product", component: adminProduct, meta: { title: "Admin" } },
+          {path:"edit/:id",name:"product.edit", props: true, component:adminFormEdit,meta:{title:'Chỉnh sửa'}}
         ]
     },
 ]

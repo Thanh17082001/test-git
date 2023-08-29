@@ -178,15 +178,9 @@
 }
 
 
-/* header */
+/* header menu */
 
-.header-admin {
-    height: 50px;
-    border-bottom: 1px solid #cec8c8;
-    margin-left: -15px;
-    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
-    margin-bottom: 20px;
-}
+
 
 .menu-user {
     position: absolute;
@@ -280,7 +274,7 @@
     width: 220px;
 }
 .column5{
-    width: 200px;
+    width: 230px;
     text-align: center;
 }
 .table-date{
@@ -464,3 +458,292 @@
     right: 0;
     left: 0;
 }
+
+/* header */
+
+.header-admin {
+    height: 50px;
+    border-bottom: 1px solid #cec8c8;
+    margin-left: -15px;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.role-user{
+    position: relative;
+    width: 200px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.role-list{
+    /* display: none; */
+    position: absolute;
+    top: 30px;
+    left: 15px;
+    background-color: #0E8388;
+    list-style: none;
+    padding: 10px 30px;
+    min-width: 200px;
+    border: 1px solid #2c2e33;
+    border-radius: 5px;
+    color: #fff;
+    opacity: 0;
+    /* transition: all linear 0.3s; */
+}
+.active_role{
+    opacity: 1;
+}
+.role-user .active_role + .role-title{
+    color: #0E8388;
+}
+.active_role li{
+     animation: growDown 1s ease-in-out;
+     transform-origin: top center;
+     padding: 10px 0;
+    text-align: left;
+}
+.role-title i{
+    color: #0E8388;
+    font-size: 20px;
+}
+.role-list::before{
+    content: "";
+    position: absolute;
+    left: 16px;
+    top: -14px;
+    width: 0; 
+    height: 0; 
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;    
+    border-bottom: 15px solid #0E8388;
+}
+.role-list li{
+   cursor: default
+}
+@keyframes growDown {
+    0% {
+        transform: scaleY(0)
+    }
+    80% {
+        transform: scaleY(1.1)
+    }
+    100% {
+        transform: scaleY(1)
+    }
+}
+.admin-search{
+    width: 450px;
+    position: relative;
+    text-align: left;
+}
+.admin-search input{
+    width: 90%;
+    border: 1px solid #a3a3a3;
+    outline: none;
+    border-radius: 15px;
+    height: 38px;
+    padding-left: 20px;
+    border-right: none;
+}
+.admin-search button{
+    position: absolute;
+    top: 0;
+    right: 0px;
+    border: 1px solid #a3a3a3;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    height: 38px;
+    padding: 0 20px;
+    transition:  all linear 0.3s;
+}
+.admin-search button:hover{
+    background-color: #0E8388;
+    color: #fff;
+}
+.admin-action{
+    width: 320px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logout-admin{
+    background-color: #0E8388;
+    padding: 8px 15px;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+}
+.back-home{
+    display: inline-block;
+    font-weight: 800;
+    cursor: pointer;
+    transition:  transform linear 0.2s;
+    color: #2c2e33;
+}
+.back-home:hover{
+    transform: scale(1.1);
+    
+}
+.back-home:hover i{
+    color: #0E8388;
+    animation: rotateAnimation 0.3s linear; 
+}
+
+
+@keyframes rotateAnimation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg); 
+    }
+}
+/* edit */
+.img-admin-edit{
+    width: 90px;
+    height: 90px;
+    border-radius: 5px;
+}
+
+.form-File-edit{
+    width: 70% !important;
+    display: none;
+}
+.label-file-edit{
+    position: relative;
+}
+
+.edit-icon{
+    position: absolute;
+    bottom: -10px;
+    right: -19px;
+    font-size: 29px;
+    cursor: pointer;
+    transition: transform linear 0.2s;
+}
+.edit-icon:hover{
+    color: #0E8388;
+    transform: scale(1.1);
+}
+
+
+/* admin product detail  */
+.admin-card{
+    width: 600px;
+    height: 600px;
+    background-color: #fff;
+    position: relative;
+    top: 50%;
+    left: 60%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    color: #4c4c4c;
+    letter-spacing: 1px;
+    padding: 10px 20px;
+}
+.card-close{
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    font-size: 35px;
+    color: #ff0606;
+    cursor: pointer;
+}
+.card-close-speci{
+    float: right;
+    font-size: 35px;
+    color: #ff0606;
+    cursor: pointer;
+    margin: 0 20px 0 0;
+}
+.card-image{
+    position: absolute;
+    top: 48px;
+    left: -145px;
+    width: 300px;
+    height: 500px;
+}
+.card-image-head{
+    width: 100%;
+}
+.card-image img{
+    width: 100%;
+    border-radius: 10px;
+    height: 90%;
+    box-shadow: 4px 4px 25px -2px rgba(0, 0, 0, 0.3);
+}
+.card-specifications{
+    background: radial-gradient(#e5f89e, #96e001);
+    width: 300px;
+    border-radius: 10px;
+    padding: 10px 0;
+}
+.card-specifications span{
+    display: block;
+    font-size: 20px;
+    margin: 5px 0;
+}
+.card-specifications-title{
+    font-size: 23px !important;
+}
+.card-info{
+    position: absolute;
+    right: 10px;
+    margin-top: 10px;
+    width: calc(100% - 179px);
+}
+.card-info h3{
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1; 
+    font-size: 20px;
+    font-weight: 600;
+    text-transform: capitalize;
+    text-align: left;
+    color: #ff3f40;
+}
+.card-info-name, .card-info-price{
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 20px;
+}
+
+.card-info-name p, .card-info-price p{
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+.card-info-name span, .card-info-price span{
+    display: inline-block;
+    color: #a6a6a6;
+    font-size: 16px;
+    font-weight: 400;
+}
+.card-info-description{
+    height: 130px;
+    padding: 10px;
+    margin:0 20px;
+    text-align: left;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    border: 1px solid #2c2e33;
+    border-radius: 5px;
+}
+.card-info-title{
+    font-size: 20px;
+    text-align: left;
+    display: block;
+    margin-left: 10px;
+    font-style: italic;
+    font-weight: 600;
+    color: #9be010;
+    letter-spacing: 2px;
+}
+
+

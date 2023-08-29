@@ -165,6 +165,7 @@ export default {
         },
         handleSelectFile(event){
             this.infoProduct.image = event.target.files[0] || '';
+            console.log(this.infoProduct)
         
         },
         handleBrand(event){
@@ -225,6 +226,7 @@ export default {
         async addCategory(){
                 try {
                 this.loading=true
+                
                 const response = await categoryService.create(this.infoCategory)
                 this.loading=false
                 if(response.data.status){

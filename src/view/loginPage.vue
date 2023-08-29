@@ -1,6 +1,6 @@
 <template>
     <div class="background-form">
-        <form action="" class="form" @submit.prevent.stop="login">
+        <form action="" class="form" @submit.prevent.stop="login" enctype="multipart/form-data">
             <div class="form-head">
                 <h2 class="title">Đăng nhập</h2>
                 <span class="description">Đăng nhập tài khoản tại đây</span>
@@ -107,7 +107,12 @@ export default {
                             this.messageFailure = '';
                             const user = JSON.stringify(response.data.user);
                             sessionStorage.setItem('user', user);
-                            this.$router.push('/');
+                            const inforUser= response.data.user
+                            if(inforUser.user.isAdmin || inforUser.user.roles.length>0){
+                                this.$router.push('/admin')
+                            }else{
+                                this.$router.push('/');
+                            }
                         } else {
                             this.messageSuccess = '';
                             this.messageFailure = response.data.mes;

@@ -1,7 +1,6 @@
 import createApiClient from "./config.service";
 
 class productService{
-   
     constructor(baseUrl='http://localhost:3000/product', headers={
         'Content-Type': 'multipart/form-data'
     }){
@@ -15,6 +14,15 @@ class productService{
         return pageNumber && pageSize 
         ? this.api.get(`/?pageNumber=${pageNumber}&pageSize=${pageSize}`) 
         : this.api.get(`/`)
+    }
+    async getProductById(id){
+        return await this.api.get(`/get-id/?id=${id}`)
+    }
+    async update(id,data){
+        return await this.api.post(`/update/?id=${id}`, data)
+    }
+    async getProductDetail(id){
+        return (await this.api.get(`/product-detail/?id=${id}`)).data
     }
 }
 
