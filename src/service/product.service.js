@@ -24,6 +24,9 @@ class productService{
     async getProductDetail(id){
         return (await this.api.get(`/product-detail/?id=${id}`)).data
     }
+    async sortProduct(type, field, pageNumber, pageSize){
+        return await this.api.get(`/sort/?type=${type}&field=${field}&pageNumber=${pageNumber}&pageSize=${pageSize}`)
+    }
 }
 
 export default new productService()

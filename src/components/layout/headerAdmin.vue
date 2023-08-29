@@ -1,7 +1,7 @@
 <template >
   <header class="header-admin">
-    <div class="role-user" @click="activeRole=!activeRole">
-        <span class="role-title">
+    <div class="role-user">
+        <span class="role-title"  @click="activeRole=!activeRole">
             Quyền của bạn
             <i class="fa-solid fa-caret-down ms-2"></i>
         </span>

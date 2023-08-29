@@ -8,11 +8,15 @@
                     <div  v-if="!activeImg" class="card-specifications">
                         <i class="fa-solid fa-xmark card-close-speci" @click="activeImg=true"></i>
                         <span class="card-specifications-title" >Thông số kỹ thuật</span>
-                        <div class="card-info-name">
-                            <p>Tốc độ in: <span>Tosiba</span></p>
-                            <p>Khay giấy <span>Máy văn phòng</span></p>
-                            <p>Công nghệ: <span>Đã qua sử dụng</span></p>
-                            <p>Màn hình: <span>Đã qua sử dụng</span></p>
+                        <div v-if="existSpe" class="card-info-name">
+                            <p>Tốc độ in: <span>{{ infoSpe.speed }}</span></p>
+                            <p>Khay giấy <span>{{ infoSpe.paperTray }}</span></p>
+                            <p>Kích thước giấy <span>{{ infoSpe.paperSize }}</span></p>
+                            <p>Công nghệ: <span>{{ infoSpe.connectionTechnology }}</span></p>
+                            <p>Màn hình: <span>{{ infoSpe.screen }}</span></p>
+                        </div>
+                        <div class="div" v-else>
+                            <span>Chưa thêm thông số kỹ thuật</span>
                         </div>
                     </div>
                 </div>
@@ -48,18 +52,22 @@
 
 <script>
 import productService from '@/service/product.service';
-
+import specificationsService from '@/service/specifications.service';
+import format from '@/utils/format';
 export default {
     data(){
         return {
             activeImg:true,
             product:{},
-            specificatios:{}
+            specificatios:{},
+            infoSpe:{},
+            existSpe:true
         }
     },
     watch:{
         activeProductDetail(){
             this.getProductDetail()
+            this.getSpeByIdProduct()
         }
     },
     props:{
@@ -80,8 +88,27 @@ export default {
                 const response = await productService.getProductDetail(this.id)
                 if(response.status){
                     this.product=response.data
+                    this.product.priceImport=format.formatCurrency(this.product.priceImport)
+                    this.product.priceRental=format.formatCurrency(this.product.priceRental)
+                    this.product.priceSale=format.formatCurrency(this.product.priceSale)
                 }
-                console.log(this.product);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getSpeByIdProduct(){
+            try {
+                const response = await specificationsService.findByIdProduct(this.id)
+                if(response.data.status){
+                    this.infoSpe={
+                        ...response.data.data
+                    }
+                    this.existSpe=true
+
+                }
+                else{
+                    this.existSpe=false
+                }
             } catch (error) {
                 console.log(error);
             }
