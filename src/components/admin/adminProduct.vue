@@ -109,8 +109,8 @@
                     <td class="column7">{{ product.priceSale }}</td>
                     <td class="column8">{{ product.priceRental }}</td>
                     <td class="column4">
-                        <span>Ngày tạo: {{ product.createdAt }}</span>
-                        <span>Ngày sửa: {{ product.updatedAt }}</span>
+                        <span><b>Tạo:</b> {{ product.createdAt }}</span>
+                        <span><b>Sử:</b> {{ product.updatedAt }}</span>
                     </td>
                     <td class="column5">
                         <div class="btn btn-outline-info me-3" @click="handleProductDetail(product._id)"><i class="fa-solid fa-circle-info"></i></div>
@@ -214,14 +214,14 @@ export default {
     async getproducts(){
         try {
             const length = await productService.getProducts()
-            this.lengthPage= Math.ceil(length.data.length/8) 
+            this.lengthPage= Math.ceil(length.data.length/this.pageSize) 
             const response = await productService.getProducts(this.pageNumber, this.pageSize)
             response.data.forEach(product => {
               product.priceSale=format.formatCurrency(product.priceSale)
               product.priceImport=format.formatCurrency(product.priceImport)
               product.priceRental=format.formatCurrency(product.priceRental)
-              product.createdAt=format.formatDate(product.createdAt)
-              product.updatedAt=format.formatDate(product.updatedAt)
+              product.createdAt=format.formatDateNoTime(product.createdAt)
+              product.updatedAt=format.formatDateNoTime(product.updatedAt)
             });
             this.products=response.data
         } catch (error) {
@@ -235,8 +235,8 @@ export default {
               product.priceSale=format.formatCurrency(product.priceSale)
               product.priceImport=format.formatCurrency(product.priceImport)
               product.priceRental=format.formatCurrency(product.priceRental)
-              product.createdAt=format.formatDate(product.createdAt)
-              product.updatedAt=format.formatDate(product.updatedAt)
+              product.createdAt=format.formatDateNoTime(product.createdAt)
+              product.updatedAt=format.formatDateNoTime(product.updatedAt)
             });
             this.products=response.data
             this.isSort=true

@@ -6,9 +6,14 @@ class format{
         }).format(price);
     }
     
-    formatDate(dateString) {
+    formatDateNoTime(dateString) {
         const date = new Date(dateString);
-        return new Intl.DateTimeFormat('default', { dateStyle: 'short' }).format(date);
+        return new Intl.DateTimeFormat('default', { dateStyle: 'medium'  }).format(date);
+    }
+
+    formatDate(dateString, config={ dateStyle: 'medium', timeStyle:'short'  }) {
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat('default', config).format(date);
     }
 
 }

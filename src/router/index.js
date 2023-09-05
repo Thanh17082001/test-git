@@ -10,6 +10,8 @@ import adminProductForm from "@/components/admin/adminForm.vue"
 import headerVue from '@/components/layout/headerVue.vue'
 import footerVue from '@/components/layout/footerVue.vue'
 import adminFormEdit from '@/components/admin/adminFormEdit.vue'
+import EntryReceiptVue from "@/components/admin/EntryReceipt.vue";
+import detailEntryReceiptVue from "@/components/admin/detailEntryReceipt.vue";
 
 const routes =[
     { path: '/', components:{
@@ -39,7 +41,9 @@ const routes =[
         children:[
           { path: "add", component: adminProductForm, meta: { title: "Admin" } },
           { path: "product", component: adminProduct, meta: { title: "Admin" } },
-          {path:"edit/:id",name:"product.edit", props: true, component:adminFormEdit,meta:{title:'Chỉnh sửa'}}
+          { path: "entry-receipt", component: EntryReceiptVue, meta: { title: "Admin" } },
+          {path:"edit/:id",name:"product.edit", props: true, component:adminFormEdit,meta:{title:'Chỉnh sửa'}},
+          {path:"entry-receipt-detail/:id", name:"entry.detail", props:true, component:detailEntryReceiptVue, meta:{title:'Chi tiết phiếu nhập'}}
         ]
     },
 ]

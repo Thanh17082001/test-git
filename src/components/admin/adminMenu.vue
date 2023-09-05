@@ -34,9 +34,9 @@
                 </router-link>
             </li>
             <li class="sec-left__item">
-                <router-link to="/admin/news" active-class="active" class="sec-left__link">
+                <router-link to="/admin/entry-receipt" active-class="active" class="sec-left__link">
                     <i class="fa-regular fa-newspaper" id="icon3"></i>
-                    Đăng tin tức
+                    Phiếu nhập kho
                 </router-link>
             </li>
             <li class="sec-left__item">

@@ -34,6 +34,8 @@
                         <p>Giá bán: <span>{{ product.priceSale }}</span></p>
                         <p>Số lượng bán: <span>{{ product.soldQuantity }}</span></p>
                         <p>Giá cho thuê: <span>{{ product.priceRental }}</span></p>
+                        <p>Ngày tạo: <span>{{ product.createdAt }}</span></p>
+                        <p>Ngày sửa: <span>{{ product.updatedAt }}</span></p>
                     </div>
                     <span class="card-info-title">Mô tả </span>
                     <div class="card-info-description">
@@ -91,6 +93,8 @@ export default {
                     this.product.priceImport=format.formatCurrency(this.product.priceImport)
                     this.product.priceRental=format.formatCurrency(this.product.priceRental)
                     this.product.priceSale=format.formatCurrency(this.product.priceSale)
+                    this.product.createdAt=format.formatDate(this.product.createdAt)
+                    this.product.updatedAt=format.formatDate(this.product.updatedAt)
                 }
             } catch (error) {
                 console.log(error);
