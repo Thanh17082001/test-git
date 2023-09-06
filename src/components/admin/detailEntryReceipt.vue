@@ -10,7 +10,7 @@
                 <div class="content-head row">
                     <div class="col-lg-6">
                         <h5 class="text-info fs-4">Người lập phiếu</h5>
-                        <span class="name"><b>Họ và tên</b>: {{ entry.createBy }}</span>
+                        <span class="name"><b>Họ và tên</b>: {{ entry.createBy  ? entry.createBy.fullName : '' }}</span>
                     </div>
                     <div class="col-lg-6">
                         <h5 class="text-info fs-4">Nhà cung cấp</h5>
@@ -88,7 +88,6 @@ export default {
                     this.entry.products[index].total= format.formatCurrency(this.entry.products[index].total)
                 
                });
-               console.log(this.entry.products);
             } catch (error) {
                 console.log(error);
             }

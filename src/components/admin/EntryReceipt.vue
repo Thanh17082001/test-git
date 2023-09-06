@@ -15,7 +15,7 @@
         <tbody class="entry-tbody">
             <tr v-for="(entry, index) in entrys" :key="entry._id">
                 <td class="entry-col1">{{ index + 1 }}</td>
-                <td class="entry-col2">{{ entry.createBy }}</td>
+                <td class="entry-col2">{{ entry.createBy.fullName }}</td>
                 <td class="entry-col4">{{ entry.totalAmount }}</td>
                 <td class="entry-col4">{{ entry.supplier }}</td>
                 <td class="entry-col3">{{ entry.createdAt }}</td>

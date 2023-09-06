@@ -44,7 +44,7 @@ function print(info = {}) {
    <div style="display: flex; justify-content: center; align-items: center;">
        <div style="width: 50%; text-align: center;">
            <h4>Người lập phiếu</h4>
-           <span><b>Họ và tên: </b>${info.createBy}</span>
+           <span><b>Họ và tên: </b>${info.createBy.fullName}</span>
        </div>
 
        <div style="width: 50%; text-align: center;">
