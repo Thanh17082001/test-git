@@ -1,14 +1,7 @@
 <template>
   <div>
     <h1 class="h1">Home page</h1>
-    <span>{{ name }}</span>
-    <br>
-    <br>
-    <button><router-link to="/register"> Đăng ký</router-link></button>
-    <br>
-    <br>
-    <button><router-link to="/login"> Đăng nhập</router-link></button>
-    <button @click="logout">Đăng xuất</button>
+    
   </div>
 </template>
 

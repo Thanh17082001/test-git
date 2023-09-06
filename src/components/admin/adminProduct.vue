@@ -230,6 +230,7 @@ export default {
     },
     async sort(type, field){
       try {
+        console.log(this.pageNumber);
         const response = await productService.sortProduct(type, field, this.pageNumber, this.pageSize)
         response.data.forEach(product => {
               product.priceSale=format.formatCurrency(product.priceSale)

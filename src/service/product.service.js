@@ -27,6 +27,17 @@ class productService{
     async sortProduct(type, field, pageNumber, pageSize){
         return await this.api.get(`/sort/?type=${type}&field=${field}&pageNumber=${pageNumber}&pageSize=${pageSize}`)
     }
+    async search(searchValue, pageNumber, pageSize){
+        const headers=undefined
+        const baseUrl= "http://localhost:3000/product"
+        this.api=createApiClient(baseUrl,headers)
+        const data={
+            searchValue
+        }
+        return pageNumber && pageSize 
+        ? this.api.post(`/search/?pageNumber=${pageNumber}&pageSize=${pageSize}`, data) 
+        : this.api.post('/search',  data) 
+    }
 }
 
 export default new productService()

@@ -6,12 +6,6 @@ class userService{
     }
     
     async register(data){
-        const headers={
-            'Content-Type': 'multipart/form-data'
-        }
-        const baseUrl= "http://localhost:3000/user"
-        this.api=createApiClient(baseUrl,headers)
-
         return await this.api.post('/register', data)
     }
     async login(data){
