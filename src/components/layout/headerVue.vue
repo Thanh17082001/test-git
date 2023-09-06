@@ -35,7 +35,7 @@
                 <div class="header-user">
                     <div class="logined" v-if="!!islogin" @click="isActive = !isActive">
                         <img
-                            src="https://phongreviews.com/wp-content/uploads/2022/11/avatar-facebook-mac-dinh-8.jpg"
+                            :src="'http://localhost:3000/'+ infoUser.avatar"
                             alt=""
                             class="header-avt"
                         />
@@ -316,12 +316,13 @@ export default {
 .user-drop-down li  a{
   padding: 10px 0;
     cursor: pointer;
-    transition: all linear 0.3s;
+    transition: all linear 0.1s;
     text-decoration: none;
     color:#111
 }
-.user-drop-down li:hover {
+.user-drop-down li:hover, .user-drop-down li:hover a{
     color: red;
+    transform: translate(5px, -5px);
 }
 .login {
     height: 100%;
