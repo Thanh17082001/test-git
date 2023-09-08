@@ -1,0 +1,130 @@
+.banner{
+    position: relative;
+    overflow: hidden;
+    max-height: 500px;
+    width: 100%;
+    display: flex;
+}
+.banner-img{
+    width: 0%;
+    height:500px;
+    object-fit:fill;
+    opacity: 0;
+}
+.activeImg{
+    opacity: 1;
+    width: 100%;
+}
+.banner-pag{
+    position: absolute;
+    top: 50%;
+    font-size: 50px;
+    color: #000;
+    cursor: pointer;
+    transition: transform ease-out 0.5s;
+}
+.next-img{
+    right: 25px;
+    transform: translate(50px,-50%);
+}
+.previous-img{
+    left: 25px;
+    transform: translate(-50px,-50%);
+
+} 
+.banner:hover .next-img, .banner:hover .previous-img{
+    transform: translate(0, -50%);
+}
+.banner-list-icon{
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    /* background-color: red; */
+    width: 150px;
+    height: 50px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.banner-list-icon span{
+    width: 20px;
+    height: 20px;
+    display: block;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    cursor: pointer;
+}
+.banner-list-icon .active-banner{
+    background-color: rgba(0, 0, 0, 0.6) ;
+
+}
+ 
+
+/* product new */
+
+.home-new-product{
+    margin-top: 30px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.home-title{
+    text-align: left;
+    position: relative;
+
+}
+.home-title::before{
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: #ccc;
+}
+.home-title::after{
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    height: 3px;
+    width:85px ;
+    background-color: #111;
+}
+.home-title h3{
+    font-size: 22px;
+    text-transform: uppercase;
+    margin-left: 30px;
+    font-weight: 600;
+    text-rendering: optimizeSpeed;
+}
+
+.home-new-product h3::before{
+    font-family: 'FontAwesome';
+    content: "\f029";
+    position: absolute;
+    top: 0;
+    left: 16px;
+    padding-right: 15px;
+
+}
+.home-see-more a{
+    display: block;
+    font-size: 20px;
+    text-align: right;
+    text-decoration: none;
+    margin-right: 10px;
+    color: #000;
+}
+.home-see-more a:hover{
+    color: #2a2af6;
+}
+
+/* home news */
+
+.news{
+    overflow: hidden;
+    margin-bottom: 20px;
+}

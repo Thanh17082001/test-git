@@ -15,6 +15,11 @@ class productService{
         ? this.api.get(`/?pageNumber=${pageNumber}&pageSize=${pageSize}`) 
         : this.api.get(`/`)
     }
+    async filtersProducts(pageNumber, pageSize){
+        return pageNumber && pageSize 
+        ? this.api.get(`/?pageNumber=${pageNumber}&pageSize=${pageSize}`) 
+        : this.api.get(`/`)
+    }
     async getProductById(id){
         return await this.api.get(`/get-id/?id=${id}`)
     }
