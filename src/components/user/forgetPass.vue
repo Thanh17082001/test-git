@@ -18,7 +18,7 @@
                         name="email"
                         type="email"
                         ref="inputRef"
-                        class="form-email"
+                        class="form-email-input"
                         placeholder="Email của bạn"
                     />
                     <span class="err-pass" v-if="!!valid.email">{{ valid.email }}</span>

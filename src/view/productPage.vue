@@ -6,6 +6,16 @@
             <product-category @filter="filter"></product-category>
         </div>
         <div class="col-lg-10">
+            <!-- Sap xep -->
+            <div class="product-filter">
+                <span>Sắp xếp</span>
+                <select v-model="sortV" value="">
+                    <option :value="{}">Không sắp xếp</option>
+                    <option :value="{type:-1,field:'priceSale'}">Giá giảm dần</option >
+                    <option :value="{type:1,field:'priceSale'}">Giá tăng dần</option >
+                </select>
+            </div>
+            <!-- Danh sach san pham -->
             <div class="row">
                 <div class="my-5" v-if="products.length==0">
                     Chưa có
@@ -51,7 +61,13 @@ export default {
             pageSize:8,
             lengthProducts:0,
             isFilter:false,
-            keyFilter:{}
+            keyFilter:{},
+            sortV:{}
+        }
+    },
+    watch:{
+        sortV(){
+            this.sort()
         }
     },
     methods:{
@@ -86,9 +102,16 @@ export default {
             }
         },
         filter(data){
-            this.isFilter=true
-            this.keyFilter={...data}
-            data.type ? this.filterServer(): this.getproduct()
+            if(data.type){
+                this.isFilter=true
+                this.keyFilter={...data}
+                this.filterServer()
+            }
+           else{
+            this.keyFilter={}
+            this.isFilter=false 
+            this.getproduct()
+           }
         },
         async filterServer(){
             try {
@@ -100,7 +123,23 @@ export default {
             } catch (error) {
                 console.log(error);
             }
-        }
+        },
+        sort() {
+                const {type, field}= this.sortV
+                  this.products.sort((a, b) => {
+                      if (type == 1) {
+                          return parseFloat(a[field]) - parseFloat(b[field]);
+                      } else if (type == -1) {
+                          return parseFloat(b[field]) - parseInt(a[field]);
+                      }else if(field=='type'){
+                        this.products.filter(product=>product.type==type)
+                      }
+                      else{
+                        this.getproduct()
+                      }
+                  });
+                  console.log(this.products);
+        },
         
     },
     mounted(){

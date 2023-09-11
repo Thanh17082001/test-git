@@ -98,11 +98,11 @@
             </div>
             <div class="group col-lg-4 mt-1">
                 <label for="">Giá bán sản phẩm <span class="required">*</span></label>
-                <input name="price-sale" v-model="infoProduct.priceSale" required placeholder="Nhập giá bán" type="text" class="product-input">
+                <input name="price-sale" v-model="infoProduct.priceSale" required placeholder="Nhập giá bán" type="number" class="product-input">
             </div>
             <div class="group col-lg-4 mt-1">
                 <label for="">Giá thuê sản phẩm <span class="required">*</span> </label>
-                <input name="price-rental" v-model="infoProduct.priceRental" required placeholder="Nhập giá cho thuê/Ngày" type="text" class="product-input">
+                <input name="price-rental" v-model="infoProduct.priceRental" required placeholder="Nhập giá cho thuê/Ngày" type="number" class="product-input">
             </div>
             <div class="group col-lg-12">
                 <label for="">Mô tả</label>

@@ -49,17 +49,17 @@
                     </div>
                     <div class="entry-group col-4">
                         <label for="">Giá nhập sản phẩm</label>
-                        <input required placeholder="Giá nhập" v-model="product.priceImport" />
+                        <input required placeholder="Giá nhập" v-model="product.priceImport" type="number" />
                     </div>
                     <div class="entry-group col-4">
                         <label for="">Số lượng nhập</label>
-                        <input required placeholder="Số lượng nhập" v-model="product.inputQuantity" />
+                        <input required placeholder="Số lượng nhập" v-model="product.inputQuantity" type="number" />
                     </div>
                 </div>
             </div>
             <div class="my-3">
-                <button class="btn btn-outline-success me-3" @click="addinput">Thêm dòng</button>
-                <button class="btn btn-outline-danger" @click="removeinput">Xóa dòng</button>
+                <span class="btn btn-outline-success me-3" @click="addinput">Thêm dòng</span>
+                <span class="btn btn-outline-danger" @click="removeinput">Xóa dòng</span>
             </div>
             <button type="submit" class="btn btn-lg btn-info text-white">Tạo phiếu</button>
         </form>
@@ -165,6 +165,7 @@ export default {
             const response = await entryReceiptService.create(data);
             if (response.data.status) {
                 this.products = [{ idProduct: '' }];
+                this.supplier=''
                 this.getAllEntry();
                 this.mesSuccess = response.data.mes;
                 this.mesFail = '';

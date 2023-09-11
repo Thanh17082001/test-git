@@ -31,7 +31,7 @@
     top: 50px;
     width: 100%;
     list-style: none;
-    padding: 0 0px 0 0;
+    padding: 0 20px;
     margin: 0;
     z-index: 9999;
 }
@@ -117,11 +117,7 @@
 }
 
 .active {
-    /* margin-left: 10px; */
-    background: #0f1015;
-    border-left: 5px solid #62CDFF;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
+    border-bottom: 5px solid #62CDFF;
 }
 
 #icon1 {
@@ -145,19 +141,28 @@
 }
 
 .sec-left__item:not(.active):hover {
-    background: #151518;
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
     transition: all 0.1s linear;
+    text-align: left;
 }
-
+.menu-title{
+    display: block;
+    font-size: 15px;
+    text-align: left;
+    text-transform: capitalize;
+    margin-top: 10px;
+    color: #62CDFF;
+}
 .sec-left__link {
     display: block;
     text-decoration: none;
     color: #fff;
-    padding: 20px 20px;
+    padding: 8px 0px 8px 10px;
     font-size: 18px;
     transition: transform 0.1s linear;
+    text-align: left;
+    margin-left: 15px;
 }
 
 .sec-left__link i {
@@ -957,8 +962,8 @@
 .entry-form{
     width: 650px;
     background-color: #fff;
-    max-height: 415px;
-    min-height: 415px;
+    max-height: 470px;
+    min-height: 470px;
     position: relative;
     top: 50%;
     left: 50%;

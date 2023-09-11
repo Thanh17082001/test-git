@@ -136,6 +136,9 @@
     border-radius: 5px;
     z-index: 1000;
 }
+.code-input{
+    width: 50px;
+}
 .close-form{
     text-align: right;
     margin: 0 88%;
@@ -146,7 +149,16 @@
     font-size: 30px;
     color: red;
 }
-.form-forget input{
+/* .form-forget{
+    background-color: #292b2c;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    height: 40px;
+    padding-left: 10px;
+    color: #fff;
+} */
+.form-email-input, .code-input, .form-pass{
     background-color: #292b2c;
     width: 100%;
     border: none;
@@ -156,7 +168,7 @@
     padding-left: 10px;
     color: #fff;
 }
-.form-forget input:focus{
+.code-input input:focus{
     background-color: #292b2c;
 }
 .form-forget .description{

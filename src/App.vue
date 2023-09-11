@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="contact-public">
+    <!-- <div class="contact-public">
       <a href="https://zalo.me/0366176577"><img src="https://inkythuatso.com/uploads/images/2021/09/zalo-logo-inkythuatso-14-15-03-04.jpg" alt=""></a>
       <a href="tel:0366176577" class="mt-2"><img src="https://hapotravel.com/wp-content/uploads/2023/04/tong-hop-25-logo-dien-thoai-dep-nhat-nam-2023_2.jpg" alt=""></a>
-    </div>
+    </div> -->
     <router-view name="header"></router-view>
     <router-view />
     <router-view name="footer"></router-view>

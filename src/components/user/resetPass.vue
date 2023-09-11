@@ -14,7 +14,7 @@
                 </div>
                 <div class="form-group">
                     <input
-                        type="text"
+                        type="password"
                         v-model="inforUser.password"
                         ref="inputRef"
                         class="form-pass"
@@ -23,9 +23,9 @@
                     />
                     <span class="err-pass" v-if="!!valid.passWord">{{ valid.passWord }}</span>
                     <input
-                        type="text"
+                        type="password"
                         v-model="inforUser.confirmPass"
-                        class="form-pass-confirm"
+                        class="mt-1 form-pass"
                         placeholder="Nhập lại mật khẩu"
                     />
                     <span class="err-pass" v-if="!!valid.confirmPass">{{ valid.confirmPass }}</span>

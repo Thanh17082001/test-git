@@ -12,15 +12,23 @@
             <span class="menu-name">Thiên Thanh</span>
         </div>
         <ul class="sec-left__list">
-            <li class="sec-left__menu">
+            <!-- <li class="sec-left__menu">
                 <p>Menu</p>
-            </li>
+            </li> -->
             <!-- <li class="sec-left__item">
                 <router-link to="/" class="sec-left__link" active-class="active" exact>
                   <i class="fa-solid fa-house"></i>
                     Trang chủ
                 </router-link>
             </li> -->
+            <span class="menu-title">Thông tin Doanh nghiệp</span>
+            <li class="sec-left__item">
+                <router-link to="/admin/home" active-class="active" class="sec-left__link">
+                    <i class="fa-regular fa-newspaper" id="icon3"></i>
+                    Xem và chỉnh sửa
+                </router-link>
+            </li>
+        <span class="menu-title">sản phẩm</span>
             <li class="sec-left__item">
                 <router-link to="/admin/product" class="sec-left__link" active-class="active">
                     <i class="fa-brands fa-product-hunt icon1" id="icon1"></i>
@@ -39,25 +47,8 @@
                     Phiếu nhập kho
                 </router-link>
             </li>
-            <li class="sec-left__item">
-                <router-link to="/admin/statistical" active-class="active" class="sec-left__link">
-                    <i class="fa-solid fa-chart-line" id="icon4"></i>
-                    Thông kê
-                </router-link>
-            </li>
-            <li class="sec-left__item">
-                <router-link to="/admin/order" active-class="active" class="sec-left__link">
-                    <i class="fa-solid fa-cart-flatbed-suitcase" id="icon5"></i>
-                    Đơn hàng
-                </router-link>
-            </li>
-
-            <li class="sec-left__item">
-                <router-link to="/admin/trash" active-class="active" class="sec-left__link" exact>
-                    <i class="fa-solid fa-trash"></i>
-                    Thùng rác
-                </router-link>
-            </li>
+        <span class="menu-title">Tài khoản người dùng</span>
+           
         </ul>
     </section>
 </template>

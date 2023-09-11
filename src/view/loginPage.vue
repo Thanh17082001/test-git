@@ -20,7 +20,7 @@
                 <input
                     v-model="inforUser.password"
                     name="password"
-                    type="text"
+                    type="password"
                     class="form-pass"
                     placeholder="Mật khẩu"
                 />

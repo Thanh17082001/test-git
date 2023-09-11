@@ -11,9 +11,12 @@ class productService{
         return this.api.post('/create',data)
     }
     async getProducts(pageNumber, pageSize){
-        return pageNumber && pageSize 
+        return pageNumber && pageSize
         ? this.api.get(`/?pageNumber=${pageNumber}&pageSize=${pageSize}`) 
         : this.api.get(`/`)
+    }
+    async getProductsCustomer(pageNumber, pageSize, type, field){
+        return this.api.get(`/?pageNumber=${pageNumber}&pageSize=${pageSize}&type=${type}&field=${field}`) 
     }
     async filtersProducts(pageNumber, pageSize){
         return pageNumber && pageSize 
