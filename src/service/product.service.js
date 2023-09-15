@@ -18,11 +18,11 @@ class productService{
     async getProductsCustomer(pageNumber, pageSize, type, field){
         return this.api.get(`/?pageNumber=${pageNumber}&pageSize=${pageSize}&type=${type}&field=${field}`) 
     }
-    async filtersProducts(pageNumber, pageSize){
-        return pageNumber && pageSize 
-        ? this.api.get(`/?pageNumber=${pageNumber}&pageSize=${pageSize}`) 
-        : this.api.get(`/`)
-    }
+    // async filtersProducts(pageNumber, pageSize){
+    //     return pageNumber && pageSize 
+    //     ? this.api.get(`/?pageNumber=${pageNumber}&pageSize=${pageSize}`) 
+    //     : this.api.get(`/`)
+    // }
     async getProductById(id){
         return await this.api.get(`/get-id/?id=${id}`)
     }
@@ -32,8 +32,8 @@ class productService{
     async getProductDetail(id){
         return (await this.api.get(`/product-detail/?id=${id}`)).data
     }
-    async sortProduct(type, field, pageNumber, pageSize){
-        return await this.api.get(`/sort/?type=${type}&field=${field}&pageNumber=${pageNumber}&pageSize=${pageSize}`)
+    async filterProduct(type, field, pageNumber, pageSize){
+        return await this.api.get(`/filter/?type=${type}&field=${field}&pageNumber=${pageNumber}&pageSize=${pageSize}`)
     }
     async search(searchValue, pageNumber, pageSize){
         const headers=undefined
@@ -45,6 +45,17 @@ class productService{
         return pageNumber && pageSize 
         ? this.api.post(`/search/?pageNumber=${pageNumber}&pageSize=${pageSize}`, data) 
         : this.api.post('/search',  data) 
+    }
+    async exportExcel(data){
+        const headers=undefined
+        const baseUrl= "http://localhost:3000/product"
+        this.api=createApiClient(baseUrl,headers)
+        console.log(data);
+        return await this.api.post('/export-excel', data, { responseType: 'blob' })
+    }
+
+    async filterByDate(day,month,year,field,pageNumber,pageSize){
+        return await this.api.get(`/filter-month/?pageNumber=${pageNumber}&pageSize=${pageSize}&field=${field}&month=${month}&day=${day}&year=${year}`)
     }
 }
 

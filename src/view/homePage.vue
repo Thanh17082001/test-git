@@ -136,8 +136,9 @@ export default {
         },
         async getProductsNew(){
             try {
-                const response = await productService.sortProduct(-1, 'createdAt', 1, 4)
+                const response = await productService.filterProduct(-1, 'createdAt', 1, 4)
                 this.productsNew=[...response.data]
+                console.log(response);
             } catch (error) {
                 console.log(error);
             }

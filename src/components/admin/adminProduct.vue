@@ -1,6 +1,37 @@
 <template>
-    <div>
+    <div >
         <h3 class="h3">Bảng sản phẩm</h3>
+        <div class="input-admin-filter">
+            <form class="filter-admin-date" @submit.prevent.stop="filterDate">
+                <select name="" id="" v-model="dateFilter.day" required>
+                    <option value="">Ngày</option>
+                    <option value="0">Tất cả</option>
+                    <option v-for="day in 31" :key="day" :value="day">{{ day }}</option>
+                </select>
+                <select name="" id="" v-model="dateFilter.month" required>
+                    <option value="">Tháng</option>
+                    <option value="0">Tất cả</option>
+                    <option v-for="month in 12" :value="month" :key="month">Tháng {{ month }}</option>
+                </select>
+                <select name="" id="" v-model="dateFilter.year" required>
+                    <option value="">Năm</option>
+                    <option value="0">Tất cả</option>
+                    <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                </select>
+                <select name="" id="" v-model="dateFilter.field" required>
+                    <option value="">Chọn kiểu</option>
+                    <option value="0">Tất cả</option>
+                    <option value="createdAt">Ngày Tạo</option>
+                    <option value="updatedAt">Ngày cập nhật</option>
+                    <option value="entryDate">Ngày Nhập kho</option>
+                </select>
+                <button>Lọc</button>
+            </form>
+            <div class="admin-export">
+                <div class="btn btn-success" @click="exportToExcel"><i class="fa-solid fa-file-excel me-1"></i> Excel</div>
+                <div class="btn btn-warning"><i class="fa-solid fa-file-pdf"></i> Pdf</div>
+            </div>
+        </div>
         <table class="table-product">
             <thead class="table-head">
                 <tr>
@@ -13,6 +44,9 @@
                                 <ul class="admin-sort-list">
                                     <li @click="sort(1, 'name')">Từ A đến Z</li>
                                     <li @click="sort(-1, 'name')">Từ Z về A</li>
+                                    <div class="filter-admin-input">
+                                        <input type="text" placeholder="Tìm sản phẩm theo tên" v-model="filterInput" @input="handleFitter('name')">
+                                    </div>
                                 </ul>
                             </div>
                         </div>
@@ -26,6 +60,9 @@
                                     <li @click="sort(1, 'inputQuantity')">Từ nhỏ đến lớn</li>
                                     <li @click="sort(-1, 'inputQuantity')">Từ lớn đến nhỏ</li>
                                     <li @click="sort(0, 'inputQuantity')">Bằng 0</li>
+                                    <div class="filter-admin-input">
+                                        <input type="text" placeholder="Tìm sản phẩm theo tên" v-model="filterInput" @input="handleFitter('inputQuantity')">
+                                    </div>
                                 </ul>
                             </div>
                         </div>
@@ -39,6 +76,9 @@
                                     <li @click="sort(1, 'soldQuantity')">Từ nhỏ đến lớn</li>
                                     <li @click="sort(-1, 'soldQuantity')">Từ lớn đến nhỏ</li>
                                     <li @click="sort(0, 'soldQuantity')">Bằng 0</li>
+                                    <div class="filter-admin-input">
+                                        <input type="text" placeholder="Tìm sản phẩm theo tên" v-model="filterInput" @input="handleFitter('soldQuantity')">
+                                    </div>
                                 </ul>
                             </div>
                         </div>
@@ -52,6 +92,9 @@
                                     <li @click="sort(1, 'priceImport')">Từ nhỏ đến lớn</li>
                                     <li @click="sort(-1, 'priceImport')">Từ lớn đến nhỏ</li>
                                     <li @click="sort(0, 'priceImport')">Bằng 0</li>
+                                    <div class="filter-admin-input">
+                                        <input type="text" placeholder="Tìm sản phẩm theo tên" v-model="filterInput" @input="handleFitter('priceImport')">
+                                    </div>
                                 </ul>
                             </div>
                         </div>
@@ -64,6 +107,9 @@
                                 <ul class="admin-sort-list">
                                     <li @click="sort(1, 'priceSale')">Từ nhỏ đến lớn</li>
                                     <li @click="sort(-1, 'priceSale')">Từ lớn đến nhỏ</li>
+                                    <div class="filter-admin-input">
+                                        <input type="text" placeholder="Tìm sản phẩm theo tên" v-model="filterInput" @input="handleFitter('priceSale')">
+                                    </div>
                                 </ul>
                             </div>
                         </div>
@@ -76,6 +122,9 @@
                                 <ul class="admin-sort-list">
                                     <li @click="sort(1, 'priceRental')">Từ nhỏ đến lớn</li>
                                     <li @click="sort(-1, 'priceRental')">Từ lớn đến nhỏ</li>
+                                    <div class="filter-admin-input">
+                                        <input type="text" placeholder="Tìm sản phẩm theo tên" v-model="filterInput" @input="handleFitter('priceRental')">
+                                    </div>
                                 </ul>
                             </div>
                         </div>
@@ -111,8 +160,8 @@
                     <td class="column7">{{ formatCurency(product.priceSale) }}</td>
                     <td class="column8">{{ formatCurency(product.priceRental) }}</td>
                     <td class="column4">
-                        <span><b>Tạo:</b> {{ product.createdAt }}</span>
-                        <span><b>Sử:</b> {{ product.updatedAt }}</span>
+                        <span><b>Tạo:</b> {{ formatDateNoTime(product.createdAt) }}</span>
+                        <span><b>Sử:</b> {{ formatDateNoTime(product.updatedAt) }}</span>
                     </td>
                     <td class="column5">
                         <div class="btn btn-outline-info me-3" @click="handleProductDetail(product._id)">
@@ -182,8 +231,19 @@ export default {
             isActiveSpe: false,
             id: '',
             pageNumber: 1,
-            pageSize: 8,
+            pageSize: 10,
             isSort: false,
+            type:'',
+            field:'',
+            filterInput:'',
+            years:[],
+            idTimeOut:null,
+            dateFilter:{
+                day:'',
+                month:'',
+                year:'',
+                field:''
+            }
         };
     },
     methods: {
@@ -191,6 +251,7 @@ export default {
             this.activePage = index;
             this.pageNumber = index;
             this.getproducts();
+            this.isSort=false
         },
         handleProductDetail(id) {
             this.activeProductDetail = true;
@@ -207,6 +268,7 @@ export default {
                 this.pageNumber += 1;
                 this.activePage += 1;
                 this.getproducts();
+            this.sort(this.type, this.field)
             }
         },
         previousPage() {
@@ -216,6 +278,8 @@ export default {
                 this.pageNumber -= 1;
                 this.activePage -= 1;
                 this.getproducts();
+            this.sort(this.type, this.field)
+
             }
         },
         closeProductDetail() {
@@ -229,21 +293,26 @@ export default {
         formatCurency(price){
           return format.formatCurrency(price)
         },
+        formatDateNoTime(date){
+          return format.formatDateNoTime(date)
+        },
         async getproducts() {
             try {
                 const length = await productService.getProducts();
                 this.lengthPage = Math.ceil(length.data.length / this.pageSize);
                 const response = await productService.getProducts(this.pageNumber, this.pageSize);
-                response.data.forEach((product) => {
-                    product.createdAt = format.formatDateNoTime(product.createdAt);
-                    product.updatedAt = format.formatDateNoTime(product.updatedAt);
-                });
+                // response.data.forEach((product) => {
+                //     product.createdAt = format.formatDateNoTime(product.createdAt);
+                //     product.updatedAt = format.formatDateNoTime(product.updatedAt);
+                // });
                 this.products = response.data;
             } catch (error) {
                 console.log(error);
             }
         },
         async sort(type, field) {
+            this.type=type
+            this.field=field
             this.isSort=true
             if(field ==='name'){
                 this.products.sort((a,b)=>{
@@ -259,7 +328,6 @@ export default {
                 // sắp xếp
                   this.products.sort((a, b) => {
                       if (type == 1) {
-                        console.log(parseFloat(a[field]));
                           return parseFloat(a[field]) - parseFloat(b[field]);
                       } else if (type == -1) {
                           return parseFloat(b[field]) - parseInt(a[field]);
@@ -268,7 +336,6 @@ export default {
                 // lấy ra bằng 0
                   if(type === 0){
                     const productEqualZero=this.products.filter(product => product[field]===0)
-                    console.log(productEqualZero);
                     this.products=[]
                     this.products=[
                       ...productEqualZero
@@ -276,9 +343,55 @@ export default {
                   }
             }
         },
+        getYears(){
+            const yearsTarget= new Date().getFullYear()
+            for(let i=5 ; i>=1;i--){
+                this.years.push(yearsTarget-i)
+            }
+            this.years.push(yearsTarget)
+            for(let i=1 ; i<5;i++){
+                this.years.push(yearsTarget+i)
+            }
+        },
+        handleFitter(name){
+            clearTimeout(this.idTimeOut);
+            this.getproducts()
+            this.idTimeOut=setTimeout(()=>{
+                this.filter(name)
+            }, 500)
+        },
+        filter(name){
+            console.log(this.filterInput);
+                const regex = new RegExp(this.filterInput.trim(), "i");
+                const abc =this.products.filter(product => {
+                    if(name==='name'){
+                        return regex.test(product[name])
+                    }
+                    else{
+                        return product[name]>= this.filterInput
+                    }
+                })
+                this.products=abc;
+        },
+        async exportToExcel(){
+            const response = await productService.exportExcel({data:this.products})
+            const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'example.xlsx');
+            document.body.appendChild(link);
+            link.click();
+        },
+        async filterDate(){
+            const {day,month,year, field} = this.dateFilter
+            const response = await productService.filterByDate(day,month,year,field,this.pageNumber,this.pageSize)
+            this.products=[...response.data]
+        }
     },
     mounted() {
         this.getproducts();
+        this.getYears()
     },
 };
 </script>

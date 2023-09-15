@@ -116,7 +116,7 @@ export default {
         async filterServer(){
             try {
                 console.log(this.keyFilter);
-                const response = await productService.sortProduct(this.keyFilter.type, this.keyFilter.field, this.pageNumber, this.pageSize)
+                const response = await productService.filterProduct(this.keyFilter.type, this.keyFilter.field, this.pageNumber, this.pageSize)
                 this.products=[]
                 this.products= [...response.data]
                 console.log(response);
