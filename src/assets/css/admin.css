@@ -1059,7 +1059,7 @@ html {
     margin-right: 5px;
 }
 .admin-export{
-    width: 200px;
+    width: 150px;
     display: flex;
     justify-content: space-around;
 }

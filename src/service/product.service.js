@@ -50,8 +50,14 @@ class productService{
         const headers=undefined
         const baseUrl= "http://localhost:3000/product"
         this.api=createApiClient(baseUrl,headers)
-        console.log(data);
         return await this.api.post('/export-excel', data, { responseType: 'blob' })
+    }
+
+    async exportPDF(data){
+        const headers=undefined
+        const baseUrl= "http://localhost:3000/product"
+        this.api=createApiClient(baseUrl,headers)
+        return await this.api.post('/export-pdf', data, { responseType: 'blob' })
     }
 
     async filterByDate(day,month,year,field,pageNumber,pageSize){
