@@ -169,7 +169,6 @@ export default {
         },
         handleSelectFile(event){
             this.infoProduct.image = event.target.files[0] || '';
-            console.log(this.infoProduct)
         
         },
         handleBrand(event){

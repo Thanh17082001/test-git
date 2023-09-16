@@ -61,7 +61,7 @@ class productService{
     }
 
     async filterByDate(day,month,year,field,pageNumber,pageSize){
-        return await this.api.get(`/filter-month/?pageNumber=${pageNumber}&pageSize=${pageSize}&field=${field}&month=${month}&day=${day}&year=${year}`)
+        return await this.api.get(`/filter-date/?pageNumber=${pageNumber}&pageSize=${pageSize}&field=${field}&month=${month}&day=${day}&year=${year}`)
     }
 }
 

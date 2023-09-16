@@ -23,7 +23,7 @@
                     <option value="0">Tất cả</option>
                     <option value="createdAt">Ngày Tạo</option>
                     <option value="updatedAt">Ngày cập nhật</option>
-                    <option value="entryDate">Ngày Nhập kho</option>
+                    <option value="dateEntyReceipt">Ngày Nhập kho</option>
                 </select>
                 <button>Lọc</button>
             </form>
@@ -216,7 +216,8 @@
                     <td class="column8">{{ formatCurency(product.priceRental) }}</td>
                     <td class="column4">
                         <span><b>Tạo:</b> {{ formatDateNoTime(product.createdAt) }}</span>
-                        <span><b>Sử:</b> {{ formatDateNoTime(product.updatedAt) }}</span>
+                        <!-- <span><b>Sửa:</b> {{ formatDateNoTime(product.updatedAt) }}</span> -->
+                        <span><b>Nhập:</b> {{ !!product.dateEntyReceipt ? formatDateNoTime(product.dateEntyReceipt)  : 'Chưa nhập'}}</span>
                     </td>
                     <td class="column5">
                         <div class="btn btn-outline-info me-3" @click="handleProductDetail(product._id)">
@@ -401,19 +402,18 @@ export default {
                 this.years.push(yearsTarget - i);
             }
             this.years.push(yearsTarget);
-            for (let i = 1; i < 5; i++) {
+            for (let i = 1; i <=5; i++) {
                 this.years.push(yearsTarget + i);
             }
         },
         handleFitter(name) {
             clearTimeout(this.idTimeOut);
-            this.getproducts();
+            this.getproducts()
             this.idTimeOut = setTimeout(() => {
                 this.filter(name);
             }, 500);
         },
         filter(name) {
-            console.log(this.filterInput);
             const regex = new RegExp(this.filterInput.trim(), 'i');
             const abc = this.products.filter((product) => {
                 if (name === 'name') {
@@ -448,7 +448,7 @@ export default {
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', 'example.pdf');
+            link.setAttribute('download', 'SanPham.pdf');
             document.body.appendChild(link);
             link.click();
         },

@@ -1,7 +1,7 @@
-html {
+/* html {
     overflow-y: hidden;
     overflow-x: hidden; 
-  } 
+}  */
 
 .main {
     min-height: 100vh;
@@ -270,7 +270,7 @@ html {
     text-transform: capitalize;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2; 
+    -webkit-line-clamp: 2;
 }
 
 .column2, .column3, .column6, .column7, .column8{
@@ -283,11 +283,11 @@ html {
 .column4{
     display: flex;
     flex-direction: column;
-    width: 130px;
+    width: 150px;
     text-align: left;
 }
 .column4-th{
-    width: 140px;
+    width: 150px;
 }
 .column5{
     width: 230px;
@@ -771,12 +771,12 @@ html {
 /* thông số kỹ thuật */
 
 .spe-form{
-    width: 350px;
+    width: 1000px;
     min-height: 300px;
     background-color: #fff;
     position: relative;
     top: 50%;
-    left: 50%;
+    left: 59%;
     transform: translate(-50%, -50%);
     padding: 20px;
     border-radius: 10px;
@@ -928,6 +928,7 @@ html {
 .entry-table{
     margin: 0 auto;
     border: 1px solid #ccc;
+    position: relative;
     
 }
 .entry-thead tr, .entry-tbody tr{
@@ -956,10 +957,10 @@ html {
 }
 .entry-col4{
     width: 146px;
-    overflow: hidden;
+    /* overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
+    -webkit-line-clamp: 1; */
 
 }
 .entry-col5{
@@ -970,8 +971,8 @@ html {
 .entry-form{
     width: 650px;
     background-color: #fff;
-    max-height: 470px;
-    min-height: 470px;
+    max-height: 500px;
+    min-height: 500px;
     position: relative;
     top: 50%;
     left: 50%;
@@ -997,6 +998,7 @@ html {
 .entry-group label{
     text-align: left;
     margin: 10px 0;
+    height: 24px;
 }
 .entry-group select{
     background-color: #fff;
@@ -1011,6 +1013,31 @@ html {
     outline: none;
     padding: 10px;
     border-radius: 5px;
+    border: 1px solid #666;
+}
+.entry-img{
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 100px ;
+    height: 100px;
+}
+.entry-img i{
+    position: absolute;
+    top: -13px;
+    right: -10px;
+    font-size: 25px;
+    color: red;
+    cursor: pointer;
+}
+.btn-entry{
+    height: 100%;
+    display: inline-block;
+    width: 100px;
+    line-height: 100%;
+    color: #fff;
+    font-size: 15px;
+    margin-left: 10px;
 }
 .entry-close{
     font-size: 35px;
@@ -1020,6 +1047,30 @@ html {
     top: 4px;
     right: 17px;
 }
+.admin-export-entry{
+    width: 90%;
+}
+.list-sort-entry{
+    position: absolute;
+    display: block;
+    z-index: 1000;
+    top: 0;
+    min-height: 100px;
+    background-color: #fff;
+    color: #2c2e33;
+    list-style: none;
+    padding: 10px;
+    margin: 0;
+    text-align: left;
+    border-radius: 10px;
+    box-shadow: 10px 10px 5px #4c4c4c;
+    animation: fadeIn linear 0.2s;
+    transform-origin: center;
+}
+
+
+
+/* filter */
 .input-admin-filter{
     text-align: left;
     margin: 10px 0;
@@ -1062,4 +1113,16 @@ html {
     width: 150px;
     display: flex;
     justify-content: space-around;
+}
+
+/* supplier */
+
+.form-supplier{
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 350px;
+    background-color: #fff;
+    padding: 20px;
 }

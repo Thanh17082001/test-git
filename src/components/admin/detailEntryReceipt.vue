@@ -11,10 +11,16 @@
                     <div class="col-lg-6">
                         <h5 class="text-info fs-4">Người lập phiếu</h5>
                         <span class="name"><b>Họ và tên</b>: {{ entry.createBy  ? entry.createBy.fullName : '' }}</span>
+                        <br>
+                        <span class="name"><b>Số điện thoại</b>: {{ entry.createBy  ? entry.createBy.phoneNumber : '' }}</span>
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-6" v-if="!!entry.supplier">
                         <h5 class="text-info fs-4">Nhà cung cấp</h5>
-                        <span class="name"><b>Tên nhà cung cấp</b>: {{ entry.supplier }}</span>
+                        <span class="name"><b>Tên nhà cung cấp</b>: {{ entry.supplier.name ||'' }}</span>
+                        <br>
+                        <span class="name"><b>Địa chỉ </b>: {{ entry.supplier.address }}</span>
+                        <br>
+                        <span class="name"><b>Số điện thoại </b>: {{ entry.supplier.phone }}</span>
                     </div>
                 </div>
                 <hr>
@@ -38,7 +44,11 @@
                 </div>
                 <hr>
                 <div class="entry-total row" >
-                    <div class="entry-note col-lg-8">
+                    <div class=" col-lg-2" v-if="entry.image">
+                        <b class="text-info">Ảnh thực tế</b>
+                        <img class="entry-detail-image" :src="'http://localhost:3000/'+ entry.image " alt="">
+                    </div>
+                    <div class="entry-note col-lg-6">
                         <b class="text-warning">Ghi chú</b>
                         <p>Kiểm tra kỹ các thông tin trên phiếu</p>
                     </div>
@@ -74,6 +84,11 @@ export default {
     },
     props: {
         id: String,
+    },
+    watch:{
+        id(){
+            this.getEntryById()
+        }
     },
     methods:{
         async getEntryById(){
@@ -128,6 +143,7 @@ export default {
 .content-head{
     display: flex;
     justify-content: space-around;
+    text-align: left;
 }
 .entry-product{
     width: 95%;
@@ -148,5 +164,14 @@ export default {
     color: #0E8388;
     font-weight: 600;
 }
-
+.name{
+    margin-left: 20px;
+}
+.text-info{
+    margin-left: 10px;
+}
+.entry-detail-image{
+    width: 100px;
+    height: 100px;
+}
 </style>
