@@ -26,6 +26,18 @@ class userService{
     async reset(data){
         return await this.api.post('/reset-pass',data)
     }
+    async getAll(pageNumber, pageSize){
+        return pageNumber&&pageSize 
+            ? this.api.get(`/?pageNumber=${pageNumber}&pageSize=${pageSize}`)
+            : this.api.get('/')
+    }
+    async filterByDate(day,month,year,field,pageNumber,pageSize){
+        return await this.api.get(`/filter-date/?pageNumber=${pageNumber}&pageSize=${pageSize}&field=${field}&month=${month}&day=${day}&year=${year}`)
+    }
+
+    async updateUser(id, data){
+        return await this.api.post(`/disable/${id}`,data)
+    }
 }
 
 export default new userService();

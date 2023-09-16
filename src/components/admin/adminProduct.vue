@@ -4,18 +4,15 @@
         <div class="input-admin-filter">
             <form class="filter-admin-date" @submit.prevent.stop="filterDate">
                 <select name="" id="" v-model="dateFilter.day" required>
-                    <option value="">Ngày</option>
-                    <option value="0">Tất cả</option>
+                    <option value="0">Ngày</option>
                     <option v-for="day in 31" :key="day" :value="day">{{ day }}</option>
                 </select>
                 <select name="" id="" v-model="dateFilter.month" required>
-                    <option value="">Tháng</option>
-                    <option value="0">Tất cả</option>
+                    <option value="0">Tháng</option>
                     <option v-for="month in 12" :value="month" :key="month">Tháng {{ month }}</option>
                 </select>
                 <select name="" id="" v-model="dateFilter.year" required>
-                    <option value="">Năm</option>
-                    <option value="0">Tất cả</option>
+                    <option value="0">Năm</option>
                     <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
                 </select>
                 <select name="" id="" v-model="dateFilter.field" required>
@@ -298,9 +295,9 @@ export default {
             years: [],
             idTimeOut: null,
             dateFilter: {
-                day: '',
-                month: '',
-                year: '',
+                day: '0',
+                month: '0',
+                year: '0',
                 field: '',
             },
         };
@@ -359,10 +356,6 @@ export default {
                 const length = await productService.getProducts();
                 this.lengthPage = Math.ceil(length.data.length / this.pageSize);
                 const response = await productService.getProducts(this.pageNumber, this.pageSize);
-                // response.data.forEach((product) => {
-                //     product.createdAt = format.formatDateNoTime(product.createdAt);
-                //     product.updatedAt = format.formatDateNoTime(product.updatedAt);
-                // });
                 this.products = response.data;
             } catch (error) {
                 console.log(error);
@@ -403,9 +396,7 @@ export default {
                 this.years.push(yearsTarget - i);
             }
             this.years.push(yearsTarget);
-            for (let i = 1; i <=5; i++) {
-                this.years.push(yearsTarget + i);
-            }
+            
         },
         handleFitter(name) {
             clearTimeout(this.idTimeOut);

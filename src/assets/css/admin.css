@@ -238,6 +238,9 @@
     color: #fff;
 
 }
+/* .table-product td, .table-product th{
+    border: 1px solid #ccc;
+} */
 .table-body{
     border: 1px solid #777 !important;
 }
@@ -1126,3 +1129,82 @@
     background-color: #fff;
     padding: 20px;
 }
+
+/* user */
+
+.admin-user-table{
+    width: 100%;
+}
+.admin-user-table thead{
+    height: 50px;
+    background-color: #0E8388;
+    color: #fff;
+}
+.admin-user-table td, .admin-user-table th{
+    border: 1px solid #ccc;
+}
+.admin-user-col1{
+    width: 50px;
+    text-align: center;
+}
+.admin-user-col2, .admin-user-col4, .admin-user-col5{
+    width: 150px;
+    text-align: center;
+}
+.admin-user-col3{
+    padding-left: 10px;
+    width: 300px;
+}
+.admin-user-col6{
+    padding-left: 10px;
+
+    width: 250px;
+}
+.admin-user-col7{
+    text-align: center;
+}
+
+.admin-user-table tbody tr:nth-child(even) {
+    height: 60px;
+    background-color: #ebebeb;
+    /* Màu nền cho hàng chẵn */
+}
+
+.admin-user-table tbody tr:nth-child(odd) {
+    height: 60px;
+    background-color: #ffffff;
+    /* Màu nền cho hàng lẻ */
+}
+/* sort */
+
+.isSort{
+    justify-content: flex-start;
+    align-items: center;
+    display: none;
+    height: 30px;
+}
+
+.isSort span{
+    display: none;
+    font-size: 20px;
+    padding: 10px;
+    color: red;
+    font-weight: 600;
+    cursor: pointer;
+    animation: scale linear 1s infinite;
+}
+.isSort-active span{
+    display: block;
+    animation: scale linear 1s infinite;
+}
+
+.isSort-active{
+    display: flex;
+}
+
+.isDisable{
+    opacity: 0.3;
+}
+
+
+

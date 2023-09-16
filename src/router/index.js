@@ -12,6 +12,7 @@ import footerVue from '@/components/layout/footerVue.vue';
 import adminFormEdit from '@/components/admin/adminFormEdit.vue';
 import EntryReceiptVue from '@/components/admin/EntryReceipt.vue';
 import detailEntryReceiptVue from '@/components/admin/detailEntryReceipt.vue';
+import adminUserVue from '@/components/admin/adminUser.vue';
 
 const routes = [
     {
@@ -74,6 +75,7 @@ const routes = [
                 component: detailEntryReceiptVue,
                 meta: { title: 'Chi tiết phiếu nhập' },
             },
+            {path:'user',component: adminUserVue, meta:{title:'Admin'}}
         ],
     },
 ];

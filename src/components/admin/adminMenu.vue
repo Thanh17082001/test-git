@@ -48,7 +48,12 @@
                 </router-link>
             </li>
         <span class="menu-title">Tài khoản người dùng</span>
-           
+            <li class="sec-left__item">
+                <router-link to="/admin/user" active-class="active" class="sec-left__link">
+                    <i class="fa-solid fa-user" id="icon3"></i>
+                    Xem tất cả tài khoản
+                </router-link>
+            </li>
         </ul>
     </section>
 </template>
