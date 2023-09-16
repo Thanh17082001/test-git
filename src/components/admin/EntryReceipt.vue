@@ -22,7 +22,7 @@
                 <button>Lọc</button>
             </form>
             <div class="admin-export">
-                <div class="btn btn-success" @click="exportToExcel">
+                <div class="btn btn-success" @click="exportExcel">
                     <i class="fa-solid fa-file-excel"></i> Excel
                 </div>
                 <div class="btn btn-warning" @click="exportToPDF"><i class="fa-solid fa-file-pdf"></i> Pdf</div>
@@ -218,6 +218,7 @@
 
 <script>
 import print from '@/utils/print'
+import exportToExcel from '@/utils/exportToExcel'
 import productService from '@/service/product.service';
 import entryReceiptService from '@/service/entryReceipt.service';
 import supplierService from '@/service/supplier.service'
@@ -405,29 +406,29 @@ export default {
             console.log(this.entry.image);
             print(printTemplate,'Phiếu in' ,this.entry.image)
        },
-       async exportToExcel() {
-            const data=[]
-            this.entrys.forEach((entry, index) =>{
-                data.push({
-                    STT:index+1,
-                    'Người tạo phiếu':entry.createBy.fullName,
-                    'Nhà Cung cấp': entry.supplier.name,
-                    'Tổng giá': this.formatCurrency(entry.totalAmount),
-                    'Ngày tạo':entry.createdAt
-                })
-            })
+    //    async exportToExcel() {
+    //         const data=[]
+    //         this.entrys.forEach((entry, index) =>{
+    //             data.push({
+    //                 STT:index+1,
+    //                 'Người tạo phiếu':entry.createBy.fullName,
+    //                 'Nhà Cung cấp': entry.supplier.name,
+    //                 'Tổng giá': this.formatCurrency(entry.totalAmount),
+    //                 'Ngày tạo':entry.createdAt
+    //             })
+    //         })
             
-            const response = await productService.exportExcel({ data });
-            const blob = new Blob([response.data], {
-                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            });
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'PhieuKho.xlsx');
-            document.body.appendChild(link);
-            link.click();
-        },
+    //         const response = await productService.exportExcel({ data });
+    //         const blob = new Blob([response.data], {
+    //             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    //         });
+    //         const url = window.URL.createObjectURL(blob);
+    //         const link = document.createElement('a');
+    //         link.href = url;
+    //         link.setAttribute('download', 'PhieuKho.xlsx');
+    //         document.body.appendChild(link);
+    //         link.click();
+    //     },
 
         async exportToPDF(){
             const data= templateEntryPDF(this.entrys)
@@ -525,6 +526,21 @@ export default {
             });
             this.entrys = abc;
         },
+        // export client
+        exportExcel() {
+            const data=[]
+            this.entrys.forEach((entry, index) =>{
+                data.push({
+                    STT:index+1,
+                    'Người tạo phiếu':entry.createBy.fullName,
+                    'Nhà Cung cấp': entry.supplier.name,
+                    'Tổng giá': this.formatCurrency(entry.totalAmount),
+                    'Ngày tạo':entry.createdAt
+                })
+            })
+        const filename = 'phieu_nhap_kho';
+        exportToExcel(data, filename);
+      }
 
     },
     mounted() {

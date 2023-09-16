@@ -1,5 +1,5 @@
 function printPDF(content, title='Phiếu in', image=undefined) {
-  const src= '127.0.0.1'+image
+  const src= 'data:image/jpg;base64,'+image.data
   console.log(src);
     let mywindow = window.open('', 'PRINT', 'height=1123,width=900,top=100,left=150');
     mywindow.document.write(`
@@ -11,7 +11,11 @@ function printPDF(content, title='Phiếu in', image=undefined) {
         }
         .page-break {
           page-break-before: always;
-      }
+        }
+        img{
+          width:100%;
+          height:100%;
+        }
         
       }
   </style><head>`);

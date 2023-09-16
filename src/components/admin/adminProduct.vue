@@ -147,15 +147,15 @@
                             <div class="admin-sort">
                                 <i class="fa-solid fa-sort"></i>
                                 <ul class="admin-sort-list">
-                                    <li @click="sort(1, 'inputQuantity')">Từ nhỏ đến lớn</li>
-                                    <li @click="sort(-1, 'inputQuantity')">Từ lớn đến nhỏ</li>
-                                    <li @click="sort(0, 'inputQuantity')">Bằng 0</li>
+                                    <li @click="sort(1, 'rentalQuantity')">Từ nhỏ đến lớn</li>
+                                    <li @click="sort(-1, 'rentalQuantity')">Từ lớn đến nhỏ</li>
+                                    <li @click="sort(0, 'rentalQuantity')">Bằng 0</li>
                                     <div class="filter-admin-input">
                                         <input
                                             type="text"
                                             placeholder="Tìm sản phẩm theo tên"
                                             v-model="filterInput"
-                                            @input="handleFitter('inputQuantity')"
+                                            @input="handleFitter('rentalQuantity')"
                                         />
                                     </div>
                                 </ul>
@@ -275,6 +275,7 @@ import adminProductDetail from '@/components/admin/adminProductDetail.vue';
 import adminSpecificationVue from './adminSpecification.vue';
 import format from '@/utils/format';
 import printProduct from '@/utils/printTemplateProduct'
+import exportToExcel from '@/utils/exportToExcel';
 export default {
     components: {
         adminProductDetail,
@@ -425,16 +426,18 @@ export default {
             this.products = abc;
         },
         async exportToExcel() {
-            const response = await productService.exportExcel({ data: this.products });
-            const blob = new Blob([response.data], {
-                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            });
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'example.xlsx');
-            document.body.appendChild(link);
-            link.click();
+
+            exportToExcel(this.products,'San_pham')
+            // const response = await productService.exportExcel({ data: this.products });
+            // const blob = new Blob([response.data], {
+            //     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            // });
+            // const url = window.URL.createObjectURL(blob);
+            // const link = document.createElement('a');
+            // link.href = url;
+            // link.setAttribute('download', 'example.xlsx');
+            // document.body.appendChild(link);
+            // link.click();
         },
 
         async exportToPDF(){

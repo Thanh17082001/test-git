@@ -38,7 +38,7 @@ function print(info = {}) {
        <h4 style="text-align: center; font-size: 20px; margin: 0px;">Ngày tạo phiếu: ${info.createdAt}</h4>
    </div>
    <div style="display: flex; justify-content: center; align-items: center;">
-       <div style="width: 50%; text-align:left;">
+       <div style="width: 50%; text-align:center;">
            <h4 style="margin-bottom:10px; margin-left:10px; font-size: 20px">Người lập phiếu</h4>
            <div  style="margin-bottom:0; margin-left:20px;">
                 <span><b>Họ và tên: </b>${info.createBy.fullName}</span>
@@ -47,7 +47,7 @@ function print(info = {}) {
            </div>
        </div>
 
-       <div style="width: 50%; text-align: left;">
+       <div style="width: 50%; text-align: center;">
            <h4 style="margin-bottom:10px; margin-left:10px; font-size: 20px">Nhà cung cấp</h4>
            <div  style="margin-bottom:0; margin-left:20px;">
                 <span><b>Tên: </b>${info.supplier.name}</span>

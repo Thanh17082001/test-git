@@ -46,7 +46,7 @@
                 <div class="entry-total row" >
                     <div class=" col-lg-2" v-if="entry.image">
                         <b class="text-info">Ảnh thực tế</b>
-                        <img class="entry-detail-image" :src="'http://localhost:3000/'+ entry.image " alt="">
+                        <img class="entry-detail-image" :src="'data:image/jpg;base64,' +entry.image.data " alt="">
                     </div>
                     <div class="entry-note col-lg-6">
                         <b class="text-warning">Ghi chú</b>
@@ -68,12 +68,15 @@
                        </div>
                 </div>
             </div>
+             <div class="btn btn-warning mb-2" @click="exportToPDF"><i class="fa-solid fa-file-pdf"></i> Pdf</div>
         </div>
     </div>
 </template>
 
 <script>
 import entryReceiptService from '@/service/entryReceipt.service';
+import productService from '@/service/product.service';
+import pdfTemplateEntry from '@/utils/printTemplateEntry'
 import format from '@/utils/format';
 export default {
     data() {
@@ -95,6 +98,7 @@ export default {
             try {
                 const response= await entryReceiptService.getById(this.id)
                this.entry=response.data
+               console.log(this.entry);
                this.entry.createdAt= format.formatDate(this.entry.createdAt)
                this.entry.totalAmount= format.formatCurrency(this.entry.totalAmount)
                this.entry.products.forEach((product, index) => {
@@ -109,7 +113,22 @@ export default {
         },
         closeDetailEntry(){
             this.$emit('closeEntry')
-        }
+        },
+        async exportToPDF(){
+            const data= pdfTemplateEntry(this.entry)
+           
+           const response = await productService.exportPDF({ data: data });
+           const blob = new Blob([ response.data], {
+               type: 'application/pdf',
+           });
+           const url = window.URL.createObjectURL(blob);
+           const link = document.createElement('a');
+           link.href = url;
+           link.target = '_blank';
+           link.setAttribute('download', 'TatCaPhieuNhapKho.pdf');
+           document.body.appendChild(link);
+           link.click();
+       },
     },
     mounted(){
         this.getEntryById()
@@ -121,7 +140,7 @@ export default {
 .detail-entry{
     width: 50%;
     position: relative;
-    top: 30px;
+    top: 0px;
     left: 50%;
     transform: translate(-40%,0%);
     box-sizing: border-box;
@@ -171,7 +190,7 @@ export default {
     margin-left: 10px;
 }
 .entry-detail-image{
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
 }
 </style>
