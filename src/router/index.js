@@ -13,6 +13,7 @@ import adminFormEdit from '@/components/admin/adminFormEdit.vue';
 import EntryReceiptVue from '@/components/admin/EntryReceipt.vue';
 import detailEntryReceiptVue from '@/components/admin/detailEntryReceipt.vue';
 import adminUserVue from '@/components/admin/adminUser.vue';
+import adminCompanyVue from '@/components/admin/adminCompany.vue';
 
 const routes = [
     {
@@ -58,6 +59,7 @@ const routes = [
         },
         component: adminPage,
         children: [
+            { path: 'profile-company', component: adminCompanyVue, meta: { title: 'Admin' } },
             { path: 'add', component: adminProductForm, meta: { title: 'Admin' } },
             { path: 'product', component: adminProduct, meta: { title: 'Admin' } },
             { path: 'entry-receipt', component: EntryReceiptVue, meta: { title: 'Admin' } },

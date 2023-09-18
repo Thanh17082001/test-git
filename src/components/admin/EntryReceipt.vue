@@ -211,7 +211,7 @@
             </li>
         </ul>
     </div>
-<detail-entry-receipt v-if="activeDetailEntry && idEntry !=''" :id="idEntry" @closeEntry="activeDetailEntry=false"></detail-entry-receipt>
+<detail-entry-receipt v-if="activeDetailEntry" :id="idEntry" @closeEntry="activeDetailEntry=false"></detail-entry-receipt>
 
 
 </template>
@@ -403,8 +403,7 @@ export default {
                 
                });
             const printTemplate= templatePrint( this.entry)
-            console.log(this.entry.image);
-            print(printTemplate,'Phiếu in' ,this.entry.image)
+            print(printTemplate,'Phiếu in' ,this.entry.image.data)
        },
     //    async exportToExcel() {
     //         const data=[]

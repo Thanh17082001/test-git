@@ -98,7 +98,6 @@ export default {
             try {
                 const response= await entryReceiptService.getById(this.id)
                this.entry=response.data
-               console.log(this.entry);
                this.entry.createdAt= format.formatDate(this.entry.createdAt)
                this.entry.totalAmount= format.formatCurrency(this.entry.totalAmount)
                this.entry.products.forEach((product, index) => {

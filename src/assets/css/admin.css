@@ -1206,5 +1206,66 @@
     opacity: 0.3;
 }
 
+/* company */
+.admin-profile-company h3{
+    font-size: 30px;
+    margin-bottom: 20px;
+}
 
+.admin-profile-company .info{
+    text-align: left;
+    width: 80%;
+    margin: auto;
+    font-size: 16px;
+}
+
+.admin-profile-company .info label{
+    font-weight: 600;
+}
+
+.admin-profile-company .info span i{
+    font-size: 18px;
+    color: #2F58CD;
+    cursor: pointer;
+}
+
+
+.admin-profile-company .info span input{
+    min-width: 60%;
+    padding: 5px 15px;
+    border-radius: 5px;
+    outline: none;
+    border: 1px solid #ccc;
+}
+
+.admin-profile-company .info span input:focus{
+    min-width: 60%;
+    padding: 5px 15px;
+    border-radius: 5px;
+    outline: none;
+    border: 2px solid #0E8388;
+}
+
+.admin-profile-company .info .logo img{
+    width: 100px;
+    aspect-ratio: 1/1;
+    border: 1px solid #ccc;
+}
+.admin-profile-company .info .logo div{
+    position: relative;
+
+}
+.admin-profile-company .info .logo i{
+    position: absolute;
+    right: -18px;
+    bottom: -11px;
+    font-size: 30px;
+    cursor: pointer;
+} 
+.admin-profile-company .info .logo{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 

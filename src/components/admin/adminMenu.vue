@@ -23,7 +23,7 @@
             </li> -->
             <span class="menu-title">Thông tin Doanh nghiệp</span>
             <li class="sec-left__item">
-                <router-link to="/admin/home" active-class="active" class="sec-left__link">
+                <router-link to="/admin/profile-company" active-class="active" class="sec-left__link">
                     <i class="fa-regular fa-newspaper" id="icon3"></i>
                     Xem và chỉnh sửa
                 </router-link>
