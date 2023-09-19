@@ -54,12 +54,40 @@
                     Xem tất cả tài khoản
                 </router-link>
             </li>
+            <li class="sec-left__item" v-if="user.isAdmin">
+                <router-link to="/admin/role" active-class="active" class="sec-left__link">
+                    <i class="fa-solid fa-user" id="icon3"></i>
+                    Cấp quyền
+                </router-link>
+            </li>
         </ul>
     </section>
 </template>
 
 <script>
-export default {};
+import userService from '@/service/user.service';
+export default {
+    data(){
+        return{
+            user:{}
+        }
+    },
+    methods:{
+        async getUser(){
+            try {
+                const response = await userService.getInfo()
+                this.user={
+                    ...response.data.user
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    },
+    mounted(){
+        this.getUser()
+    }
+};
 </script>
 
 <style scoped>

@@ -6,17 +6,16 @@ function print(products = []) {
             ` 
                 <tr style=" font-size: 15px; text-align: center; border: 1px solid #666; height: 50px;  width: 100%;">
                     <td  style="width: 4%;  border: 1px solid #666" >${index+1.}</td>
-                    <td style="width: 16.6667%; border: 1px solid #666; overflow: hidden;">${product.name}</td>
+                    <td style="width: 16.6667%; border: 1px solid #666;">${product.name}</td>
                     <td style="width: 12%; border: 1px solid #666;">${product.inputQuantity}</td>
                     <td style="width: 12%; border: 1px solid #666;">${format.formatCurrency(product.priceImport)}</td>
                     <td style="width: 12%; border: 1px solid #666;">${product.soldQuantity}</td>
                     <td style="width: 12%; border: 1px solid #666;">${format.formatCurrency(product.priceSale)}</td>
-                    <td style="width: 12%; border: 1px solid #666;">2000</td>
-                    <td style="width: 12%; border: 1px solid #666;">12.000.000đ</td>
+                    <td style="width: 12%; border: 1px solid #666;">${product.retalQuantity}</td>
+                    <td style="width: 12%; border: 1px solid #666;">${format.formatCurrency(product.priceRental)}</td>
                 </tr>
             `;
     });
-    console.log(productTemplate);
     const print = `
    <div style="width: 100%;">
         <div>

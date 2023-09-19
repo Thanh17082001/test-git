@@ -959,7 +959,7 @@
     width: 200px;
 }
 .entry-col4{
-    width: 146px;
+    width: 200px;
     /* overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -1157,10 +1157,9 @@
 }
 .admin-user-col6{
     padding-left: 10px;
-
-    width: 250px;
 }
 .admin-user-col7{
+    width: 250px;
     text-align: center;
 }
 
@@ -1268,4 +1267,15 @@
     justify-content: center;
     align-items: center;
 }
+/* loadding */
 
+.center-laoding{
+    position: relative;
+    top: 50%;
+}
+/* alert */
+.admin-alert{
+    position: fixed;
+    top: 20px;
+    right: 20px;
+}

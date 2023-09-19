@@ -62,7 +62,6 @@
 </template>
 
 <script>
-import userService from '@/service/user.service'
 import productService from '@/service/product.service'
 import productCard from '@/components/product/cardVue.vue'
 import newsCard from '@/components/news/newsCard.vue'
@@ -73,7 +72,6 @@ export default {
     },
      data(){
         return{
-            name:'',
             linkImgs:
                 [
                     'https://giavan.com.vn/wp-content/uploads/2019/01/banner-toshiba-gia-van.jpg',
@@ -107,46 +105,16 @@ export default {
             }
 
         },
-        getItem(){
-            const user = JSON.parse(sessionStorage.getItem('user'))
-            if(user){
-                this.name=user.user.fullName
-            }else{
-                this.name=''
-            }
-        },
-        async logout(){
-            try {
-                await userService.logout()
-                sessionStorage.removeItem('user')
-                this.getItem()
-            } catch (error) {
-                console.log(error);
-            }
-        },
-        async getInfoUser(){
-            try {
-                const response = await userService.getInfo()
-                const user = JSON.stringify(response.data);
-                sessionStorage.setItem('user', user);
-                this.getItem()
-            } catch (error) {
-                console.log(error);
-            }
-        },
         async getProductsNew(){
             try {
                 const response = await productService.filterProduct(-1, 'createdAt', 1, 4)
                 this.productsNew=[...response.data]
-                console.log(response);
             } catch (error) {
                 console.log(error);
             }
         }
      },
      mounted(){
-        this.getItem()
-        this.getInfoUser()
         this.getProductsNew()
      },
      created(){

@@ -182,12 +182,10 @@ export default {
     color: #0E8388;
     font-weight: 600;
 }
-.name{
+/* .name{
     margin-left: 20px;
-}
-.text-info{
-    margin-left: 10px;
-}
+} */
+
 .entry-detail-image{
     width: 80px;
     height: 80px;

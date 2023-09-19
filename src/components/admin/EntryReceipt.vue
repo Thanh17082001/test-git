@@ -403,7 +403,8 @@ export default {
                 
                });
             const printTemplate= templatePrint( this.entry)
-            print(printTemplate,'Phiếu in' ,this.entry.image.data)
+            const image= this.entry.image ? this.entry.image.data : undefined
+            print(printTemplate,'Phiếu in' , image)
        },
     //    async exportToExcel() {
     //         const data=[]

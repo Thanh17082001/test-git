@@ -30,8 +30,7 @@
                 <i class="fa-solid fa-chevron-down ms-2" v-else></i>
             </span>
             <ul class="category-list" :class="{'active-list':activeType}">
-                <li @click="filter('Mới','type')">Sản phẩm mới</li>
-                <li @click="filter('Đã qua sử dụng','type')">Sản phẩm đã qua sử dụng</li>
+                <li @click="filter(typeItem._id,'typeId')"  v-for="typeItem in types" :key="typeItem._id">{{ typeItem.name }}</li>
             </ul>
         </div>
     </div>
@@ -40,11 +39,13 @@
 <script>
 import brandService from '@/service/brand.service';
 import categoryService from '@/service/category.service';
+import typeService from '@/service/type.service';
 export default {
     data(){
         return{
             brands:[],
             categories:[],
+            types:[],
             activeCategory:true,
             activeBrand:false,
             activeType:false
@@ -64,7 +65,7 @@ export default {
                     this.activeBrand=!this.activeBrand
                     this.activeType=false
             }
-            else{
+            else if(name == 'type'){
                 this.activeCategory=false
                 this.activeBrand=false
                 this.activeType=!this.activeType
@@ -86,6 +87,14 @@ export default {
                 console.log(error);
             }
         },
+        async getTypes(){
+            try {
+                const response=await typeService.getAll()
+                this.types=[...response.data]
+            } catch (error) {
+                console.log(error);
+            }
+        },
         filter(type, field){
             this.$emit('filter',{type,field})
         }
@@ -93,6 +102,7 @@ export default {
     mounted(){
         this.getBrand()
         this.getCategories()
+        this.getTypes()
     }
 }
 </script>

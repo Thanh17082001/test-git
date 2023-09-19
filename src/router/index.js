@@ -14,7 +14,7 @@ import EntryReceiptVue from '@/components/admin/EntryReceipt.vue';
 import detailEntryReceiptVue from '@/components/admin/detailEntryReceipt.vue';
 import adminUserVue from '@/components/admin/adminUser.vue';
 import adminCompanyVue from '@/components/admin/adminCompany.vue';
-
+import adminAllRole from '@/components/admin/adminAllRole.vue'
 const routes = [
     {
         path: '/',
@@ -48,7 +48,7 @@ const routes = [
         beforeEnter: (to, from, next) => {
             const getAdmin = JSON.parse(sessionStorage.getItem('user'));
             if (getAdmin) {
-                if (getAdmin.user.isAdmin) {
+                if (getAdmin.user.isAdmin || getAdmin.user.roles.length>0) {
                     return next();
                 } else {
                     return next('/');
@@ -61,8 +61,16 @@ const routes = [
         children: [
             { path: 'profile-company', component: adminCompanyVue, meta: { title: 'Admin' } },
             { path: 'add', component: adminProductForm, meta: { title: 'Admin' } },
-            { path: 'product', component: adminProduct, meta: { title: 'Admin' } },
-            { path: 'entry-receipt', component: EntryReceiptVue, meta: { title: 'Admin' } },
+            { path: 'product', component: adminProduct,
+                 meta: { title: 'Admin', roleId:'65090feb73b597759ef14538' },
+                beforeEnter:(to,form,next)=>{
+                    beforeEnter(to,next)
+                }
+            },
+            { path: 'entry-receipt', component: EntryReceiptVue, meta: { title: 'Admin', roleId:'6509100e73b597759ef1453b' },
+            beforeEnter:(to,form,next)=>{
+                beforeEnter(to,next)
+            } },
             {
                 path: 'edit/:id',
                 name: 'product.edit',
@@ -77,10 +85,55 @@ const routes = [
                 component: detailEntryReceiptVue,
                 meta: { title: 'Chi tiết phiếu nhập' },
             },
-            {path:'user',component: adminUserVue, meta:{title:'Admin'}}
+            {path:'user',component: adminUserVue, meta:{title:'Admin'}},
+            {
+                path:'role',
+                beforeEnter: (to, from, next) => {
+                    const getAdmin = JSON.parse(sessionStorage.getItem('user'));
+                    if (getAdmin) {
+                        if (getAdmin.user.isAdmin) {
+                            return next();
+                        } else {
+                            return next('/admin');
+                        }
+                    } else {
+                        return next('/admin');
+                    }
+                }
+                ,component: adminAllRole, meta:{title:'Admin'}
+            },
         ],
     },
 ];
+
+function checkRole(userRoles, roleId){
+    let isRole=false
+    userRoles.some(userRole =>{
+        if(userRole.roleId==roleId){
+            isRole=true
+            return isRole=true;
+        }
+        else{
+            isRole=false
+        }
+    })
+
+    return isRole
+}
+
+const beforeEnter=(to,next)=>{
+    const getUser = JSON.parse(sessionStorage.getItem('user'));
+    const userRoles = getUser.user.roles
+    const roleId=to.meta.roleId
+    if(checkRole(userRoles, roleId) || getUser.user.isAdmin){
+        return next()
+    }
+    else{
+        alert('Bạn không có quyền truy cập')
+        return next('/admin')
+    }
+}
+
 
 const router = createRouter({
     history: createWebHistory(),

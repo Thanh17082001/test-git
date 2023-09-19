@@ -23,14 +23,41 @@
               <input name="abc" @change="handleSelectFile" ref="inputFile" class="form-File-edit" type="file" id="form-file" >
             </div>
           </div>
-         
-          <div class="group col-lg-4 mt-1">
-              <label for="">Loại sản phẩm <span class="required">*</span> </label>
-              <select name="" id="" class="form-select" v-model="infoProduct.type" required>
-                  <option value="" class="form-option">--- Chọn loại ---</option>
-                  <option v-for="(type, index) in types" :key="index" class="form-option" :value="type">{{ type }}</option>
-              </select>
-          </div>
+         <!-- loại -->
+         <div class="group d-flex col-lg-4">
+               <div class="d-flex mb-1">
+                    <label for="">Loại sản phẩm <span class="required">*</span></label>
+                    <span class="btn btn-info btn-brand" @click="activeFormType=true">Mới</span>
+               </div>
+               <!-- Them loại mơi -->
+               <div class="brand">
+                   <div class="overlay2" v-if="activeFormType">
+                        <form action="" class="brand-form" @submit.prevent.stop="addType">
+                            <div class="close-form" @click="closeFormType">
+                                <i class="fa-solid fa-xmark"></i>
+                            </div>
+                            <div class="form-head me-5 ms-3">
+                                <h2 class="title">Thêm thương hiệu</h2>
+                                <span class="mes-success" v-if="!!mesSuccess">{{ mesSuccess }}</span>
+                                <span class="mes-failed" v-if="!!mesFaild">{{ mesFaild }}</span>
+                                <div class="lds-dual-ring" v-if="loading"></div>
+                            </div>
+                            <div class="group">
+                                <label for="">Tên loại <span class="required">*</span></label>
+                                <input v-model="infoType.name" type="text" required placeholder="Nhập tên thương hiệu">
+                            </div>
+                            <div>
+                                <button class="btn btn-brand-submit">Thêm</button>
+                            </div>
+                       </form>
+                   </div>
+               </div>
+                <select name="" id="" class="form-select" v-model="infoProduct.typeId" required>
+                    <option value="" class="form-option">--- Chọn loại ---</option>
+                    <option v-for="(type, index) in types" :key="index" class="form-option" :value="type._id">{{ type.name }}</option>
+                </select>
+            </div>
+          <!-- thuong hieu -->
           <div class="group d-flex col-lg-4">
              <div class="d-flex mb-1">
                   <label for="">Thương hiệu sản phẩm <span class="required">*</span></label>
@@ -124,16 +151,19 @@
 import productSevice from '@/service/product.service'
 import brandService from '@/service/brand.service'
 import categoryService from '@/service/category.service'
+import typeService from '@/service/type.service'
 export default {
   data(){
       return{
           infoProduct:{
               
           },
-          infoCategory:{},
           activeFormbrand:false,
           activeFormCategory:false,
+          activeFormType:false,
+          infoCategory:{},
           infoBrand:{},
+          infoType:{},
           mesSuccess:'',
           mesFaild:'',
           addProductSuccess:'',
@@ -142,7 +172,7 @@ export default {
           loadingProduct:false,
           brands:[],
           categories:[],
-          types:['Mới', 'Đã qua sử dụng'],
+          types:[],
           imgSrc:''
       }
   },
@@ -171,6 +201,12 @@ export default {
           this.mesSuccess=''
           this.infoBrand={}
       },
+      closeFormType(){
+            this.activeFormType=false
+            this.mesFaild=''
+            this.mesSuccess=''
+            this.infoType={}
+        },
       handleSelectFile(event){
         const files= event.target.files[0]
         this.infoProduct.image=files
@@ -185,14 +221,7 @@ export default {
       async editProduct(){
           try {
             const data={
-                brandId: this.infoProduct.brandId.toString(),
-                categoryId: this.infoProduct.categoryId.toString(),
-                name: this.infoProduct.name,
-                priceSale: this.infoProduct.priceSale,
-                priceRental: this.infoProduct.priceRental,
-                description: this.infoProduct.description,
-                image: this.infoProduct.image,
-                type: this.infoProduct.type,
+                ...this.infoProduct
             }
               this.loadingProduct=true
               const response = await productSevice.update(this.id,data)
@@ -233,6 +262,7 @@ export default {
               console.log(error);
           }
       },
+      
       async getBrands(){
           try {
               const response = await brandService.getAll()
@@ -267,12 +297,40 @@ export default {
           } catch (error) {
               console.log(error);
           }
-      }
+      },
+      async addType(){
+            try {
+                this.loading=true
+                const response = await typeService.create(this.infoType)
+                this.loading=false
+                if(response.data.status){
+                    this.mesSuccess=response.data.mes
+                    this.mesFaild=''
+                    this.infoType={}
+                }
+                else{
+                    this.mesFaild=response.data.mes
+                    this.mesSuccess=''
+                }
+                this.getType()
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getType(){
+            try {
+                const response = await typeService.getAll()
+                this.types=[...response.data]
+            } catch (error) {
+                console.log(error);
+            }
+        }
   },
   mounted(){
       this.getBrands()
       this.getCategories()
       this.getProduct()
+      this.getType()
   },
 }
 </script>

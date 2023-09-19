@@ -26,7 +26,7 @@
                     <div class="card-info-name">
                         <p>Tên thương hiệu: <span>{{product.brandId? product.brandId.name : '' }}</span></p>
                         <p>Tên danh mục: <span>{{product.categoryId? product.categoryId.name : '' }}</span></p>
-                        <p>Loại: <span>{{ product.type }}</span></p>
+                        <p>Loại: <span>{{ product.typeId? product.typeId.name : '' }}</span></p>
                     </div>
                     <div class="card-info-price">
                         <p>Giá nhập: <span>{{ product.priceImport }}</span></p>

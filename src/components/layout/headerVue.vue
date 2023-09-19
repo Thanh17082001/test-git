@@ -68,14 +68,14 @@
                 </ul>
 
                 <div class="header-user">
-                    <div class="logined" v-if="!!islogin" @click="isActive = !isActive">
-                        <img :src="'http://localhost:3000/' + infoUser.avatar" alt="" class="header-avt" />
+                    <div class="logined" v-if="islogin && !!infoUser" @click="isActive = !isActive">
+                        <img v-if="!!infoUser" :src="'http://localhost:3000/' + infoUser.avatar" alt="" class="header-avt" />
                         <span class="header-name">{{ infoUser.fullName }}</span>
                         <i class="fa-solid fa-sort-down"></i>
                         <ul class="user-drop-down" v-if="islogin && isActive">
                             <li @click="logout">Đăng xuất</li>
                             <li>Chỉnh sửa thông tin</li>
-                            <li v-if="infoUser.isAdmin"><router-link to="/admin">Quay lại trang Admin</router-link></li>
+                            <li v-if="infoUser.isAdmin ||infoUser.roles.length>0"><router-link to="/admin">Quay lại trang Admin</router-link></li>
                         </ul>
                     </div>
                     <div class="login" v-else>

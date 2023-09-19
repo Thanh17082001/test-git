@@ -38,6 +38,10 @@ class userService{
     async updateUser(id, data){
         return await this.api.post(`/disable/${id}`,data)
     }
+
+    async updateRole(id,data){
+        return await this.api.post(`/update-role/?id=${id}`,data)
+    }
 }
 
 export default new userService();

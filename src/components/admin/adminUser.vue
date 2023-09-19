@@ -125,28 +125,34 @@
                     </td>
                     <td class="admin-user-col7">
                         <button
-                            @click="upStaff(user._id)"
+                            @click="upStaff(user._id,'up')"
                             class="btn btn-outline-info me-3"
                             v-if="!user.disable && !user.isStaff"
+                            title="Nâng cấp thành tài khoản nhân viên"
                         >
                             <i class="fa-solid fa-turn-up"></i>
                         </button>
-                        <button class="btn btn-success me-3" v-else-if="user.isStaff">
+                        <button class="btn btn-success me-3" 
+                        v-else-if="!user.disable && user.isStaff" 
+                        @click="upStaff(user._id,'down')"
+                        title="Hạ xuống tài khoản người dùng"
+                        >
                             <i class="fa-solid fa-check"></i>
                         </button>
                         <button disabled class="btn btn-outline-info me-3" v-else-if="user.disable">
                             <i class="fa-solid fa-turn-up"></i>
                         </button>
-                        <div
+                        <button
                             @click="disableUser(user._id, 'unlock')"
                             class="btn btn-outline-danger"
                             v-if="user.disable === true"
+                            title="Mở khóa tài khoản"
                         >
                             <i class="fa-solid fa-lock-open"></i>
-                        </div>
-                        <div @click="disableUser(user._id, 'lock')" class="btn btn-outline-danger" v-else>
+                        </button>
+                        <button @click="disableUser(user._id, 'lock')" class="btn btn-outline-danger  me-3" v-else title="Khóa tài khoản">
                             <i class="fa-solid fa-lock"></i>
-                        </div>
+                        </button>
                     </td>
                 </tr>
             </tbody>
@@ -335,9 +341,14 @@ export default {
                 }
             }
         },
-        async upStaff(id) {
-            if (confirm('Nâng cấp thành tài khoản nhân viên')) {
+        async upStaff(id,type) {
+            if (type=='up' && confirm('Nâng cấp thành tài khoản nhân viên')) {
                 const response = await userService.updateUser(id, { isStaff: true });
+                if (response.data.status) {
+                    this.getAllUsers();
+                }
+            } else if(type=='down' && confirm('Chuyển thành tài khoản thường')){
+                const response = await userService.updateUser(id, { isStaff: false });
                 if (response.data.status) {
                     this.getAllUsers();
                 }
