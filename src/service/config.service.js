@@ -8,7 +8,6 @@ const createApiClient = (baseURL, headers) =>{
             Accept: "application/json",
         },
     };
-
     return axios.create({
         baseURL,
         ...commonConfig,

@@ -15,6 +15,8 @@ import detailEntryReceiptVue from '@/components/admin/detailEntryReceipt.vue';
 import adminUserVue from '@/components/admin/adminUser.vue';
 import adminCompanyVue from '@/components/admin/adminCompany.vue';
 import adminAllRole from '@/components/admin/adminAllRole.vue'
+import adminStaffVue from '@/components/admin/adminStaff.vue';
+
 const routes = [
     {
         path: '/',
@@ -102,6 +104,7 @@ const routes = [
                 }
                 ,component: adminAllRole, meta:{title:'Admin'}
             },
+            {path:'staff', component:adminStaffVue,meta:{title:'Admin'}}
         ],
     },
 ];

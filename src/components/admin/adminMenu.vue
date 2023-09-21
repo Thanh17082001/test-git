@@ -5,11 +5,11 @@
     >
         <div class="menu-user">
             <img
-                src="https://bookvexe.vn/wp-content/uploads/2023/04/chon-loc-25-avatar-facebook-mac-dinh-chat-nhat_1.jpg"
+                :src="'http://localhost:3000'+user.avatar"
                 alt=""
                 class="menu-avt"
             />
-            <span class="menu-name">Thiên Thanh</span>
+            <span class="menu-name">{{ user.fullName }}</span>
         </div>
         <ul class="sec-left__list">
             <!-- <li class="sec-left__menu">
@@ -24,7 +24,7 @@
             <span class="menu-title">Thông tin Doanh nghiệp</span>
             <li class="sec-left__item">
                 <router-link to="/admin/profile-company" active-class="active" class="sec-left__link">
-                    <i class="fa-regular fa-newspaper" id="icon3"></i>
+                    <i class="fa-solid fa-building" id="icon5"></i>
                     Xem và chỉnh sửa
                 </router-link>
             </li>
@@ -43,7 +43,7 @@
             </li>
             <li class="sec-left__item">
                 <router-link to="/admin/entry-receipt" active-class="active" class="sec-left__link">
-                    <i class="fa-regular fa-newspaper" id="icon3"></i>
+                    <i class="fa-solid fa-receipt" id="icon4"></i>
                     Phiếu nhập kho
                 </router-link>
             </li>
@@ -51,21 +51,27 @@
             <li class="sec-left__item">
                 <router-link to="/admin/user" active-class="active" class="sec-left__link">
                     <i class="fa-solid fa-user" id="icon3"></i>
-                    Xem tất cả tài khoản
+                    Tài khoản
+                </router-link>
+            </li>
+            <li class="sec-left__item">
+                <router-link to="/admin/staff" active-class="active" class="sec-left__link">
+                    <i class="fa-solid fa-sitemap text-white"></i>
+                    Nhân viên
                 </router-link>
             </li>
             <li class="sec-left__item" v-if="user.isAdmin">
                 <router-link to="/admin/role" active-class="active" class="sec-left__link">
-                    <i class="fa-solid fa-user" id="icon3"></i>
+                    <i class="fa-solid fa-fingerprint" id="icon2"></i>
                     Cấp quyền
                 </router-link>
             </li>
+
         </ul>
     </section>
 </template>
 
 <script>
-import userService from '@/service/user.service';
 export default {
     data(){
         return{
@@ -73,11 +79,11 @@ export default {
         }
     },
     methods:{
-        async getUser(){
+        getUser(){
             try {
-                const response = await userService.getInfo()
+                const response = JSON.parse(sessionStorage.getItem('user'))
                 this.user={
-                    ...response.data.user
+                    ...response.user
                 }
             } catch (error) {
                 console.log(error);

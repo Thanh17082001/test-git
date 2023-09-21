@@ -217,7 +217,7 @@
 .menu-name {
     color: #fff;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 16px;
     text-transform: uppercase;
     letter-spacing: 2px;
 }
@@ -801,7 +801,7 @@
     align-items: flex-start;
 }
 
-.spe-group input{
+.spe-group input, .spe-group select{
     width: 100%;
     height: 40px;
     outline: none;
@@ -810,6 +810,7 @@
     margin-bottom: 10px;
     padding-left: 10px;
 }
+
 .spe-group label{
     font-size: 18px;
     margin-bottom: 5px;
@@ -1147,7 +1148,7 @@
     width: 50px;
     text-align: center;
 }
-.admin-user-col2, .admin-user-col4, .admin-user-col5{
+.admin-user-col7, .admin-user-col4, .admin-user-col5{
     width: 150px;
     text-align: center;
 }
@@ -1158,9 +1159,10 @@
 .admin-user-col6{
     padding-left: 10px;
 }
-.admin-user-col7{
+.admin-user-col2{
     width: 250px;
-    text-align: center;
+    text-align: left;
+    padding-left: 20px;
 }
 
 .admin-user-table tbody tr:nth-child(even) {

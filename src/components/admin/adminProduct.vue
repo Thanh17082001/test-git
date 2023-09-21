@@ -433,9 +433,7 @@ export default {
 
         async exportToPDF(){
             const template= printProduct(this.products)
-           
-            const response = await productService.exportPDF({ data: template });
-            console.log(response);
+            const response = await productService.exportPDF({ data: template }, 'vertical');
             const blob = new Blob([response.data], {
                 type: 'application/pdf',
             });

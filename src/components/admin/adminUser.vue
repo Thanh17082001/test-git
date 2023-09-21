@@ -181,6 +181,8 @@
 import format from '@/utils/format';
 import userService from '@/service/user.service';
 import exportToExcel from '@/utils/exportToExcel';
+import templateUser from '@/utils/templateUser'
+import productService from '@/service/product.service';
 export default {
     data() {
         return {
@@ -327,6 +329,21 @@ export default {
                 });
             });
             exportToExcel(data, 'user');
+        },
+        async exportToPDF(){
+            const data= templateUser(this.users)
+
+            const response = await productService.exportPDF({ data: data }, 'vertical');
+            const blob = new Blob([ response.data], {
+                type: 'application/pdf',
+            });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.target = '_blank';
+            link.setAttribute('download', 'TaiKhoan.pdf');
+            document.body.appendChild(link);
+            link.click();
         },
         async disableUser(id, action) {
             if (action === 'lock' && confirm('Hành động này sẽ khóa tài khoản')) {

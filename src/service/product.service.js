@@ -53,11 +53,12 @@ class productService{
         return await this.api.post('/export-excel', data, { responseType: 'blob' })
     }
 
-    async exportPDF(data){
+    async exportPDF(data, pageDirection){
+        console.log(pageDirection);
         const headers=undefined
         const baseUrl= "http://localhost:3000/product"
         this.api=createApiClient(baseUrl,headers)
-        return await this.api.post('/export-pdf', data, { responseType: 'blob' })
+        return await this.api.post(`/export-pdf/?pageDirection=${pageDirection}`, data, { responseType: 'blob' })
     }
 
     async filterByDate(day,month,year,field,pageNumber,pageSize){
