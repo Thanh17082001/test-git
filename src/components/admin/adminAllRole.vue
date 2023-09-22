@@ -1,19 +1,23 @@
 <template>
     <div class="alert alert-success admin-alert" role="alert" v-if="alert">Thay đổi quyền thành công</div>
     <h3>Phân quyền cho tài khoản nhân viên</h3>
-    <div class="d-flex justify-content-start my-3">
+    <div class="d-flex justify-content-between my-3">
         <button class="btn btn-info" @click="activeAddRole = true">Thêm Quyền</button>
+       <div>
+           <button class="btn btn-warning me-1" @click="handelRole('pre')">Các quyền trước đó</button>
+            <button class="btn btn-info" @click="handelRole('next')">Các quyền tiếp theo</button>
+       </div>
     </div>
-    <table class="w-100">
+    <table class="table">
         <thead>
             <tr class="row">
                 <th class="col-1">STT</th>
-                <th class="col">
+                <th class="col-3">
                     <span class="admin-role-name1">Email</span>
                     <span class="admin-wall"></span>
                     <span class="admin-role-name2">Tên quyền</span>
                 </th>
-                <th class="col" v-for="role in roles" :key="role._id">
+                <th class="col-1" v-for="role in roles" :key="role._id">
                     {{ role.roleName }}
                 </th>
             </tr>
@@ -24,10 +28,10 @@
                 <td class="col-1">
                     {{ index + 1 }}
                 </td>
-                <td class="col">
+                <td class="col-3">
                     {{ user.email }}
                 </td>
-                <td class="col" v-for="role in roles" :key="role._id">
+                <td class="col-1" v-for="role in roles" :key="role._id">
                     <input
                         type="checkbox"
                         name=""
@@ -94,7 +98,9 @@ export default {
             pageNumber: 1,
             pageSize: 8,
             lengthPage: 1,
-            activePage:1
+            activePage:1,
+            pageRole:1,
+            lengthRole:1
         };
     },
     methods: {
@@ -177,12 +183,38 @@ export default {
         },
         async getRoles() {
             try {
-                const response = await roleService.getAll();
+                const length = await roleService.getAll();
+                this.lengthRole = Math.ceil(length.data.length / 8);
+                const response = await roleService.getAll(this.pageRole, 8);
                 this.roles = [...response.data];
             } catch (error) {
                 console.log(error);
             }
         },
+        handelRole(type){
+            if(type == 'next'){
+                if(this.pageRole < this.lengthRole){
+                    this.pageRole+=1;
+                    this.getRoles()
+                }
+                else{
+                    this.pageRole=1;
+                    this.getRoles()
+                }
+            }
+            else{
+                console.log(this.pageRole);
+                if(this.pageRole >1){
+                    this.pageRole-=1;
+                    this.getRoles()
+                }
+                else{
+                    console.log(this.lengthRole);
+                    this.pageRole=this.lengthRole;
+                    this.getRoles()
+                }
+            }
+        }
     },
     mounted() {
         this.getUsers();
@@ -192,7 +224,7 @@ export default {
 </script>
 
 <style scoped>
-th,
+th:nth-child(1),
 td {
     border: 1px solid #ccc;
     text-align: center;
@@ -201,6 +233,20 @@ td {
     padding: 0;
     position: relative;
     overflow: hidden;
+}
+td:nth-child(2){
+    text-align: left;
+    padding-left: 10px;
+}
+th{
+    border: 1px solid #ccc;
+    text-align: center;
+    height: 50px;
+    padding: 0;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 input[type='checkbox'] {
     width: 20px;
@@ -267,13 +313,13 @@ form button {
 .admin-role-name1 {
     display: block;
     position: absolute;
-    bottom: -10px;
+    bottom: 1px;
     left: 12px;
 }
 .admin-role-name2 {
     display: block;
     position: absolute;
-    top: -10px;
+    top: 12px;
     right: 12px;
 }
 </style>

@@ -8,8 +8,10 @@ class roleService{
     async create(data){
         return await this.api.post('/create',data)
     }
-    async getAll(){
-        return await this.api.get('/')
+    async getAll(pageNumber, pageSize){
+        return pageNumber&&pageSize 
+            ? await this.api.get(`/?pageNumber=${pageNumber}&pageSize=${pageSize}`)
+            : await this.api.get('/')
     }
 }
 

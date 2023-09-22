@@ -339,7 +339,6 @@ export default {
     methods: {
         handleImage(event){
             this.infoStaff.avatar=event.target.files[0] || '';
-            console.log(this.infoStaff);
         },
         closeForm() {
             this.activeStaff = false;

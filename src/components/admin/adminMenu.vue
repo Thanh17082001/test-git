@@ -36,6 +36,12 @@
                 </router-link>
             </li>
             <li class="sec-left__item">
+                <router-link to="/admin/accessory" class="sec-left__link" active-class="active">
+                    <i class="fa-brands fa-paypal" id="icon5"></i>
+                    Phụ kiện
+                </router-link>
+            </li>
+            <li class="sec-left__item">
                 <router-link to="/admin/add" class="sec-left__link" active-class="active">
                     <i class="fa-solid fa-plus icon1" active-class="active" id="icon2"></i>
                     Thêm sản phẩm

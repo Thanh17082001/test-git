@@ -16,6 +16,7 @@ import adminUserVue from '@/components/admin/adminUser.vue';
 import adminCompanyVue from '@/components/admin/adminCompany.vue';
 import adminAllRole from '@/components/admin/adminAllRole.vue'
 import adminStaffVue from '@/components/admin/adminStaff.vue';
+import adminAccessoryVue from '@/components/admin/adminAccessory.vue';
 
 const routes = [
     {
@@ -104,7 +105,8 @@ const routes = [
                 }
                 ,component: adminAllRole, meta:{title:'Admin'}
             },
-            {path:'staff', component:adminStaffVue,meta:{title:'Admin'}}
+            {path:'staff', component:adminStaffVue,meta:{title:'Admin'}},
+            {path:'accessory', component:adminAccessoryVue,meta:{title:'Admin'}},
         ],
     },
 ];

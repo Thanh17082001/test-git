@@ -8,7 +8,8 @@ class format{
     
     formatDateNoTime(dateString) {
         const date = new Date(dateString);
-        return new Intl.DateTimeFormat('default', { dateStyle: 'medium'  }).format(date);
+        const utcDate = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }));
+        return new Intl.DateTimeFormat('default', { dateStyle: 'medium' }).format(utcDate);
     }
 
     formatDate(dateString, config={ dateStyle: 'medium', timeStyle:'short'  }) {
