@@ -17,11 +17,11 @@ function print(info = {}) {
      <div style="width: 16.6666666667%; margin-top: 10px;">
          ${product.inputQuantity}
      </div>
+     <div style="width: 16.6666666667%; margin-top: 10px;">
+         ${product.typeProduct=='product' ? 'Máy photocopy' : 'Phụ kiện'}
+     </div>
      <div style="width: 25%; margin-top: 10px;">
          ${product.total}
-     </div>
-     <div style="width: 16.6666666667%; margin-top: 10px;">
-         
      </div>
         </div>
      `
@@ -72,11 +72,11 @@ function print(info = {}) {
                 <div style="width: 16.6666666667%;">
                     Số lượng
                 </div>
+                <div style="width: 16.6666666667%;">
+                    Loại hàng
+                </div>
                 <div style="width: 25%;">
                     Tổng tiền
-                </div>
-                <div style="width: 16.6666666667%;">
-                    Ghi chú
                 </div>
             </div>
             ${productTemplate}
@@ -107,7 +107,7 @@ function print(info = {}) {
     </div>
 
     <div style="height:90% ">
-        <img style="height:auto;" src="${src}">
+        <img style="height:auto; width:100%;" src="${src}">
     </div>
 `
 

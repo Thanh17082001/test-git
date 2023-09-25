@@ -1,7 +1,7 @@
 <template>
     <div class="overlay" @click="closeDetailEntry">
         <div @click.stop class="detail-entry">
-            <h3 class="h3 my-3">Phiếu nhập hàng</h3>
+            <h3 class="h3 my-2">Phiếu nhập hàng</h3>
             <div class="entry-content">
                 <div class="entry-date my-3 row">
                     <span class="col-lg-6"><b>Mã số phiếu</b>: {{ entry._id }}</span>
@@ -27,22 +27,24 @@
                 <h5 class="mt-2">Danh sách sản phẩm</h5>
                 <div class="entry-product"> 
                     <div class="row mb-3 product-head">
-                        <div class="col-lg-1 text-center">STT</div>
-                        <div class="col-lg-4">Tên sản phẩm</div>
-                        <div class="col-lg-3">Giá nhập</div>
-                        <div class="col-lg-2 text-center">Số lượng</div>
-                        <div class="col-lg-2 text-center">Tổng giá</div>
+                        <div class="col-1 text-center">STT</div>
+                        <div class="col">Tên sản phẩm</div>
+                        <div class="col">Giá nhập</div>
+                        <div class="col text-center">Số lượng</div>
+                        <div class="col text-center">Loại hàng</div>
+                        <div class="col text-center">Tổng giá</div>
                     </div>
-    
-                    <div class="row my-3" v-for="(product, index) in entry.products" :key="index" >
-                        <div class="col-lg-1 text-center">{{ index+1 }} .</div>
-                        <div class="col-lg-4">{{ product.idProduct.name }}</div>
-                        <div class="col-lg-3">{{ product.priceImport }}</div>
-                        <div class="col-lg-2 text-center">{{ product.inputQuantity }}</div>
-                        <div class="col-lg-2 text-center">{{product.total}}</div>
+                    <div v-if="!!entry.products"  :class="{'entry-scroll': entry.products.length>1}" class="entry-products">
+                        <div class="row my-3" v-for="(product, index) in entry.products" :key="index">
+                            <div class="col-1 text-center">{{ index+1 }} .</div>
+                            <div class="col">{{ product.idProduct.name }}</div>
+                            <div class="col">{{ product.priceImport }}</div>
+                            <div class="col text-center">{{ product.inputQuantity }}</div>
+                            <div class="col text-center">{{ product.typeProduct =="product" ? "Máy photocopy" : "Phụ kiện" }}</div>
+                            <div class="col text-center">{{product.total}}</div>
+                        </div>       
                     </div>
                 </div>
-                <hr>
                 <div class="entry-total row" >
                     <div class=" col-lg-2" v-if="entry.image">
                         <b class="text-info">Ảnh thực tế</b>
@@ -116,7 +118,7 @@ export default {
         async exportToPDF(){
             const data= pdfTemplateEntry(this.entry)
            
-           const response = await productService.exportPDF({ data: data });
+           const response = await productService.exportPDF({ data: data }, 'vertical');
            const blob = new Blob([ response.data], {
                type: 'application/pdf',
            });
@@ -189,5 +191,8 @@ export default {
 .entry-detail-image{
     width: 80px;
     height: 80px;
+}
+.entry-products{
+    height: 90px;
 }
 </style>

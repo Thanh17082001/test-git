@@ -137,13 +137,32 @@
                     <input class="entry-file-input" ref="entryInputFile" type="file" @change="handleImage">
                 </div>
             </div>
-            <div :class="{ 'entry-info': true, 'entry-scroll': products.length > 2 }">
+            <div :class="{ 'entry-info': true, 'entry-scroll': products.length > 1 }">
                 <div class="row" v-for="(product, index) in products" :key="index">
-                    <div class="entry-group col-4">
-                        <label for="">Chọn sản phẩm</label>
+                    <div class="row">
+                        <div class="entry-group col-4">
+                            <label for="">Chọn loại hàng </label>
+                            <select v-model="product.typeProduct" name="" id="" required>
+                                <option value="">---Chọn Loại hàng---</option>
+                               <option value="accessory">Phụ kiện</option>
+                               <option value="product">Sản phẩm</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="entry-group col-4" v-if="product.typeProduct == 'product'">
+                        <label for="">Chọn sản phẩm </label>
                         <select v-model="product.idProduct" name="" id="" required>
                             <option value="">---Chọn tên sản phẩm---</option>
                             <option v-for="item in productsName" :key="item._id" :value="item._id">
+                                {{ item.name }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="entry-group col-4" v-if="product.typeProduct == 'accessory'">
+                        <label for="">Chọn Phụ kiện</label>
+                        <select v-model="product.idProduct" name="" id="" required>
+                            <option value="">---Chọn phụ kiện---</option>
+                            <option v-for="item in accessorys" :key="item._id" :value="item._id">
                                 {{ item.name }}
                             </option>
                         </select>
@@ -226,13 +245,15 @@ import format from '@/utils/format';
 import detailEntryReceipt from './detailEntryReceipt.vue';
 import templatePrint from '@/utils/printTemplateEntry'
 import templateEntryPDF from '@/utils/templateEntryPdf'
+import accessoryService from '@/service/accessory.service';
 export default {
     components:{
         detailEntryReceipt
     },
     data() {
         return {
-            products: [{ idProduct: '' }],
+            products: [{ idProduct: '', typeProduct:'product' }],
+            accessorys:[],
             Idsupplier:'',
             supplier:{},
             suppliers:[],
@@ -292,7 +313,7 @@ export default {
             }
         },
         addinput() {
-            this.products.push({ idProduct: '' });
+            this.products.push({ idProduct: '', typeProduct:'product' });
         },
         removeinput() {
             if (this.products.length > 1) {
@@ -355,6 +376,7 @@ export default {
                 supplier: this.Idsupplier || undefined,
                 image:this.image || undefined
             };
+            console.log(data);
             const response = await entryReceiptService.create(data);
             if (response.data.status) {
                 this.products = [{ idProduct: '' }];
@@ -374,6 +396,14 @@ export default {
             try {
                 const response = await productService.getProducts();
                 this.productsName = [...response.data];
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getAccessory() {
+            try {
+                const response = await accessoryService.getAll();
+                this.accessorys = [...response.data];
             } catch (error) {
                 console.log(error);
             }
@@ -548,6 +578,7 @@ export default {
         this.getAllEntry();
         this.getSupplier()
         this.getYears()
+        this.getAccessory()
     },
 };
 </script>

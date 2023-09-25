@@ -164,7 +164,9 @@
                             <button class="btn btn-outline-warning mx-3" @click="openEditAcc(acc._id)">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
-                            <button class="btn btn-outline-info" @click="openDetail(acc._id)"><i class="fa-solid fa-circle-info"></i></button>
+                            <button class="btn btn-outline-info" @click="openDetail(acc._id)">
+                                <i class="fa-solid fa-circle-info"></i>
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -227,21 +229,114 @@
                             }}</span>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="fits-group">
-                            <h2 for="">Phù hợp với các sản phẩm<span class="text-danger ms-2">*</span></h2>
-                            <ul class="fits">
-                                <li v-for="product in products" :key="product._id">
-                                    <input
-                                        @change="(event) => handleCheckBox(event, product._id)"
-                                        ref="checboxProduct"
-                                        type="checkbox"
-                                        :value="product._id"
-                                        :id="product._id"
-                                    />
-                                    <label :for="product._id">{{ product.name }}</label>
-                                </li>
-                            </ul>
+                    <!-- loại -->
+                    <div class="group d-flex col-lg-4">
+                        <div class="d-flex mb-1">
+                            <label for="">Loại phụ kiện <span class="required">*</span></label>
+                            <span class="btn btn-info btn-brand" @click="activeFormType = true">Mới</span>
+                        </div>
+                        <!-- Them loại mơi -->
+                        <div class="brand">
+                            <div class="overlay" v-if="activeFormType">
+                                <form action="" class="brand-form" @submit.prevent.stop="addType">
+                                    <div class="close-form" @click="closeFormType">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </div>
+                                    <div class="form-head me-5 ms-3">
+                                        <h2 class="title">Thêm loại phụ kiện</h2>
+                                        <span class="mes-success" v-if="!!mesSuccessType">{{ mesSuccessType }}</span>
+                                        <span class="mes-failed" v-if="!!mesFaildType">{{ mesFaildType }}</span>
+                                        <div class="lds-dual-ring" v-if="loading"></div>
+                                    </div>
+                                    <div class="spe-group me-3">
+                                        <label for="">Tên loại <span class="required">*</span></label>
+                                        <input
+                                            v-model="infoType.name"
+                                            type="text"
+                                            required
+                                            placeholder="Nhập tên thương hiệu"
+                                        />
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-brand-submit">Thêm</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <select name="" id="" class="form-select" v-model="infoAccessory.idType"> 
+                            <option value="" class="form-option">--- Chọn loại ---</option>
+                            <option v-for="(type, index) in types" :key="index" class="form-option" :value="type._id">
+                                {{ type.name }}
+                            </option>
+                        </select>
+                    </div>
+                    <!-- thương hiệu -->
+                    <div class="group d-flex col-lg-5">
+                        <div class="d-flex mb-1">
+                            <label for="">Thương hiệu sản phẩm <span class="required">*</span></label>
+                            <span class="btn btn-info btn-brand" @click="activeFormbrand = true">Mới</span>
+                        </div>
+                        <!-- Them thuong hieu mơi -->
+                        <div class="brand">
+                            <div class="overlay" v-if="activeFormbrand">
+                                <form action="" class="brand-form" @submit.prevent.stop="addBrand">
+                                    <div class="close-form" @click="closeFormBrand">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </div>
+                                    <div class="form-head me-5 ms-3">
+                                        <h2 class="title">Thêm thương hiệu</h2>
+                                        <span class="mes-success" v-if="!!mesSuccessType">{{ mesSuccessType }}</span>
+                                        <span class="mes-failed" v-if="!!mesFaildType">{{ mesFaildType }}</span>
+                                        <div class="lds-dual-ring" v-if="loading"></div>
+                                    </div>
+                                    <div class="spe-group me-3">
+                                        <label for="">Ảnh thương hiệu <span class="required">*</span></label>
+                                        <input class="pt-1" @change="handleBrand" ref="fileBrand" type="file" />
+                                    </div>
+                                    <div class="spe-group me-3">
+                                        <label for="">Tên thương hiệu <span class="required">*</span></label>
+                                        <input
+                                            v-model="infoBrand.name"
+                                            type="text"
+                                            required
+                                            placeholder="Nhập tên thương hiệu"
+                                        />
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-brand-submit">Thêm</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <select name="" id="" class="form-select" v-model="infoAccessory.idBrand">
+                            <option value="" class="form-option">--- Chọn thương hiệu ---</option>
+                            <option v-for="brand in brands" :key="brand._id" class="form-option" :value="brand._id">
+                                {{ brand.name }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="fits-group">
+                                <h2 for="">Phù hợp với các sản phẩm<span class="text-danger ms-2">*</span></h2>
+                                <ul class="fits">
+                                    <li v-if="products.length>0">
+                                        <input :checked="infoAccessory.fits.length == products.length" type="checkbox" @change="checkAll">
+                                        <label for="">Chọn tất cả</label>
+                                    </li>
+                                    <li v-for="product in products" :key="product._id">
+                                        <input
+                                            @change="(event) => handleCheckBox(event, product._id)"
+                                            ref="checboxProduct"
+                                            type="checkbox"
+                                            :value="product._id"
+                                            :id="product._id"
+                                        />
+                                        <label :for="product._id">{{ product.name }}</label>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-12">
@@ -299,10 +394,100 @@
                             }}</span>
                         </div>
                     </div>
+                    <!-- loại phụ kiện -->
+                    <div class="group d-flex col-lg-4">
+                        <div class="d-flex mb-1">
+                            <label for="">Loại phụ kiện <span class="required">*</span></label>
+                            <span class="btn btn-info btn-brand" @click="activeFormType = true">Mới</span>
+                        </div>
+                        <!-- Them loại mơi -->
+                        <div class="brand">
+                            <div class="overlay" v-if="activeFormType">
+                                <form action="" class="brand-form" @submit.prevent.stop="addType">
+                                    <div class="close-form" @click="closeFormType">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </div>
+                                    <div class="form-head me-5 ms-3">
+                                        <h2 class="title">Thêm loại phụ kiện</h2>
+                                        <span class="mes-success" v-if="!!mesSuccessType">{{ mesSuccessType }}</span>
+                                        <span class="mes-failed" v-if="!!mesFaildType">{{ mesFaildType }}</span>
+                                        <div class="lds-dual-ring" v-if="loading"></div>
+                                    </div>
+                                    <div class="spe-group me-3">
+                                        <label for="">Tên loại <span class="required">*</span></label>
+                                        <input
+                                            v-model="infoType.name"
+                                            type="text"
+                                            required
+                                            placeholder="Nhập tên thương hiệu"
+                                        />
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-brand-submit">Thêm</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <select name="" id="" class="form-select" v-model="accessory.idType"> 
+                            <option value="" class="form-option">--- Chọn loại ---</option>
+                            <option v-for="(type, index) in types" :key="index" class="form-option" :value="type._id">
+                                {{ type.name }}
+                            </option>
+                        </select>
+                    </div>
+                    <!-- thương hiệu -->
+                    <div class="group d-flex col-lg-5">
+                        <div class="d-flex mb-1">
+                            <label for="">Thương hiệu sản phẩm <span class="required">*</span></label>
+                            <span class="btn btn-info btn-brand" @click="activeFormbrand = true">Mới</span>
+                        </div>
+                        <!-- Them thuong hieu mơi -->
+                        <div class="brand">
+                            <div class="overlay" v-if="activeFormbrand">
+                                <form action="" class="brand-form" @submit.prevent.stop="addBrand">
+                                    <div class="close-form" @click="closeFormBrand">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </div>
+                                    <div class="form-head me-5 ms-3">
+                                        <h2 class="title">Thêm thương hiệu</h2>
+                                        <span class="mes-success" v-if="!!mesSuccessType">{{ mesSuccessType }}</span>
+                                        <span class="mes-failed" v-if="!!mesFaildType">{{ mesFaildType }}</span>
+                                        <div class="lds-dual-ring" v-if="loading"></div>
+                                    </div>
+                                    <div class="spe-group me-3">
+                                        <label for="">Ảnh thương hiệu <span class="required">*</span></label>
+                                        <input class="pt-1" @change="handleBrand" ref="fileBrand" type="file" />
+                                    </div>
+                                    <div class="spe-group me-3">
+                                        <label for="">Tên thương hiệu <span class="required">*</span></label>
+                                        <input
+                                            v-model="infoBrand.name"
+                                            type="text"
+                                            required
+                                            placeholder="Nhập tên thương hiệu"
+                                        />
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-brand-submit">Thêm</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <select name="" id="" class="form-select" v-model="accessory.idBrand">
+                            <option value="" class="form-option">--- Chọn thương hiệu ---</option>
+                            <option v-for="brand in brands" :key="brand._id" class="form-option" :value="brand._id">
+                                {{ brand.name }}
+                            </option>
+                        </select>
+                    </div>
                     <div class="col-lg-6">
                         <div class="fits-group">
                             <h2 for="">Phù hợp với các sản phẩm<span class="text-danger ms-2">*</span></h2>
                             <ul class="fits" v-if="!!accessory.fits">
+                                <li v-if="products.length>0">
+                                    <input :checked="accessory.fits.length == products.length" type="checkbox" @change="checkAllEdit">
+                                    <label for="">Chọn tất cả</label>
+                                </li>
                                 <li v-for="product in products" :key="product._id">
                                     <input
                                         @change="(event) => handleCheckBoxEdit(event, product._id)"
@@ -310,6 +495,7 @@
                                         type="checkbox"
                                         :value="product._id"
                                         :id="product._id"
+                                        ref="checboxProduct"
                                     />
                                     <label :for="product._id">{{ product.name }}</label>
                                 </li>
@@ -339,8 +525,11 @@
         </div>
 
         <!-- chi tiết -->
-        <admin-accessory-detail v-if="activeDetail" :idAcc="id" @closeDetail="activeDetail=false"></admin-accessory-detail>
-
+        <admin-accessory-detail
+            v-if="activeDetail"
+            :idAcc="id"
+            @closeDetail="activeDetail = false"
+        ></admin-accessory-detail>
     </div>
 </template>
 
@@ -350,9 +539,11 @@ import accessoryService from '@/service/accessory.service';
 import format from '@/utils/format';
 import exportToExcel from '@/utils/exportToExcel';
 import adminAccessoryDetail from './adminAccessoryDetail.vue';
+import typeAccService from '@/service/typeAcc.service'
+import brandService from '@/service/brand.service';
 export default {
-    components:{
-        adminAccessoryDetail
+    components: {
+        adminAccessoryDetail,
     },
     data() {
         return {
@@ -363,6 +554,8 @@ export default {
             lengthPage: 1,
             activePage: 1,
             infoAccessory: {
+                idType:'',
+                idBrand:'',
                 fits: [],
             },
             valid: {},
@@ -370,7 +563,9 @@ export default {
             mesSuccess: '',
             acctiveAccessory: false,
             acctiveAccessoryEdit: false,
-            activeDetail:false,
+            activeDetail: false,
+            activeFormType:false,
+            activeFormbrand:false,
             dateFilter: {
                 day: '0',
                 month: '0',
@@ -384,13 +579,90 @@ export default {
             accessory: {},
             idAcc: '',
             imgSrc: '',
-            id:''
+            id: '',
+            infoType: {},
+            loading:false,
+            mesSuccessType:'',
+            mesFaildType:'',
+            types:[],
+            brands:[],
+            infoBrand:{}
         };
     },
     methods: {
-        openDetail(id){
-            this.activeDetail=true
-            this.id=id
+        closeFormType(){
+            this.activeFormType=false
+            this.mesFaildType=''
+            this.mesSuccessType=''
+            this.infoType={}
+        },
+        async addType(){
+            try {
+                this.loading=true
+                const response = await typeAccService.create(this.infoType)
+                this.loading=false
+                if(response.data.status){
+                    this.mesSuccessType=response.data.mes
+                    this.mesFaildType=''
+                    this.infoType={}
+                }
+                else{
+                    this.mesFaildType=response.data.mes
+                    this.mesSuccessType=''
+                }
+                this.getType()
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getType(){
+            try {
+                const response = await typeAccService.getAll()
+                this.types=[...response.data]
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getBrands(){
+            try {
+                const response = await brandService.getAll()
+                this.brands=[...response.data]
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        handleBrand(event){
+            this.infoBrand.image = event.target.files[0] || '';
+        },
+        async addBrand(){
+            try {
+                this.loading=true
+                const response = await brandService.create(this.infoBrand)
+                this.loading=false
+                if(response.data.status){
+                    this.mesSuccessType=response.data.mes
+                    this.mesFaildType=''
+                    this.infoBrand={}
+                    this.$refs.fileBrand.value=''
+                }
+                else{
+                    this.mesFaildType=response.data.mes
+                    this.mesSuccessType=''
+                }
+                this.getBrands()
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        closeFormBrand(){
+            this.activeFormbrand=false
+            this.mesFaildType=''
+            this.mesSuccessType=''
+            this.infoBrand={}
+        },
+        openDetail(id) {
+            this.activeDetail = true;
+            this.id = id;
         },
         getYears() {
             const yearsTarget = new Date().getFullYear();
@@ -427,6 +699,8 @@ export default {
             this.acctiveAccessory = true;
             (this.infoAccessory = {
                 fits: [],
+                idType:'',
+                idBrand:''
             }),
                 (this.mesFaild = ''),
                 (this.mesSuccess = ''),
@@ -446,6 +720,14 @@ export default {
                 console.log(error);
             }
         },
+        async getAllProducts(){
+            try {
+                const response = await productService.getProducts()
+                this.products=[...response.data]
+            } catch (error) {
+                console.log(error);
+            }
+        },
         async getAllAccesory() {
             try {
                 const length = await accessoryService.getAll();
@@ -460,12 +742,56 @@ export default {
             this.infoAccessory.image = event.target.files[0] || '';
         },
         handleCheckBox(e, idProduct) {
+            console.log(this.infoAccessory);
             if (e.target.checked) {
-                this.infoAccessory.fits.push({ product: idProduct });
+                if(this.infoAccessory.fits.length==0){
+                    this.infoAccessory.fits.push({ product: idProduct });
+                }
+                else{
+                    const exit = this.infoAccessory.fits.some(fit => fit.product === idProduct)
+                    if(!exit){
+                        this.infoAccessory.fits.push({ product: idProduct });
+                    }
+                }
             } else {
                 const indexDelValue = this.infoAccessory.fits.findIndex((fit) => fit.product == idProduct);
                 this.infoAccessory.fits.splice(indexDelValue, 1);
             }
+            
+        },
+        checkAll(e){
+            this.infoAccessory.fits=[]
+            if(e.target.checked){
+                this.products.forEach(product =>{
+                    this.infoAccessory.fits.push({ product: product._id });
+                })
+                this.$refs.checboxProduct.map((check) => {
+                     check.checked = true;
+                });
+            }
+            else{
+                this.$refs.checboxProduct.map((check) => {
+                     check.checked = false;
+                });
+            }
+        },
+        checkAllEdit(e){
+            this.accessory.fits=[]
+            if(e.target.checked){
+                this.products.forEach(product =>{
+                    this.accessory.fits.push({ product: product._id });
+                })
+                this.$refs.checboxProduct.map((check) => {
+                     check.checked = true;
+                });
+            }
+            else{
+                this.$refs.checboxProduct.map((check) => {
+                    this.accessory.fits=[]
+                     check.checked = false;
+                });
+            }
+            console.log(this.accessory);
         },
         validateForm(infoAccessory) {
             if (infoAccessory.priceSale < 0) {
@@ -493,11 +819,13 @@ export default {
                 if (response.data.status) {
                     this.mesSuccess = response.data.mes;
                     this.mesFaild = false;
-                    this.infoAccessory = { fits: [] };
+                    this.infoAccessory = { fits: [],idType:'',idBrand:'' };
                     this.getAllAccesory();
-                    this.$refs.checboxProduct.map((check) => {
-                        check.checked = false;
-                    });
+                    if(this.$refs.checboxProduct){
+                        this.$refs.checboxProduct.map((check) => {
+                            check.checked = false;
+                        });
+                    }
                     this.$refs.inputImg.value = '';
                 } else {
                     this.mesFaild = response.data.mes;
@@ -595,9 +923,11 @@ export default {
             try {
                 const response = await accessoryService.getById(id);
                 this.accessory = { ...response.data };
-                const covertFits= this.accessory.fits.map(fit => ({product:fit.product._id}))
-                this.accessory.fits=[]
-                this.accessory.fits=[...covertFits]
+                this.accessory.idType= this.accessory.idType._id
+                this.accessory.idBrand= this.accessory.idBrand._id
+                const covertFits = this.accessory.fits.map((fit) => ({ product: fit.product._id }));
+                this.accessory.fits = [];
+                this.accessory.fits = [...covertFits];
             } catch (error) {
                 console.log(error);
             }
@@ -612,45 +942,57 @@ export default {
             this.imgSrc = src;
             this.accessory.image = image;
         },
-        handleCheckBoxEdit(e, idProduct){
-            if(e.target.checked){
-                this.accessory.fits.push({ product: idProduct })
-            }
-            else{
+        handleCheckBoxEdit(e, idProduct) {
+            console.log(this.accessory.fits.length);
+            if (e.target.checked) {
+                if(this.accessory.fits.length==0){
+                    this.accessory.fits.push({ product: idProduct });
+                }
+                else{
+                   const exit=this.accessory.fits.some(fit => fit.product==idProduct)
+                   if(!exit){
+                        this.accessory.fits.push({ product: idProduct });
+                   }
+                }
+            } else {
                 const indexDelValue = this.accessory.fits.findIndex((fit) => fit.product == idProduct);
                 this.accessory.fits.splice(indexDelValue, 1);
             }
+            console.log(this.accessory);
         },
-        async editAccessory(){
+        async editAccessory() {
             try {
-               const valid = this.validateForm(this.accessory)
-               if(valid){
-                console.log(this.accessory.fits);
-                const response = await accessoryService.update(this.accessory._id,this.accessory)
-                if (response.data.status) {
-                    this.mesSuccess = response.data.mes;
-                    this.mesFaild = '';
-                    this.getAccessoryByid(this.accessory._id);
-                    setTimeout(()=>{
-                        this.mesSuccess = '';
-                    },2000)
-                } else {
-                    this.mesFaild = response.data.mes;
-                    this.mesSuccess = '';
-                    setTimeout(()=>{
+                console.log(this.accessory);
+                const valid = this.validateForm(this.accessory);
+                if (valid) {
+                    console.log(this.accessory.fits);
+                    const response = await accessoryService.update(this.accessory._id, this.accessory);
+                    if (response.data.status) {
+                        this.mesSuccess = response.data.mes;
                         this.mesFaild = '';
-                    },2000)
+                        this.getAccessoryByid(this.accessory._id);
+                        setTimeout(() => {
+                            this.mesSuccess = '';
+                        }, 2000);
+                    } else {
+                        this.mesFaild = response.data.mes;
+                        this.mesSuccess = '';
+                        setTimeout(() => {
+                            this.mesFaild = '';
+                        }, 2000);
+                    }
                 }
-               }
             } catch (error) {
                 console.log(error);
             }
-        }
+        },
     },
     mounted() {
-        this.getAllProduct();
         this.getAllAccesory();
         this.getYears();
+        this.getType();
+        this.getBrands()
+        this.getAllProducts()
     },
 };
 </script>
@@ -738,4 +1080,8 @@ textarea {
 .admin-sort-list li {
     height: 24px;
 }
+select {
+    border: 1px solid #2c2e33;
+}
+
 </style>

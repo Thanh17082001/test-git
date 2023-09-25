@@ -1,6 +1,6 @@
 <template>
     <div class="overlay" >
-            <div class="admin-card">
+            <div class="admin-card-acc">
                 <i class="fa-solid fa-xmark card-close" @click="closeProductDetail"></i>
                 <div class="card-image">
                     <div  class="card-image-head"><span class="card-info-title">Ảnh phụ kiện</span></div>
@@ -8,22 +8,34 @@
                 </div>
                 <div class="card-info">
                     <h3>{{ accessory.name }}</h3>
-                    <span class="card-info-title">Thông tin phụ kiện</span>
-                    <div class="card-info-price">
-                        <p>Giá nhập: <span>{{ accessory.priceImport }}</span></p>
-                        <p>Số lượng nhập: <span>{{ accessory.inputQuantity }}</span></p>
-                        <p>Giá bán: <span>{{ accessory.priceSale }}</span></p>
-                        <p>Số lượng bán: <span>{{ accessory.soldQuantity }}</span></p>
-                        <p>Ngày tạo: <span>{{ accessory.createdAt }}</span></p>
-                        <p>Ngày sửa: <span>{{ accessory.updatedAt }}</span></p>
-                    </div>
-                    <span class="card-info-title mt-3">Phù hợp với các sản phẩm</span>
-                    <div class="card-info-price info-acc">
-                        <span class="text-left mb-2" v-for="(fit, index) in accessory.fits" :key="fit._id"><b class="text-black">Tên sản phẩm {{ index+1 }}</b>: <span>{{ fit.product.name }}</span></span>
-                    </div>
-                    <span class="card-info-title mt-3">Mô tả </span>
-                    <div class="card-info-description">
-                        {{ accessory.description }}
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <span class="card-info-title">Thông tin phụ kiện</span>
+                            <div class="card-info-price">
+                                <p>Giá nhập: <span>{{ accessory.priceImport }}</span></p>
+                                <p>Số lượng nhập: <span>{{ accessory.inputQuantity }}</span></p>
+                                <p>Giá bán: <span>{{ accessory.priceSale }}</span></p>
+                                <p>Số lượng bán: <span>{{ accessory.soldQuantity }}</span></p>
+                                <p>Loại: <span>{{ accessory.idType?.name }}</span></p>
+                                <p>Hãng sản xuất: <span>{{ accessory.idBrand?.name }}</span></p>
+                                <p>Ngày sửa: <span>{{ accessory.updatedAt }}</span></p>
+                                <p>Ngày sửa: <span>{{ accessory.updatedAt }}</span></p>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <span class="card-info-title">Phù hợp với các sản phẩm</span>
+                            <div class="card-info-price info-acc">
+                                <span v-if="accessory.fits?.length<=0">Đang đề cập</span>
+                                <span class="text-left mb-2" v-for="(fit, index) in accessory.fits" :key="fit._id"><b class="text-black">Tên sản phẩm {{ index+1 }}</b>: <span>{{ fit.product.name }}</span></span>
+                            </div>
+                            
+                        </div>
+                        <div class="col-lg-12">
+                            <span class="card-info-title mt-3">Mô tả </span>
+                            <div class="card-info-description">
+                                {{ accessory.description }}
+                            </div>
+                        </div>
                     </div>
                 </div>
               
@@ -85,7 +97,7 @@ export default {
 }
 
 .info-acc{
-    height: 130px;
+    height: 326px;
     overflow-y: scroll;
     scroll-behavior: smooth;
     border: 1px solid #ccc;
