@@ -90,6 +90,41 @@
                     </router-link>
                 </li>
             </div>
+            <span
+                class="menu-title"
+                data-bs-toggle="collapse"
+                href="#collapseExample3"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapseExample2"
+                >Đơn hàng <i class="fa-solid fa-chevron-down ms-1"></i> </span
+            >
+            <div class="collapse" id="collapseExample3">
+                <li class="sec-left__item" v-if="user.isAdmin">
+                    <router-link to="/admin/order" active-class="active" class="sec-left__link">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                        Đơn hàng bán
+                    </router-link>
+                </li>
+                <li class="sec-left__item" v-if="user.isAdmin">
+                    <router-link to="/admin/order-create" active-class="active" class="sec-left__link">
+                        <i class="fa-solid fa-cart-plus" id="icon4"></i>
+                        Tạo đơn hàng bán
+                    </router-link>
+                </li>
+                <li class="sec-left__item" v-if="user.isAdmin">
+                    <router-link to="/admin/rental" active-class="active" class="sec-left__link">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                        Đơn hàng thuê
+                    </router-link>
+                </li>
+                <li class="sec-left__item" v-if="user.isAdmin">
+                    <router-link to="/admin/rental-create" active-class="active" class="sec-left__link">
+                        <i class="fa-solid fa-cart-plus" id="icon4"></i>
+                        Tạo đơn hàng thuê
+                    </router-link>
+                </li>
+            </div>  
         </ul>
     </section>
 </template>

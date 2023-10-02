@@ -541,6 +541,7 @@ import exportToExcel from '@/utils/exportToExcel';
 import adminAccessoryDetail from './adminAccessoryDetail.vue';
 import typeAccService from '@/service/typeAcc.service'
 import brandService from '@/service/brand.service';
+import accessoryTemplate from '@/utils/templateAccessory'
 export default {
     components: {
         adminAccessoryDetail,
@@ -866,6 +867,20 @@ export default {
                 });
             });
             exportToExcel(data, 'PhuKien');
+        },
+        async exportToPDF(){
+            const data= accessoryTemplate(this.accessorys)
+            const response = await productService.exportPDF({ data: data });
+            const blob = new Blob([ response.data], {
+                type: 'application/pdf',
+            });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.target = '_blank';
+            link.setAttribute('download', 'PhuKien.pdf');
+            document.body.appendChild(link);
+            link.click();
         },
         async sort(type, field) {
             this.type = type;

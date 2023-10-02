@@ -221,7 +221,7 @@
                             <i class="fa-solid fa-circle-info"></i>
                         </div>
                         <router-link
-                            :to="{ name: 'product.edit', params: { id: product._id } }"
+                            :to="{ name: 'product.edit', params: { id: product?._id } }"
                             class="btn btn-outline-warning me-3"
                         >
                             <i class="fa-solid fa-pen-to-square"></i>

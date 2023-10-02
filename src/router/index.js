@@ -17,7 +17,10 @@ import adminCompanyVue from '@/components/admin/adminCompany.vue';
 import adminAllRole from '@/components/admin/adminAllRole.vue'
 import adminStaffVue from '@/components/admin/adminStaff.vue';
 import adminAccessoryVue from '@/components/admin/adminAccessory.vue';
-
+import adminOrderVue from '@/components/admin/adminOrder.vue';
+import adminOrderCreate from '@/components/admin/adminOrderCreate.vue'
+import adminRentalVue from '@/components/admin/adminRental.vue';
+import adminRentalCreate from '@/components/admin/adminRentalCreate.vue'
 const routes = [
     {
         path: '/',
@@ -107,6 +110,10 @@ const routes = [
             },
             {path:'staff', component:adminStaffVue,meta:{title:'Admin'}},
             {path:'accessory', component:adminAccessoryVue,meta:{title:'Admin'}},
+            {path:'order', component:adminOrderVue,meta:{title:'Admin'}},
+            {path:'order-create', component:adminOrderCreate,meta:{title:'Admin'}},
+            {path:'rental', component:adminRentalVue,meta:{title:'Admin'}},
+            {path:'rental-create', component:adminRentalCreate,meta:{title:'Admin'}},
         ],
     },
 ];

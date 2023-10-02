@@ -376,7 +376,6 @@ export default {
                 supplier: this.Idsupplier || undefined,
                 image:this.image || undefined
             };
-            console.log(data);
             const response = await entryReceiptService.create(data);
             if (response.data.status) {
                 this.products = [{ idProduct: '' }];

@@ -131,11 +131,24 @@
           </div>
           <div class="group col-lg-4 mt-1">
               <label for="">Giá bán sản phẩm <span class="required">*</span></label>
-              <input name="price-sale" v-model="infoProduct.priceSale" required placeholder="Nhập giá bán" type="text" class="product-input">
+              <input name="price-sale" v-model="infoProduct.priceSale" required placeholder="Nhập giá bán" type="number" class="product-input">
+              <span v-if="!!valid.priceSale" :class="{ 'text-danger': !!valid.priceSale }">{{
+                    valid.priceSale
+                }}</span>
           </div>
           <div class="group col-lg-4 mt-1">
               <label for="">Giá thuê sản phẩm <span class="required">*</span> </label>
-              <input name="price-rental" v-model="infoProduct.priceRental" required placeholder="Nhập giá cho thuê/Ngày" type="text" class="product-input">
+              <input name="price-rental" v-model="infoProduct.priceRental" required placeholder="Nhập giá cho thuê/Ngày" type="number" class="product-input">
+              <span v-if="!!valid.priceRental" :class="{ 'text-danger': !!valid.priceRental }">{{
+                    valid.priceRental
+                }}</span>
+          </div>
+          <div class="group col-lg-4 mt-1">
+              <label for="">Số tháng bảo hành <span class="required">*</span> </label>
+              <input name="price-rental" v-model="infoProduct.warrantyTime" required placeholder="Nhập số tháng bảo hành" type="number" class="product-input">
+              <span v-if="!!valid.warrantyTime" :class="{ 'text-danger': !!valid.warrantyTime }">{{
+                    valid.warrantyTime
+                }}</span>
           </div>
           <div class="group col-lg-12">
               <label for="">Mô tả</label>
@@ -173,7 +186,8 @@ export default {
           brands:[],
           categories:[],
           types:[],
-          imgSrc:''
+          imgSrc:'',
+          valid:{}
       }
   },
   props:{
@@ -218,26 +232,62 @@ export default {
       handleBrand(event){
           this.infoBrand.image = event.target.files[0] || '';
       },
+      validateForm(info){
+            if(info.priceSale <0){
+                this.valid.priceSale='Giá bán không được nhỏ hơn 0'
+            }
+            else{
+                this.valid.priceSale=false
+            }
+
+            if(info.priceRental <0){
+                this.valid.priceRental='Giá thuê không được nhỏ hơn 0'
+            }
+            else{
+                this.valid.priceRental=false
+            }
+            if(info.warrantyTime <0){
+                this.valid.warrantyTime='Số tháng không được nhỏ hơn 0'
+            }
+            else{
+                this.valid.warrantyTime=false
+            }
+            let isValid = false;
+            const arrayValid= Object.values(this.valid)
+            for(let i=0;i<arrayValid.length;i++){
+                if(arrayValid[i]===false){
+                    isValid = true;
+                } else {
+                    isValid = false;
+                    break
+                }
+            }
+            return isValid;
+            
+        },
       async editProduct(){
           try {
             const data={
                 ...this.infoProduct
             }
-              this.loadingProduct=true
-              const response = await productSevice.update(this.id,data)
-              this.loadingProduct=false
-              if(response.data.status){
-                  this.addProductSuccess=response.data.mes
-                  this.addProductFail=''
-                  this.infoProduct={
-                     ...response.data.data
-                  }
-                  this.$refs.inputFile.value=''
-              }
-              else{
-                  this.addProductFail=response.data.mes
-                  this.addProductSuccess=''
-              }
+            const isValid = this.validateForm(data)
+            if(isValid){
+                this.loadingProduct=true
+                const response = await productSevice.update(this.id,data)
+                this.loadingProduct=false
+                if(response.data.status){
+                    this.addProductSuccess=response.data.mes
+                    this.addProductFail=''
+                    this.infoProduct={
+                       ...response.data.data
+                    }
+                    this.$refs.inputFile.value=''
+                }
+                else{
+                    this.addProductFail=response.data.mes
+                    this.addProductSuccess=''
+                }
+            }
           } catch (error) {
               console.log(error);
           }
