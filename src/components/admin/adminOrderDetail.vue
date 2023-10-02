@@ -63,8 +63,23 @@
 
         <div class="status mt-1">
             <h5 class="mt-2 mb-4">Trạng thái đơn hàng</h5>
+            <div class="status-progress" v-if="order.status ==='Hủy đơn'">
+                <div class="status-progress-color" style="--left:0%; --colorB:red"></div>
+                <div class="progress-item" style="--left:8% ">
+                    <span style="--border-color:red">1</span>
+                    <span>Đang xử lý</span>
+                </div>
+                <div class="progress-item" style="--left:43% ">
+                    <span style="--border-color:red">2</span>
+                    <span>Đang vận chuyển</span>
+                </div>
+                <div class="progress-item" style="--left:80%">
+                    <span style="--border-color:red">3</span>
+                    <span>Đã giao hàng</span>
+                </div>
+            </div>
             <div class="status-progress" v-if="order.status ==='Đang xử lý'">
-                <div class="status-progress-color" style="--left:83%"></div>
+                <div class="status-progress-color" style="--left:83%; --colorB:#11e911"></div>
                 <div class="progress-item" style="--left:8% ">
                     <span style="--border-color:#11e911">1</span>
                     <span>Đang xử lý</span>
@@ -79,7 +94,7 @@
                 </div>
             </div>
             <div class="status-progress" v-if="order.status ==='Đang vận chuyển'">
-                <div class="status-progress-color" style="--left:48%"></div>
+                <div class="status-progress-color" style="--left:48%; --colorB:#11e911"></div>
                 <div class="progress-item" style="--left:8% ">
                     <span style="--border-color:#11e911">1</span>
                     <span>Đang xử lý</span>
@@ -94,7 +109,7 @@
                 </div>
             </div>
             <div class="status-progress" v-if="order.status ==='Đã giao hàng'">
-                <div class="status-progress-color" style="--left:0%"></div>
+                <div class="status-progress-color" style="--left:0%; --colorB:#11e911"></div>
                 <div class="progress-item" style="--left:8% ">
                     <span style="--border-color:#11e911">1</span>
                     <span>Đang xử lý</span>
@@ -108,9 +123,11 @@
                     <span>Đã giao hàng</span>
                 </div>
             </div>
+            <div class="btn btn-danger mt-5 me-2 mb-1" v-if="order.status ==='Đang xử lý' && order.isPayment==false" @click="update(order._id,{status:'Hủy đơn'})">Hủy đơn hàng</div>
             <div class="btn btn-warning mt-5 mb-1" v-if="order.status ==='Đang xử lý'" @click="update(order._id,{status:'Đang vận chuyển'})">Cập nhật</div>
             <div class="btn btn-warning mt-5 mb-1" v-else-if="order.status ==='Đang vận chuyển'" @click="update(order._id,{status:'Đã giao hàng'})">Cập nhật</div>
-            <button disabled class="btn btn-success mt-5 mb-1" v-else>Hoàn thành</button>
+            <div class="btn btn-warning mt-5 mb-1" v-else-if="order.status ==='Đã giao hàng'">Hoàn thành</div>
+            <button disabled class="btn btn-danger mt-5 mb-1" v-else-if="order.status=='Hủy đơn'">Đơn hàng đã hủy</button>
         </div>
 
         <div class="row mt-1">
@@ -220,6 +237,10 @@ export default {
                     totalAmount: order.totalAmount,
                     orderId:order._id
                 }
+                if(order.status=='Hủy đơn'){
+                    alert('Đơn hàng đã bị hủy')
+                    return ;
+                }
                 const payment = await orderService.payment('admin/order',data)
                 window.location.href=payment.data
             } catch (error) {
@@ -326,7 +347,7 @@ thead{
         left: 0;
         right: var(--left);
         bottom: 0;
-        background: #11e911;
+        background: var(--colorB);
 
     }
 
@@ -373,6 +394,11 @@ thead{
     .scroll-address{
         display: flex;
         flex-direction: column;
+        overflow-y: scroll;
+        scroll-behavior: smooth;
+    }
+    .scroll-address::-webkit-scrollbar{
+        width: 0;
     }
     .modal-success{
     position: absolute;

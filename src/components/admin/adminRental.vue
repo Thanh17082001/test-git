@@ -35,10 +35,11 @@
 
         <div class="order-status d-flex mb-3">
             <span @click="sort('Đang xử lý','status')" class="order-status-item me-3" style="--color:#1e90ff">Đang xử lý <span>{{ orders.filter(order => order.status =='Đang xử lý').length }}</span></span>
-            <span @click="sort('Đang vận chuyển','status')" class="order-status-item me-3" style="--color:red">Đang vận chuyển <span>{{ orders.filter(order => order.status =='Đang vận chuyển').length }}</span></span>
+            <span @click="sort('Đang vận chuyển','status')" class="order-status-item me-3" style="--color:#C63D2F">Đang vận chuyển <span>{{ orders.filter(order => order.status =='Đang vận chuyển').length }}</span></span>
             <span @click="sort('Đã giao hàng','status')" class="order-status-item me-3" style="--color:green">Đã giao hàng <span>{{ orders.filter(order => order.status =='Đã giao hàng').length }}</span></span>
             <span @click="sort('Đang sử dụng','status')" class="order-status-item me-3" style="--color:#E9B824">Đang sử dụng <span>{{ orders.filter(order => order.status =='Đang sử dụng').length }}</span></span>
             <span @click="sort('Dừng thuê','status')" class="order-status-item me-3" style="--color:#61677A">Dừng thuê <span>{{ orders.filter(order => order.status =='Dừng thuê').length }}</span></span>
+            <span @click="sort('Hủy đơn','status')" class="order-status-item me-3" style="--color:#FE0000">Hủy đơn <span>{{ orders.filter(order => order.status =='Hủy đơn').length }}</span></span>
 
         </div>
         <div class="isSort" :class="{ 'isSort-active': isSort }">
