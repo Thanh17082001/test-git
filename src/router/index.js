@@ -21,6 +21,8 @@ import adminOrderVue from '@/components/admin/adminOrder.vue';
 import adminOrderCreate from '@/components/admin/adminOrderCreate.vue'
 import adminRentalVue from '@/components/admin/adminRental.vue';
 import adminRentalCreate from '@/components/admin/adminRentalCreate.vue'
+import adminNewsCreate from '@/components/admin/adminNewsCreate.vue'
+import adminNews from '@/components/admin/adminNews.vue'
 const routes = [
     {
         path: '/',
@@ -114,6 +116,9 @@ const routes = [
             {path:'order-create', component:adminOrderCreate,meta:{title:'Admin'}},
             {path:'rental', component:adminRentalVue,meta:{title:'Admin'}},
             {path:'rental-create', component:adminRentalCreate,meta:{title:'Admin'}},
+            {path:'news-create', component:adminNewsCreate,meta:{title:'Admin'}},
+            {path:'news', component:adminNews,meta:{title:'Admin'}},
+
         ],
     },
 ];

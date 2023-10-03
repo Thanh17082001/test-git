@@ -124,7 +124,26 @@
                         Tạo đơn hàng thuê
                     </router-link>
                 </li>
-            </div>  
+            </div>
+            <span
+                class="menu-title"
+                data-bs-toggle="collapse"
+                href="#collapseExample4"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapseExample2"
+                >Tin tức <i class="fa-solid fa-chevron-down ms-1"></i> </span
+            >
+            <li class="sec-left__item" v-if="user.isAdmin">
+                <router-link to="/admin/news-create" active-class="active" class="sec-left__link">
+                    <i class="fa-solid fa-newspaper" id="icon2"></i>
+                    Tạo tin tức
+                </router-link>
+                <router-link to="/admin/news" active-class="active" class="sec-left__link">
+                    <i class="fa-solid fa-newspaper" id="icon3"></i>
+                   Tin tức
+                </router-link>
+            </li>
         </ul>
     </section>
 </template>

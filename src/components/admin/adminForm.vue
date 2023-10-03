@@ -207,7 +207,6 @@ export default {
         },
         handleSelectFile(event){
             this.infoProduct.image = event.target.files[0] || '';
-        
         },
         handleBrand(event){
             this.infoBrand.image = event.target.files[0] || '';
