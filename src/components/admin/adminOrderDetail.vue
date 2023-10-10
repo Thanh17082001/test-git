@@ -45,9 +45,9 @@
                     <h5><i class="fa-solid fa-truck"></i> Khách hàng</h5>
                     <hr>
                     <div class="scroll-address">
-                        <span><strong class="me-2">Tên:</strong>{{ order.customerId?.fullName }}</span>
-                        <span><strong class="me-2">Số điện thoại:</strong>{{ order.customerId?.phone }}</span>
-                        <span><strong class="me-2">Địa chỉ:</strong>{{ order.customerId?.address }}</span>
+                        <span><strong class="me-2">Tên:</strong>{{ order.nameCustomer }}</span>
+                        <span><strong class="me-2">Số điện thoại:</strong>{{ order.phone }}</span>
+                        <span><strong class="me-2">Địa chỉ:</strong>{{ order.address }}</span>
                     </div>
                 </div>
             </div>

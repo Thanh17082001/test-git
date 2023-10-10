@@ -159,7 +159,7 @@
                 <tr v-for="(order,index) in orders" :key="order._id">
                     <td class="col-1 text-center">{{ index+1 }}</td>
                     <td class="col-2">{{ order._id }}</td>
-                    <td class="col">{{ order.customerId?.fullName }}</td>
+                    <td class="col">{{ order.nameCustomer }}</td>
                     <td class="col">{{ order.status }}</td>
                     <td class="col">{{ order.IsOnlineOrder ? ' Trực tuyến' : 'Tại của hàng' }}</td>
                     <td class="col">{{ order.paymentMethod }}</td>

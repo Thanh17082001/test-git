@@ -134,16 +134,42 @@
                 aria-controls="collapseExample2"
                 >Tin tức <i class="fa-solid fa-chevron-down ms-1"></i> </span
             >
-            <li class="sec-left__item" v-if="user.isAdmin">
-                <router-link to="/admin/news-create" active-class="active" class="sec-left__link">
-                    <i class="fa-solid fa-newspaper" id="icon2"></i>
-                    Tạo tin tức
-                </router-link>
-                <router-link to="/admin/news" active-class="active" class="sec-left__link">
-                    <i class="fa-solid fa-newspaper" id="icon3"></i>
-                   Tin tức
-                </router-link>
-            </li>
+            <div class="collapse" id="collapseExample4">
+                <li class="sec-left__item" v-if="user.isAdmin">
+                    <router-link to="/admin/news-create" active-class="active" class="sec-left__link">
+                        <i class="fa-solid fa-newspaper" id="icon2"></i>
+                        Tạo tin tức
+                    </router-link>
+                    <router-link to="/admin/news" active-class="active" class="sec-left__link">
+                        <i class="fa-solid fa-newspaper" id="icon3"></i>
+                       Tin tức
+                    </router-link>
+                </li>
+            </div>
+
+            <span
+                class="menu-title"
+                data-bs-toggle="collapse"
+                href="#collapseExample5"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapseExample2"
+                >Dịch vụ & công việc <i class="fa-solid fa-chevron-down ms-1"></i> </span
+            >
+            <div class="collapse" id="collapseExample5">
+                <li class="sec-left__item" v-if="user.isAdmin">
+                    <router-link to="/admin/service" active-class="active" class="sec-left__link">
+                        <i class="fa-solid fa-newspaper" id="icon3"></i>
+                       Dịch vụ
+                    </router-link>
+                </li>
+                <li class="sec-left__item" v-if="user.isAdmin">
+                    <router-link to="/admin/task" active-class="active" class="sec-left__link">
+                        <i class="fa-solid fa-newspaper" id="icon3"></i>
+                       Nhiệm vụ
+                    </router-link>
+                </li>
+            </div>
         </ul>
     </section>
 </template>

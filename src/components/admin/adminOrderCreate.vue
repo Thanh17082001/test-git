@@ -34,7 +34,6 @@
                                     <h2 class="title">Thêm khách hàng</h2>
                                     <span class="mes-success" v-if="!!mesSucCus">{{ mesSucCus }}</span>
                                     <span class="mes-failed" v-if="!!mesFaiCus">{{ mesFaiCus }}</span>
-                                    <div class="lds-dual-ring" v-if="loading"></div>
                                 </div>
                                 <div class="row">
                                     <div class="spe-group col-lg-6">
@@ -102,12 +101,102 @@
                                 </div>
                             </form>
                         </div>
-                    <select v-model="customerId" class="form-select" required>
+                        <!-- chọn khách hàng -->
+                    <select v-model="customerId" class="form-select" required @change="getCustomerById(customerId)">
                         <option value="" class="form-option">--- Chọn khách hàng ---</option>
                         <option v-for="(customer, index) in customers" :key="index" class="form-option" :value="customer._id">
-                            {{ customer.fullName }}
+                            {{ customer.fullName }} <i class="fa-solid fa-pen"></i>
                         </option>
                     </select>
+                    <!-- edit khách hàng -->
+                    <div class="overlay" v-if="activeEditCustomer">
+                        <form action="" class="customer-form" @submit.prevent.stop="editCustomer">
+                            <div class="close-form-customer" @click="closeFormCustomerEdit">
+                                <i class="fa-solid fa-xmark"></i>
+                            </div>
+                            <div class="form-head">
+                                <h2 class="title">Xem và thay đổi thông tin</h2>
+                                <span class="mes-success" v-if="!!mesSucCus">{{ mesSucCus }}</span>
+                                <span class="mes-failed" v-if="!!mesFaiCus">{{ mesFaiCus }}</span>
+                            </div>
+                            <div class="row">
+                                <div class="spe-group col-lg-6">
+                                    <label for="">Tên khách hàng <span class="required">*</span></label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="Nhập tên khách hàng"
+                                        v-model="customerInfo.fullName"
+                                    />
+                                </div>
+                                <div class="spe-group col-lg-6">
+                                    <label for="">Số điện thoại<span class="required">*</span></label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="Nhập Số điện thoại"
+                                        v-model="customerInfo.phone"
+                                    />
+                                    <span v-if="!!valid.phone" :class="{ 'text-danger': !!valid.phone }">{{
+                                        valid.phone
+                                    }}</span>
+                                </div>
+                                <div class="spe-group col-lg-12" v-if="!activeEditAddress">
+                                    <label for="">Địa chỉ<span class="required">*</span> 
+                                    </label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="Nhập tên đường, hẻm, số nhà"
+                                        v-model="customerInfo.address"
+                                        disabled
+                                        />
+                                </div>
+                                <span class="col-lg-3 ms-2 btn btn-warning" @click="activeEditAddress=!activeEditAddress">{{activeEditAddress ? 'Giữ địa chỉ cũ' : 'Tạo địa chỉ mới'}}</span>
+                                <div class="spe-group col-lg-12" v-if="activeEditAddress">
+                                    <label for="">Địa chỉ<span class="required">*</span></label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="Nhập tên đường, hẻm, số nhà"
+                                        v-model="customerInfo.address2"
+                                    />
+                                </div>
+                            </div>
+                            <div class="row" v-if="activeEditAddress">
+                                <div class="group col-lg-4">
+                                    <div class="d-flex mb-1">
+                                        <label for="">Tỉnh/Thành phố <span class="required">*</span></label>
+                                    </div> 
+                                    <select v-model="VmodelAddress.city" name="" id="" class="form-select  w-100" @change="getDistricts(VmodelAddress.city)" required>
+                                        <option value="" class="form-option">--- Chọn ---</option>
+                                        <option v-for="item in city" :key="item.code" :value="item">{{ item.name }}</option>
+                                    </select>
+                                </div>
+                                <div class="group col-lg-4">
+                                    <div class="d-flex mb-1">
+                                        <label for="">Quận/huyện <span class="required">*</span></label>
+                                    </div>
+                                    <select v-model="VmodelAddress.district" name="" id="" class="form-select  w-100" @change="getWards(VmodelAddress.district)" required>
+                                        <option value="" class="form-option">--- Chọn ---</option>
+                                        <option v-for="item in districts" :key="item.code" :value="item">{{ item.name }}</option>
+                                    </select>
+                                </div>
+                                <div class="group col-lg-4">
+                                    <div class="d-flex mb-1">
+                                        <label for="">Phường/Xã <span class="required">*</span></label>
+                                    </div>
+                                    <select v-model="VmodelAddress.ward" name="" id="" class="form-select w-100" @change="saveAddress(VmodelAddress.ward)" required>
+                                        <option value="" class="form-option">--- Chọn ---</option>
+                                        <option v-for="item in wards" :key="item.code" :value="item">{{ item.name }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="btn btn-brand-submit mt-5">Sửa</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
                 <div class="group col-lg-8">
                     <div class="w-100">
@@ -181,7 +270,7 @@
                         <input type="text" v-model="totalAmount" disabled>
                     </div>
                 </div>
-
+                <!-- hình thức thanh toán -->
                 <div class="row mt-4">
                     <div class="col-lg-6">
                         <label for="payment" :class="{'payment-active': isClassCod, 'payment-error':choosePayent}" class="payment" @click=" paymentMeThod('COD')">
@@ -254,10 +343,19 @@ export default {
             transportFee:0,
             totalCostOfProducts:0,
             totalAmount:0,
-            VAT:0
+            VAT:0,
+            customerInfo:{},
+            activeEditCustomer:false,
+            activeEditAddress:false
         }
     },
-    
+    watch:{
+        activeCustomer(){
+            if(this.activeCustomer){
+                this.getCity()
+            }
+        }
+    },
     methods:{
         closeSuccess(){
             this.$router.push('/admin/order-create')
@@ -305,13 +403,21 @@ export default {
             this.wards=[],
            this.VmodelAddress={city:'',district:'',ward:''}
         },
+        closeFormCustomerEdit(){
+            this.activeEditCustomer=false
+            this.activeEditAddress=false
+            this.city=[]
+            this.districts=[]
+            this.wards=[],
+           this.VmodelAddress={city:'',district:'',ward:''}
+        },
         async addCustomer(){
             try {
                 const isValid = this.validateForm(this.customer)
                 const data={
                     ...this.customer
                 }
-                data.address=this.customer.address+','+this.address.ward+','+this.address.district+','+this.address.city
+                data.address=this.customer.address+', '+this.address.ward+', '+this.address.district+', '+this.address.city
                 if(isValid){
                     const response = await customerService.create(data)
                     if(response.data.status){
@@ -330,6 +436,44 @@ export default {
                 console.log(error);
             }
             
+        },
+
+        async editCustomer(){
+            try {
+                const isValid = this.validateForm(this.customerInfo)
+                const data={
+                    ...this.customerInfo
+                }
+                data.address=this.activeEditAddress ? 
+                    this.customerInfo.address2+', '+this.address.ward+', '+this.address.district+', '+this.address.city :
+                    this.customerInfo.address
+                if(isValid){
+                    const response = await customerService.update(this.customerInfo._id,data)
+                    if(response.data.status){
+                        this.mesSucCus=response.data.mes
+                        this.mesFaiCus=''
+                        this.VmodelAddress={city:'',district:'',ward:''}
+                        this.getCustomerById(this.customerInfo._id)
+                        this.activeEditAddress=false
+                    }
+                    else{
+                        this.mesFaiCus=response.data.mes
+                        this.mesSucCus=''
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+            
+        },
+        async getCustomerById(id){
+            try {
+                const response = await customerService.getById(id)
+                this.customerInfo = response.data
+                this.activeEditCustomer=true
+            } catch (error) {
+                console.log(error);
+            }
         },
         validateForm(infoCustomer) {
             const phoneRegex = /^[0-9]+$/;
@@ -425,9 +569,15 @@ export default {
                 else{
                     this.isSubmit=true
                 }
+                
+                const customer = await customerService.getById(this.customerId)
+
                 const data={
                     createBy:user ? user.user._id : null,
                     customerId:this.customerId,
+                    address:customer.data.address,
+                    phone:customer.data.phone,
+                    nameCustomer:customer.data.fullName,
                     products:[
                         ...this.ordersProducts
                     ],
@@ -567,10 +717,11 @@ export default {
     left: 50%;
     transform: translate(-50%,-50%);
     width: 650px;
-    height: 550px;
+    min-height: 0px;
     background: #fff;
     padding: 10px 20px;
 }
+
 .close-form-customer{
     display: flex;
     justify-content: flex-end;

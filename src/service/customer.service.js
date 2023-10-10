@@ -13,6 +13,14 @@ class customerService{
             ? await this.api.get(`/?pageNumber=${pageNumber}&pageSize=${pageSize}`)
             : await this.api.get('/')
     }
+
+    async getById(id){
+        return this.api.get(`/find/?id=${id}`)
+    }
+
+    async update(id, data){
+        return this.api.post(`/update/?id=${id}`,data)
+    }
 }
 
 export default new customerService()

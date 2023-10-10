@@ -23,6 +23,8 @@ import adminRentalVue from '@/components/admin/adminRental.vue';
 import adminRentalCreate from '@/components/admin/adminRentalCreate.vue'
 import adminNewsCreate from '@/components/admin/adminNewsCreate.vue'
 import adminNews from '@/components/admin/adminNews.vue'
+import adminService from '@/components/admin/adminService.vue'
+import canlendar from '@/components/admin/adminCanledar.vue';
 const routes = [
     {
         path: '/',
@@ -118,6 +120,8 @@ const routes = [
             {path:'rental-create', component:adminRentalCreate,meta:{title:'Admin'}},
             {path:'news-create', component:adminNewsCreate,meta:{title:'Admin'}},
             {path:'news', component:adminNews,meta:{title:'Admin'}},
+            {path:'service', component:adminService,meta:{title:'Admin'}},
+            {path:'task', component:canlendar,meta:{title:'Admin'}},
 
         ],
     },

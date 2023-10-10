@@ -49,11 +49,11 @@ function print(info = {}) {
             <div style="width: 50%; text-align: center;">
                 <h4 style="margin-bottom:10px; margin-left:10px; font-size: 20px">Thông tin khách hàng</h4>
                 <div  style="margin-bottom:0; margin-left:20px;">
-                        <span><b>Tên: </b>${info.customerId.fullName}</span>
+                        <span><b>Tên: </b>${info.nameCustomer}</span>
                         <br>
-                        <span><b>Địa chỉ: </b>${info.customerId.address}</span>
+                        <span><b>Địa chỉ: </b>${info.address}</span>
                         <br>
-                        <span><b>Số điện thoại: </b>${info.customerId.phone}</span>
+                        <span><b>Số điện thoại: </b>${info.phone}</span>
                 </div>
             </div>
         </div>
