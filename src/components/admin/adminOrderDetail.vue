@@ -248,7 +248,6 @@ export default {
             }
         },
         async printPDF(){
-            
             const printTemplate= printTemlateOrder( this.order)
             print(printTemplate,'Phiếu đơn hàng' )
         },

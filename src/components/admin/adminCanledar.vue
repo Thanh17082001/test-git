@@ -1,630 +1,1261 @@
 <template>
-  <div class="row">
-    <div class="col-lg-2">
-      <h3 class="text-danger mt-1">Danh mục</h3>
-      <div class="note-content">
-        <h5 class=" mt-2 text-info" >Màu sắc công việc</h5>
-        <div>
-          <div class="note-color">
-            <span style="--color:#7D7C7C"></span>
-            <span>: Chưa bắt đầu</span>
-          </div>
-          <div class="note-color">
-            <span style="--color:#7091F5"></span>
-            <span>: Đang thực hiện</span>
-          </div>
-          <div class="note-color">
-            <span style="--color:#A2FF86"></span>
-            <span>: Hoàn thành</span>
-          </div>
-          <div class="note-color">
-            <span style="--color:#FC4F00"></span>
-            <span>: Quá hạn</span>
-          </div>
-        </div>
-        <div class="search-task mt-2">
-          <h5 class="text-info">Tìm kiếm</h5>
-          <div class="search-content row">
-            <div class="col-lg-12 group">
-              <label for="" class="text-start mt-0">Tìm theo nhân viên</label>
-              <input type="text" placeholder="Nhập tên nhân viên">
+    <div class="row">
+        <h3>Công việc</h3>
+        <div class="d-flex justify-content-end align-items-center mb-1">
+            <div class="input-admin-filter">
+                <form class="filter-admin-date" @submit.prevent.stop="filterDate">
+                    <select name="" id="" v-model="dateFilter.day" required>
+                        <option value="0">Ngày</option>
+                        <option v-for="day in 31" :key="day" :value="day">{{ day }}</option>
+                    </select>
+                    <select name="" id="" v-model="dateFilter.month" required>
+                        <option value="0">Tháng</option>
+                        <option v-for="month in 12" :value="month" :key="month">Tháng {{ month }}</option>
+                    </select>
+                    <select name="" id="" v-model="dateFilter.year" required>
+                        <option value="0">Năm</option>
+                        <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                    </select>
+                    <select name="" id="" v-model="dateFilter.field" required>
+                        <option value="">Chọn kiểu</option>
+                        <option value="0">Tất cả</option>
+                        <option value="createdAt">Ngày tạo</option>
+                        <option value="startDate">Ngày bắt đầu</option>
+                        <option value="endDate">Ngày kết thúc</option>
+                        <option value="updatedAt">Ngày sửa</option>
+                        <option value="currentDate">Công việc trong tháng</option>
+                    </select>
+                    <button>Lọc</button>
+                </form>
+                <div class="admin-export">
+                    <div class="btn btn-success" @click="exportToExcel">
+                        <i class="fa-solid fa-file-excel"></i> Excel
+                    </div>
+                    <!-- <div class="btn btn-warning" @click="exportToPDF"><i class="fa-solid fa-file-pdf"></i> Pdf</div> -->
+                </div>
             </div>
-            <div class="col-lg-12 group">
-              <label for="" class="text-start">Tìm theo khách hàng</label>
-              <input type="text" placeholder="Nhập tên nhân viên">
-            </div>
-          </div>
         </div>
-      </div>
+       
+        <div class="col-lg-2">
+            <h3 class="text-danger mt-1">Danh mục</h3>
+            <div class="note-content">
+              <span v-if="isSort" @click="offSort" class=" fs-2 sort">Đang lọc...</span>
+                <h5 class="mt-2 text-info">Màu sắc công việc</h5>
+                <div>
+                    <div class="note-color" @click="fillter('Chưa bắt đầu')">
+                        <span style="--color: #7d7c7c"></span>
+                        <span>: Chưa bắt đầu</span>
+                    </div>
+                    <div class="note-color" @click="fillter('Đang tiến hành')">
+                        <span style="--color: #7091f5"></span>
+                        <span>: Đang tiến hành</span>
+                    </div>
+                    <div class="note-color" @click="fillter('Hoàn thành')">
+                        <span style="--color: #a2ff86"></span>
+                        <span>: Hoàn thành</span>
+                    </div>
+                    <div class="note-color" @click="fillter('Quá hạn')">
+                        <span style="--color: #fc4f00"></span>
+                        <span>: Quá hạn</span>
+                    </div>
+                </div>
+                <div class="search-task mt-2">
+                    <h5 class="text-info">Tìm kiếm</h5>
+                    <div class="search-content row">
+                        <div class="col-lg-12 group">
+                            <label for="" class="text-start mt-0">Tìm theo nhân viên</label>
+                            <input v-model="inputSearch2" @input="handleFitter('nameStaff')" type="text" placeholder="Nhập tên nhân viên" />
+                        </div>
+                        <div class="col-lg-12 group">
+                            <label for="" class="text-start">Tìm theo khách hàng</label>
+                            <input v-model="inputSearch" @input="handleFitter('nameCustomer')" type="text" placeholder="Nhập tên khách hàng" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <FullCalendar class="col-lg-10" ref="fullCalendar" :options="calendarOptions">
+            <template v-slot:eventContent="arg">
+                <b>{{ arg.timeText }}</b>
+                <i>{{ arg.event.title }}</i>
+            </template>
+        </FullCalendar>
     </div>
-    <FullCalendar class="col-lg-10" ref="fullCalendar" :options="calendarOptions">
-        <template v-slot:eventContent='arg'>
-            <b>{{ arg.timeText }}</b>
-            <i>{{ arg.event.title }}</i>
-          </template>
-    </FullCalendar>
-
-  </div>
 
     <!-- tạo mới việc -->
     <div class="overlay" v-if="activeCreate">
-      <form action="" @submit.prevent.stop="submitCreate">
-          <div class="d-flex justify-content-end">
-              <i @click="closeCreate" class="fa-solid fa-xmark fs-1 text-danger me-2"></i>
-          </div>
-          <h3>Tạo công việc</h3>
-          <div class="row">
-              <span class="fs-4" :class="{'text-danger':!!mesFail, 'text-success':!!messSuc}">{{!!mesFail ?mesFail:messSuc}}</span>
-              <div class="spe-group col-lg-4">
-                  <label for="">Tên khách hàng<span class="text-danger ms-2">*</span></label>
-                  <input v-model="infoTask.nameCustomer" type="text" placeholder="Tên khách hàng..." required>
-              </div>
-              <div class="spe-group col-lg-4">
-                  <label for="">Địa chỉ<span class="text-danger ms-2">*</span></label>
-                  <input v-model="infoTask.address" type="text" placeholder="Địa chỉ..." required>
-              </div>
-              <div class="spe-group col-lg-4">
-                  <label for="">Số điện thoại<span class="text-danger ms-2">*</span></label>
-                  <input v-model="infoTask.phone" type="text" placeholder="Số điện thoại..." required>
-              </div>
-              <div class="group col-lg-6">
-                  <div class="d-flex mb-1">
-                      <label for="" class="mt-0">Chọn nhân viên <span class="required">*</span></label>
+        <form class="form-task" action="" @submit.prevent.stop="submitCreate">
+            <div class="d-flex justify-content-end">
+                <i @click="closeCreate" class="fa-solid fa-xmark fs-1 text-danger me-2"></i>
+            </div>
+            <h3>Tạo công việc</h3>
+            <div class="row">
+                <span class="fs-4" :class="{ 'text-danger': !!mesFail, 'text-success': !!messSuc }">{{
+                    !!mesFail ? mesFail : messSuc
+                }}</span>
+                <div class="group col-lg-6">
+                    <div class="d-flex mb-1">
+                        <label for="" class="mt-0">Tên Khách hàng <span class="required">*</span></label>
+                        <span class="btn btn-info btn-brand mt-0" @click="activeCustomer = true">Mới</span>
+                    </div>
+                    <!-- Them khách hàng mơi -->
+                    <div class="overlay" v-if="activeCustomer">
+                        <form action="" class="customer-form" @submit.prevent.stop="addCustomer">
+                            <div class="d-flex justify-content-end text-danger fs-2" @click="closeFormCustomer">
+                                <i class="fa-solid fa-xmark"></i>
+                            </div>
+                            <div class="form-head">
+                                <h2 class="title">Thêm khách hàng</h2>
+                                <span class="mes-success" v-if="!!mesSucCus">{{ mesSucCus }}</span>
+                                <span class="mes-failed" v-if="!!mesFaiCus">{{ mesFaiCus }}</span>
+                            </div>
+                            <div class="row">
+                                <div class="spe-group col-lg-6">
+                                    <label for="">Tên khách hàng <span class="required">*</span></label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="Nhập tên khách hàng"
+                                        v-model="customer.fullName"
+                                    />
+                                </div>
+                                <div class="spe-group col-lg-6">
+                                    <label for="">Số điện thoại<span class="required">*</span></label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="Nhập Số điện thoại"
+                                        v-model="customer.phone"
+                                    />
+                                    <span v-if="!!valid.phone" :class="{ 'text-danger': !!valid.phone }">{{
+                                        valid.phone
+                                    }}</span>
+                                </div>
+                                <div class="spe-group col-lg-12">
+                                    <label for="">Địa chỉ<span class="required">*</span></label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="Nhập tên đường, hẻm, số nhà"
+                                        v-model="customer.address"
+                                    />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="group col-lg-4">
+                                    <div class="d-flex mb-1">
+                                        <label for="">Tỉnh/Thành phố <span class="required">*</span></label>
+                                    </div>
+                                    <select
+                                        v-model="VmodelAddress.city"
+                                        name=""
+                                        id=""
+                                        class="form-select w-100"
+                                        @change="getDistricts(VmodelAddress.city)"
+                                        required
+                                    >
+                                        <option value="" class="form-option">--- Chọn ---</option>
+                                        <option v-for="item in city" :key="item.code" :value="item">
+                                            {{ item.name }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="group col-lg-4">
+                                    <div class="d-flex mb-1">
+                                        <label for="">Quận/huyện <span class="required">*</span></label>
+                                    </div>
+                                    <select
+                                        v-model="VmodelAddress.district"
+                                        name=""
+                                        id=""
+                                        class="form-select w-100"
+                                        @change="getWards(VmodelAddress.district)"
+                                        required
+                                    >
+                                        <option value="" class="form-option">--- Chọn ---</option>
+                                        <option v-for="item in districts" :key="item.code" :value="item">
+                                            {{ item.name }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="group col-lg-4">
+                                    <div class="d-flex mb-1">
+                                        <label for="">Phường/Xã <span class="required">*</span></label>
+                                    </div>
+                                    <select
+                                        v-model="VmodelAddress.ward"
+                                        name=""
+                                        id=""
+                                        class="form-select w-100"
+                                        @change="saveAddress(VmodelAddress.ward)"
+                                        required
+                                    >
+                                        <option value="" class="form-option">--- Chọn ---</option>
+                                        <option v-for="item in wards" :key="item.code" :value="item">
+                                            {{ item.name }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="btn btn-brand-submit mt-5">Thêm</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- chọn khách hàng -->
+                    <select v-model="customerId" class="form-select" required @change="getCustomerById(customerId)">
+                        <option value="" class="form-option">--- Chọn khách hàng ---</option>
+                        <option
+                            v-for="(customer, index) in customers"
+                            :key="index"
+                            class="form-option"
+                            :value="customer._id"
+                        >
+                            {{ customer.fullName }} <i class="fa-solid fa-pen"></i>
+                        </option>
+                    </select>
+                    <!-- edit khách hàng -->
+                    <div class="overlay" v-if="activeEditCustomer">
+                        <form action="" class="customer-form" @submit.prevent.stop="editCustomer">
+                            <div class="d-flex justify-content-end fs-2 text-danger" @click="closeFormCustomerEdit">
+                                <i class="fa-solid fa-xmark"></i>
+                            </div>
+                            <div class="form-head">
+                                <h2 class="title">Xem và thay đổi thông tin</h2>
+                                <span class="mes-success" v-if="!!mesSucCus">{{ mesSucCus }}</span>
+                                <span class="mes-failed" v-if="!!mesFaiCus">{{ mesFaiCus }}</span>
+                            </div>
+                            <div class="row">
+                                <div class="spe-group col-lg-6">
+                                    <label for="">Tên khách hàng <span class="required">*</span></label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="Nhập tên khách hàng"
+                                        v-model="customerInfo.fullName"
+                                    />
+                                </div>
+                                <div class="spe-group col-lg-6">
+                                    <label for="">Số điện thoại<span class="required">*</span></label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="Nhập Số điện thoại"
+                                        v-model="customerInfo.phone"
+                                    />
+                                    <span v-if="!!valid.phone" :class="{ 'text-danger': !!valid.phone }">{{
+                                        valid.phone
+                                    }}</span>
+                                </div>
+                                <div class="spe-group col-lg-12" v-if="!activeEditAddress">
+                                    <label for="">Địa chỉ<span class="required">*</span> </label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="Nhập tên đường, hẻm, số nhà"
+                                        v-model="customerInfo.address"
+                                        disabled
+                                    />
+                                </div>
+                                <span
+                                    class="col-lg-3 ms-2 btn btn-warning"
+                                    @click="activeEditAddress = !activeEditAddress"
+                                    >{{ activeEditAddress ? 'Giữ địa chỉ cũ' : 'Tạo địa chỉ mới' }}</span
+                                >
+                                <div class="spe-group col-lg-12" v-if="activeEditAddress">
+                                    <label for="">Địa chỉ<span class="required">*</span></label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="Nhập tên đường, hẻm, số nhà"
+                                        v-model="customerInfo.address2"
+                                    />
+                                </div>
+                            </div>
+                            <div class="row" v-if="activeEditAddress">
+                                <div class="group col-lg-4">
+                                    <div class="d-flex mb-1">
+                                        <label for="">Tỉnh/Thành phố <span class="required">*</span></label>
+                                    </div>
+                                    <select
+                                        v-model="VmodelAddress.city"
+                                        name=""
+                                        id=""
+                                        class="form-select w-100"
+                                        @change="getDistricts(VmodelAddress.city)"
+                                        required
+                                    >
+                                        <option value="" class="form-option">--- Chọn ---</option>
+                                        <option v-for="item in city" :key="item.code" :value="item">
+                                            {{ item.name }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="group col-lg-4">
+                                    <div class="d-flex mb-1">
+                                        <label for="">Quận/huyện <span class="required">*</span></label>
+                                    </div>
+                                    <select
+                                        v-model="VmodelAddress.district"
+                                        name=""
+                                        id=""
+                                        class="form-select w-100"
+                                        @change="getWards(VmodelAddress.district)"
+                                        required
+                                    >
+                                        <option value="" class="form-option">--- Chọn ---</option>
+                                        <option v-for="item in districts" :key="item.code" :value="item">
+                                            {{ item.name }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="group col-lg-4">
+                                    <div class="d-flex mb-1">
+                                        <label for="">Phường/Xã <span class="required">*</span></label>
+                                    </div>
+                                    <select
+                                        v-model="VmodelAddress.ward"
+                                        name=""
+                                        id=""
+                                        class="form-select w-100"
+                                        @change="saveAddress(VmodelAddress.ward)"
+                                        required
+                                    >
+                                        <option value="" class="form-option">--- Chọn ---</option>
+                                        <option v-for="item in wards" :key="item.code" :value="item">
+                                            {{ item.name }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="btn btn-brand-submit mt-5">Sửa</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="group col-lg-6">
+                    <div class="d-flex mb-1">
+                        <label for="" class="mt-0">Chọn nhân viên <span class="required">*</span></label>
+                    </div>
+                    <select v-model="infoTask.staffId" class="form-select mt-2" required>
+                        <option value="" class="form-option">--- Chọn ---</option>
+                        <option v-for="staff in staffs" :value="staff._id" :key="staff._id">
+                            {{ staff.fullName }}
+                        </option>
+                    </select>
+                </div>
+                <div class="group col-lg-6">
+                    <div class="d-flex mb-1">
+                        <label for="" class="mt-0">Chọn dịch vụ<span class="required">*</span></label>
+                    </div>
+                    <select v-model="infoTask.serviceId" class="form-select" required @change="getServiceById(infoTask.serviceId)">
+                        <option value="" class="form-option">--- Chọn ---</option>
+                        <option v-for="service in services" :value="service._id" :key="service._id">
+                            {{ service.name }}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-lg-6">
+                  <div class="group">
+                    <label for="" class="mt-0">Giá của dịch vụ</label>
+                    <input type="number" v-model="serviceInfo.price" class="input-price" v-if="!!serviceInfo?.price" required disabled>
                   </div>
-                  <select v-model="infoTask.staffId"  class="form-select" required>
-                      <option value="" class="form-option">--- Chọn ---</option>
-                      <option  v-for="staff in staffs" :value="staff._id" :key="staff._id">{{ staff.fullName }}</option>
-                  </select>
-              </div>
-              <div class="group col-lg-6">
-                  <div class="d-flex mb-1">
-                      <label for="" class="mt-0">Chọn dịch vụ<span class="required">*</span></label>
-                  </div>
-                  <select v-model="infoTask.serviceId"  class="form-select" required>
-                      <option value="" class="form-option">--- Chọn ---</option>
-                      <option  v-for="service in services" :value="service._id" :key="service._id">{{ service.name }}</option>
-                  </select>
-              </div>
-          </div>
-          <button class="btn btn-success mt-3">Tạo</button>
-      </form>
+                </div>
+            </div>
+            <button class="btn btn-success mt-3">Tạo</button>
+        </form>
     </div>
 
     <!-- edit cong việc -->
     <div class="overlay" v-if="activeEdit">
-      <form action="" @submit.prevent.stop>
-          <div class="d-flex justify-content-end">
-              <i @click="activeEdit=false" class="fa-solid fa-xmark fs-1 text-danger me-2"></i>
-          </div>
-          <h3>Sửa công việc</h3>
-          <div class="row">
-              <span class="fs-4" :class="{'text-danger':!!mesFail, 'text-success':!!messSuc}">{{!!mesFail ?mesFail:messSuc}}</span>
-              <div class="spe-group col-lg-4 mb-4">
-                  <label for="">Tên khách hàng<span class="text-danger ms-2">*</span></label>
-                  <input v-model="infoTaskEdit.nameCustomer" type="text" placeholder="Tên khách hàng..." required>
-              </div>
-              <div class="spe-group col-lg-4 mb-4">
-                  <label for="">Địa chỉ<span class="text-danger ms-2">*</span></label>
-                  <input v-model="infoTaskEdit.address" type="text" placeholder="Địa chỉ..." required>
-              </div>
-              <div class="spe-group col-lg-4 mb-4">
-                  <label for="">Số điện thoại<span class="text-danger ms-2">*</span></label>
-                  <input v-model="infoTaskEdit.phone" type="text" placeholder="Số điện thoại..." required>
-              </div>
-              <div class="col-lg-12 mb-5">
-                <div class="status" v-if="infoTaskEdit.status=='Quá hạn'">
-                  <div class="status-progress-color" style="--left:0% ; --colorB:#FC4F00"></div>
-                  <div class="status-item" style="--left:2%">
-                    <span style="--border-color:#FC4F00">1</span>
-                    <span>Chưa bắt đầu</span>
-                  </div>
-                  <div class="status-item" style="--left:35%">
-                    <span style="--border-color:#FC4F00">2</span>
-                    <span>Đang tiến hành</span>
-                  </div>
-                  <div class="status-item" style="--left:70%">
-                    <span style="--border-color:#FC4F00">3</span>
-                    <span>Hoàn thành</span>
-                  </div>
-                  <span class="btn btn-info my-5" v-if="infoTaskEdit.status=='Chưa bắt đầu'" @click="editStatus(infoTaskEdit._id, 'Đang tiến hành')">Cập nhật thành đang tiến hành</span>
-                  <span class="btn btn-info my-5" v-if="infoTaskEdit.status=='Đang tiến hành'" @click="editStatus(infoTaskEdit._id, 'Hoàn thành')">Cập nhật thành hoàn thành</span>
-                  <button class="btn btn-danger my-5" v-if="infoTaskEdit.status=='Quá hạn'" disabled>Quá hạn</button>
-                  <span class="btn btn-info my-5" v-if="infoTaskEdit.status=='Hoàn thành'" >Đã hoàn thành</span>
+        <form class="form-task" action="" @submit.prevent.stop>
+            <div class="d-flex justify-content-end">
+                <i @click="activeEdit = false" class="fa-solid fa-xmark fs-1 text-danger me-2"></i>
+            </div>
+            <h3>Sửa công việc</h3>
+            <div class="row">
+                <span class="fs-4" :class="{ 'text-danger': !!mesFail, 'text-success': !!messSuc }">{{
+                    !!mesFail ? mesFail : messSuc
+                }}</span>
+                <div class="spe-group col-lg-4 mb-4">
+                    <label for="">Tên khách hàng<span class="text-danger ms-2">*</span></label>
+                    <input v-model="infoTaskEdit.nameCustomer" type="text" placeholder="Tên khách hàng..." required />
                 </div>
-                <div class="status" v-if="infoTaskEdit.status=='Chưa bắt đầu'">
-                  <div class="status-progress-color" style="--left:80% ; --colorB:#11e911"></div>
-                  <div class="status-item" style="--left:2%">
-                    <span style="--border-color:#11e911">1</span>
-                    <span>Chưa bắt đầu</span>
-                  </div>
-                  <div class="status-item" style="--left:35%">
-                    <span style="--border-color:blue">2</span>
-                    <span>Đang tiến hành</span>
-                  </div>
-                  <div class="status-item" style="--left:70%">
-                    <span style="--border-color:blue">3</span>
-                    <span>Hoàn thành</span>
-                  </div>
-                  <span class="btn btn-info my-5" v-if="infoTaskEdit.status=='Chưa bắt đầu'" @click="editStatus(infoTaskEdit._id, 'Đang tiến hành')">Cập nhật thành đang tiến hành</span>
-                  <span class="btn btn-info my-5" v-if="infoTaskEdit.status=='Đang tiến hành'" @click="editStatus(infoTaskEdit._id, 'Hoàn thành')">Cập nhật thành hoàn thành</span>
-                  <span class="btn btn-info my-5" v-if="infoTaskEdit.status=='Hoàn thành'" >Đã hoàn thành</span>
+                <div class="spe-group col-lg-4 mb-4">
+                    <label for="">Địa chỉ<span class="text-danger ms-2">*</span></label>
+                    <input v-model="infoTaskEdit.address" type="text" placeholder="Địa chỉ..." required />
                 </div>
+                <div class="spe-group col-lg-4 mb-4">
+                    <label for="">Số điện thoại<span class="text-danger ms-2">*</span></label>
+                    <input v-model="infoTaskEdit.phone" type="text" placeholder="Số điện thoại..." required />
+                </div>
+                <div class="col-lg-12 mb-5">
+                    <div class="status" v-if="infoTaskEdit.status == 'Quá hạn'">
+                        <div class="status-progress-color" style="--left: 0%; --colorB: #fc4f00"></div>
+                        <div class="status-item" style="--left: 2%">
+                            <span style="--border-color: #fc4f00">1</span>
+                            <span>Chưa bắt đầu</span>
+                        </div>
+                        <div class="status-item" style="--left: 35%">
+                            <span style="--border-color: #fc4f00">2</span>
+                            <span>Đang tiến hành</span>
+                        </div>
+                        <div class="status-item" style="--left: 70%">
+                            <span style="--border-color: #fc4f00">3</span>
+                            <span>Hoàn thành</span>
+                        </div>
+                        <span
+                            class="btn btn-info my-5"
+                            v-if="infoTaskEdit.status == 'Chưa bắt đầu'"
+                            @click="editStatus(infoTaskEdit._id, 'Đang tiến hành')"
+                            >Cập nhật thành đang tiến hành</span
+                        >
+                        <span
+                            class="btn btn-info my-5"
+                            v-if="infoTaskEdit.status == 'Đang tiến hành'"
+                            @click="editStatus(infoTaskEdit._id, 'Hoàn thành')"
+                            >Cập nhật thành hoàn thành</span
+                        >
+                        <button class="btn btn-danger my-5" v-if="infoTaskEdit.status == 'Quá hạn'" disabled>
+                            Quá hạn
+                        </button>
+                        <span class="btn btn-info my-5" v-if="infoTaskEdit.status == 'Hoàn thành'">Đã hoàn thành</span>
+                    </div>
+                    <div class="status" v-if="infoTaskEdit.status == 'Chưa bắt đầu'">
+                        <div class="status-progress-color" style="--left: 80%; --colorB: #11e911"></div>
+                        <div class="status-item" style="--left: 2%">
+                            <span style="--border-color: #11e911">1</span>
+                            <span>Chưa bắt đầu</span>
+                        </div>
+                        <div class="status-item" style="--left: 35%">
+                            <span style="--border-color: blue">2</span>
+                            <span>Đang tiến hành</span>
+                        </div>
+                        <div class="status-item" style="--left: 70%">
+                            <span style="--border-color: blue">3</span>
+                            <span>Hoàn thành</span>
+                        </div>
+                        <span
+                            class="btn btn-info my-5"
+                            v-if="infoTaskEdit.status == 'Chưa bắt đầu'"
+                            @click="editStatus(infoTaskEdit._id, 'Đang tiến hành')"
+                            >Cập nhật thành đang tiến hành</span
+                        >
+                        <span
+                            class="btn btn-info my-5"
+                            v-if="infoTaskEdit.status == 'Đang tiến hành'"
+                            @click="editStatus(infoTaskEdit._id, 'Hoàn thành')"
+                            >Cập nhật thành hoàn thành</span
+                        >
+                        <span class="btn btn-info my-5" v-if="infoTaskEdit.status == 'Hoàn thành'">Đã hoàn thành</span>
+                    </div>
 
-                <div class="status" v-if="infoTaskEdit.status=='Đang tiến hành'">
-                  <div class="status-progress-color" style="--left:45% ; --colorB:#11e911"></div>
-                  <div class="status-item" style="--left:2%">
-                    <span style="--border-color:#11e911">1</span>
-                    <span>Chưa bắt đầu</span>
-                  </div>
-                  <div class="status-item" style="--left:35%">
-                    <span style="--border-color:#11e911">2</span>
-                    <span>Đang tiến hành</span>
-                  </div>
-                  <div class="status-item" style="--left:70%">
-                    <span style="--border-color:blue">3</span>
-                    <span>Hoàn thành</span>
-                  </div>
-                  <span class="btn btn-info my-5" v-if="infoTaskEdit.status=='Chưa bắt đầu'" @click="editStatus(infoTaskEdit._id, 'Đang tiến hành')">Cập nhật thành đang tiến hành</span>
-                  <span class="btn btn-info my-5" v-if="infoTaskEdit.status=='Đang tiến hành'" @click="editStatus(infoTaskEdit._id, 'Hoàn thành')">Cập nhật thành hoàn thành</span>
-                  <span class="btn btn-info my-5" v-if="infoTaskEdit.status=='Hoàn thành'" >Đã hoàn thành</span>
-                </div>
+                    <div class="status" v-if="infoTaskEdit.status == 'Đang tiến hành'">
+                        <div class="status-progress-color" style="--left: 45%; --colorB: #11e911"></div>
+                        <div class="status-item" style="--left: 2%">
+                            <span style="--border-color: #11e911">1</span>
+                            <span>Chưa bắt đầu</span>
+                        </div>
+                        <div class="status-item" style="--left: 35%">
+                            <span style="--border-color: #11e911">2</span>
+                            <span>Đang tiến hành</span>
+                        </div>
+                        <div class="status-item" style="--left: 70%">
+                            <span style="--border-color: blue">3</span>
+                            <span>Hoàn thành</span>
+                        </div>
+                        <span
+                            class="btn btn-info my-5"
+                            v-if="infoTaskEdit.status == 'Chưa bắt đầu'"
+                            @click="editStatus(infoTaskEdit._id, 'Đang tiến hành')"
+                            >Cập nhật thành đang tiến hành</span
+                        >
+                        <span
+                            class="btn btn-info my-5"
+                            v-if="infoTaskEdit.status == 'Đang tiến hành'"
+                            @click="editStatus(infoTaskEdit._id, 'Hoàn thành')"
+                            >Cập nhật thành hoàn thành</span
+                        >
+                        <span class="btn btn-info my-5" v-if="infoTaskEdit.status == 'Hoàn thành'">Đã hoàn thành</span>
+                    </div>
 
-                <div class="status" v-if="infoTaskEdit.status=='Hoàn thành'">
-                  <div class="status-progress-color" style="--left:0% ; --colorB:#11e911"></div>
-                  <div class="status-item" style="--left:2%">
-                    <span style="--border-color:#11e911">1</span>
-                    <span>Chưa bắt đầu</span>
-                  </div>
-                  <div class="status-item" style="--left:35%">
-                    <span style="--border-color:#11e911">2</span>
-                    <span>Đang tiến hành</span>
-                  </div>
-                  <div class="status-item" style="--left:70%">
-                    <span style="--border-color:#11e911">3</span>
-                    <span>Hoàn thành</span>
-                  </div>
-                  <span class="btn btn-info my-5" v-if="infoTaskEdit.status=='Chưa bắt đầu'" @click="editStatus(infoTaskEdit._id, 'Đang tiến hành')">Cập nhật thành đang tiến hành</span>
-                  <span class="btn btn-info my-5" v-if="infoTaskEdit.status=='Đang tiến hành'" @click="editStatus(infoTaskEdit._id, 'Hoàn thành')">Cập nhật thành hoàn thành</span>
-                  <button class="btn btn-info my-5" v-if="infoTaskEdit.status=='Hoàn thành'" disabled>Đã hoàn thành</button>
+                    <div class="status" v-if="infoTaskEdit.status == 'Hoàn thành'">
+                        <div class="status-progress-color" style="--left: 0%; --colorB: #11e911"></div>
+                        <div class="status-item" style="--left: 2%">
+                            <span style="--border-color: #11e911">1</span>
+                            <span>Chưa bắt đầu</span>
+                        </div>
+                        <div class="status-item" style="--left: 35%">
+                            <span style="--border-color: #11e911">2</span>
+                            <span>Đang tiến hành</span>
+                        </div>
+                        <div class="status-item" style="--left: 70%">
+                            <span style="--border-color: #11e911">3</span>
+                            <span>Hoàn thành</span>
+                        </div>
+                        <span
+                            class="btn btn-info my-5"
+                            v-if="infoTaskEdit.status == 'Chưa bắt đầu'"
+                            @click="editStatus(infoTaskEdit._id, 'Đang tiến hành')"
+                            >Cập nhật thành đang tiến hành</span
+                        >
+                        <span
+                            class="btn btn-info my-5"
+                            v-if="infoTaskEdit.status == 'Đang tiến hành'"
+                            @click="editStatus(infoTaskEdit._id, 'Hoàn thành')"
+                            >Cập nhật thành hoàn thành</span
+                        >
+                        <button class="btn btn-info my-5" v-if="infoTaskEdit.status == 'Hoàn thành'" disabled>
+                            Đã hoàn thành
+                        </button>
+                    </div>
                 </div>
-              </div>
-              <div class="group col-lg-6 mt-5">
-                  <div class="d-flex mb-1">
-                      <label for="" class="mt-0">Chọn nhân viên <span class="required">*</span></label>
+                <div class="group col-lg-4 mt-5">
+                    <div class="d-flex mb-1">
+                        <label for="" class="mt-0">Chọn nhân viên <span class="required">*</span></label>
+                    </div>
+                    <select v-model="infoTaskEdit.staffId" class="form-select" required>
+                        <option value="" class="form-option">--- Chọn ---</option>
+                        <option v-for="staff in staffs" :value="staff._id" :key="staff._id">
+                            {{ staff.fullName }}
+                        </option>
+                    </select>
+                </div>
+                <div class="group col-lg-4 mt-5">
+                    <div class="d-flex mb-1">
+                        <label for="" class="mt-0">Chọn dịch vụ<span class="required">*</span></label>
+                    </div>
+                    <select v-model="infoTaskEdit.serviceId" class="form-select" required @change="ChangePriceTaskEdit(infoTaskEdit.serviceId)">
+                        <option value="" class="form-option">--- Chọn ---</option>
+                        <option v-for="service in services" :value="service._id" :key="service._id">
+                            {{ service.name }}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-lg-4 mt-5">
+                  <div class="group">
+                    <label for="" class="mt-0">Giá của dịch vụ</label>
+                    <input type="number" v-model="infoTaskEdit.totalAmount" class="input-price" required disabled>
                   </div>
-                  <select v-model="infoTaskEdit.staffId"  class="form-select" required>
-                      <option value="" class="form-option">--- Chọn ---</option>
-                      <option  v-for="staff in staffs" :value="staff._id" :key="staff._id">{{ staff.fullName }}</option>
-                  </select>
-              </div>
-              <div class="group col-lg-6 mt-5">
-                  <div class="d-flex mb-1">
-                      <label for="" class="mt-0">Chọn dịch vụ<span class="required">*</span></label>
-                  </div>
-                  <select v-model="infoTaskEdit.serviceId"  class="form-select" required>
-                      <option value="" class="form-option">--- Chọn ---</option>
-                      <option  v-for="service in services" :value="service._id" :key="service._id">{{ service.name }}</option>
-                  </select>
-              </div>
-          </div>
-          <button class="btn btn-warning me-3 mt-3" @click="editTask(infoTaskEdit._id)">Sửa</button>
-          <button class="btn btn-danger mt-3" @click="deleteTask(infoTaskEdit._id)">Xóa</button>
-      </form>
+                </div>
+            </div>
+            <button class="btn btn-success me-3 mt-3" @click="editTask(infoTaskEdit._id)">Sửa</button>
+            <button class="btn btn-danger me-3 mt-3" @click="deleteTask(infoTaskEdit._id)">Xóa</button>
+            <button class="btn btn-warning mt-3" @click="printPDF(infoTaskEdit._id)">In phiếu</button>
+        </form>
     </div>
 </template>
 
 <script>
-import FullCalendar from '@fullcalendar/vue3'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import interactionPlugin from '@fullcalendar/interaction'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import taskService from '@/service/task.service'
-import staffService from '@/service/staff.service'
-import serviceService from '@/service/service.service'
+import FullCalendar from '@fullcalendar/vue3';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import taskService from '@/service/task.service';
+import staffService from '@/service/staff.service';
+import serviceService from '@/service/service.service';
+import customerService from '@/service/customer.service';
+import axios from 'axios';
+import print from '@/utils/print'
+import printTemlateTask from '@/utils/printTemplateTask'
+import exportToExcel from '@/utils/exportToExcel';
+import format from '@/utils/format';
 export default {
     components: {
-    FullCalendar,
-  },
-  data() {
-    return {
-      mesFail:'',
-      messSuc:'',
-      infoTask:{staffId:'',serviceId:''},
-      infoTaskEdit:{},
-      activeCreate:false,
-      activeEdit:false,
-      isCreate:false,
-      staffs:[],
-      services:[],
-      selectInfo:{},
-      currentDate:null,
-      calendarOptions: {
-        plugins: [ dayGridPlugin, timeGridPlugin, interactionPlugin ],
-        initialView: 'dayGridMonth',
-        
+        FullCalendar,
+    },
+    data() {
+        return {
+            tasks:[],
+            years:[],
+            dateFilter: {
+                day: '0',
+                month: '0',
+                year: '0',
+                field: '',
+            },
+            inputSearch:'',
+            inputSearch2:'',
+            idTimeOut:null,
+            serviceInfo:{},
+            isSort:false,
+            mesSucCus: '',
+            mesFaiCus: '',
+            districts: [],
+            wards: [],
+            valid: {},
+            customers: [],
+            customer: {},
+            customerInfo: {},
+            VmodelAddress: { city: '', district: '', ward: '' },
+            activeCustomer: false,
+            activeEditCustomer: false,
+            activeEditAddress: false,
+            customerId: '',
+            mesFail: '',
+            messSuc: '',
+            infoTask: { staffId: '', serviceId: '' },
+            infoTaskEdit: {},
+            activeCreate: false,
+            activeEdit: false,
+            isCreate: false,
+            staffs: [],
+            services: [],
+            selectInfo: {},
+            currentDate: null,
+            address:'',
+            calendarOptions: {
+                plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
+                initialView: 'dayGridMonth',
 
-        themeSystem: 'bootstrap5',
-        // headerToolbar: {
-        //   left: 'prev,next today',
-        //   center: 'title',
-        //   right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        // },
-        locale:'vi',
-        events: [
-        ],
-       
-        // alternatively, use the `events` setting to fetch from a feed
-        editable: true,
-        selectable: true,
-        selectMirror: true,
-        dayMaxEvents: true,
-        weekends:true,
-        eventsSet: this.handleEvents,
-        select: this.handleDateSelect,
-        eventClick:(arg)=>{
-            this.detatilTask(arg)
+                themeSystem: 'bootstrap5',
+                // headerToolbar: {
+                //   left: 'prev,next today',
+                //   center: 'title',
+                //   right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                // },
+                locale: 'vi',
+                events: [],
+
+                // alternatively, use the `events` setting to fetch from a feed
+                editable: true,
+                selectable: true,
+                selectMirror: true,
+                dayMaxEvents: true,
+                weekends: true,
+                eventsSet: this.handleEvents,
+                select: this.handleDateSelect,
+                eventClick: (arg) => {
+                    this.detatilTask(arg);
+                },
+                eventAdd: (arg) => {
+                    const currentDate = this.$refs.fullCalendar.getApi().currentData.currentDate;
+                    const info = {
+                        serviceId: this.infoTask.serviceId,
+                        staffId: this.infoTask.staffId,
+                        nameCustomer: this.customerInfo.fullName,
+                        phone: this.customerInfo.phone,
+                        address: this.customerInfo.address,
+                        startDate: arg.event.start,
+                        endDate: arg.event.end ? arg.event.end : arg.event.start,
+                        status: this.selectInfo.status ? this.selectInfo.status : 'Chưa bắt đầu',
+                        currentDate: currentDate,
+                        totalAmount: this.serviceInfo.price
+                    };
+                    this.addTask(info);
+                    this.getAll();
+                },
+                datesSet: () => {
+                    const currentDate2 = this.$refs.fullCalendar.getApi().currentData.currentDate;
+                    this.currentDate = currentDate2;
+                },
+            },
+        };
+    },
+    // watch:{
+    //   currentDate(){
+    //     this.getAll()
+    //   }
+    // },
+
+    methods: {
+        handleEvents(events) {
+            this.currentEvents = events;
         },
-        eventAdd:(arg) =>{
-            const currentDate= this.$refs.fullCalendar.getApi().currentData.currentDate
-            const info ={
-                serviceId:this.infoTask.serviceId,
-                staffId:this.infoTask.staffId,
-                nameCustomer:this.infoTask.nameCustomer,
-                phone:this.infoTask.phone,
-                address:this.infoTask.address,
-                startDate:arg.event.start,
-                endDate:arg.event.end ? arg.event.end : arg.event.start,
-                status: this.selectInfo.status ? this.selectInfo.status : 'Chưa bắt đầu',
-                currentDate:currentDate
+        async detatilTask(arg) {
+            try {
+                const id = arg.event._def.publicId;
+                const createDate = {
+                    startDate: arg.event.start,
+                    endDate:
+                        arg.event.end.getDate() - 1 !== arg.event.start.getDate() ? arg.event.end : arg.event.start,
+                };
+                const response = await taskService.getById(id);
+                this.getAllService();
+                await this.getAllStaff(createDate);
+                this.staffs.push({ ...response.data.staffId });
+                this.infoTaskEdit = response.data;
+                this.infoTaskEdit.staffId = response.data.staffId._id;
+                this.infoTaskEdit.serviceId = response.data.serviceId._id;
+                this.activeEdit = true;
+                this.mesFail = '';
+                this.messSuc = '';
+            } catch (error) {
+                console.log(error);
             }
-            this.addTask(info)
-            this.getAll()
-          
         },
-        datesSet:()=>{
-          const currentDate2 = this.$refs.fullCalendar.getApi().currentData.currentDate
-          this.currentDate=currentDate2
-        }
-      },
-    }
-  },
-  // watch:{
-  //   currentDate(){
-  //     this.getAll()
-  //   }
-  // },
-  
-  methods: {
-    next() {
-      this.$refs.calendar.fireMethod('next')
-      console.log('a');
-    },
-    
-    handleEvents(events) {
-      this.currentEvents = events
-    },
-    async detatilTask(arg){
-     try {
-        const id=arg.event._def.publicId
-        const createDate= {
-          startDate:arg.event.start, 
-          endDate:arg.event.end.getDate()-1 !==arg.event.start.getDate() ?arg.event.end : arg.event.start
-        }
-        const response = await taskService.getById(id)
-        this.getAllService()
-        await this.getAllStaff(createDate)
-        this.staffs.push({...response.data.staffId})
-        this.infoTaskEdit=response.data
-        this.infoTaskEdit.staffId=response.data.staffId._id
-        this.activeEdit=true
-        this.mesFail=''
-        this.messSuc=''
-     } catch (error) {
-      console.log(error);
-     }
-    },
 
-    async getStaffs(){
-      try {
-        const response = await staffService.getAll()
-        this.staffs = response.data
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async submitCreate(){
-      let calendarApi = this.selectInfo.view.calendar
-      calendarApi.unselect() // clear date selection
-      // this.selectInfo.end.setDate(this.selectInfo.end.getDate()-1)
-      if (this.activeCreate) {
-        calendarApi.addEvent({
-          id: 3,
-          title:`${this.infoTask.serviceId}`,
-          start: new Date (this.selectInfo.startStr),
-          end: new Date(this.selectInfo.endStr),
-          allDay: this.selectInfo.allDay,
-          
-        })
+        async getStaffs() {
+            try {
+                const response = await staffService.getAll();
+                this.staffs = response.data;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async submitCreate() {
+            let calendarApi = this.selectInfo.view.calendar;
+            calendarApi.unselect(); // clear date selection
+            // this.selectInfo.end.setDate(this.selectInfo.end.getDate()-1)
+            if (this.activeCreate) {
+                calendarApi.addEvent({
+                    id: 3,
+                    title: `${this.infoTask.serviceId}`,
+                    start: new Date(this.selectInfo.startStr),
+                    end: new Date(this.selectInfo.endStr),
+                    allDay: this.selectInfo.allDay,
+                });
+            }
+        },
+        async handleDateSelect(selectInfo) {
+            const date = new Date();
+            const selecEnd = new Date(selectInfo.endStr);
+            if (selecEnd < date) {
+                if (confirm('Bạn muốn tạo công việc bé hơn ngày hôm nay')) {
+                    this.selectInfo = selectInfo;
+                    this.selectInfo.status = 'Quá hạn';
+                    this.activeCreate = true;
+                    this.mesFail = '';
+                    this.messSuc = '';
+                    await this.getAllStaff({
+                        startDate: selectInfo.start,
+                        endDate:
+                            selectInfo.end.getDate() - 1 !== selectInfo.start.getDate()
+                                ? selectInfo.end
+                                : selectInfo.start,
+                    });
+                    await this.getAllService();
+                }
+            } else {
+                this.selectInfo = selectInfo;
+                this.activeCreate = true;
+                this.mesFail = '';
+                this.messSuc = '';
+                await this.getAllStaff({
+                    startDate: selectInfo.start,
+                    endDate:
+                        selectInfo.end.getDate() - 1 !== selectInfo.start.getDate() ? selectInfo.end : selectInfo.start,
+                });
+                await this.getAllService();
+            }
+        },
+
+        async addTask(info) {
+            try {
+                const response = await taskService.create(info);
+                if (response.data.status) {
+                    this.getAll();
+                    this.infoTask = { staffId: '', serviceId: '' };
+                    this.mesFail = '';
+                    this.messSuc = 'Thêm công viêc thành công';
+                    this.customerId=''
+                    this.serviceInfo={}
+                } else {
+                    this.mesFail = 'Thêm thất bại';
+                    this.messSuc = '';
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        async getAllStaff(dateCreate) {
+            try {
+                const fomatDateCreate = {
+                    start: dateCreate.startDate.toLocaleDateString('en-US'),
+                    end: dateCreate.endDate.toLocaleDateString('en-US'),
+                };
+                dateCreate.endDate.setDate(dateCreate.endDate.getDate() - 1);
+                this.staffs = [];
+                const response = await staffService.getAll();
+                const a = this.calendarOptions.events.filter((task) => {
+                    task.start = new Date(task.start);
+                    task.end = new Date(task.end);
+
+                    const fomatTaskDate = {
+                        start: task.start.toLocaleDateString('en-US'),
+                        end: task.end.toLocaleDateString('en-US'),
+                    };
+                    fomatTaskDate.end = new Date(fomatTaskDate.end);
+                    fomatTaskDate.end.setDate(fomatTaskDate.end.getDate() - 1);
+                    fomatTaskDate.end = fomatTaskDate.end.toLocaleDateString('en-US');
+                    if (fomatDateCreate.start <= fomatTaskDate.start && fomatDateCreate.end >= fomatTaskDate.end) {
+                        return true;
+                    } else if (fomatDateCreate.start == fomatTaskDate.end) {
+                        return true;
+                    } else if (fomatDateCreate.start == fomatDateCreate.end) {
+                        if (
+                            fomatDateCreate.start == fomatTaskDate.end ||
+                            fomatDateCreate.start == fomatTaskDate.start
+                        ) {
+                            return true;
+                        }
+                    } else {
+                        return false;
+                    }
+                });
+                const c = response.data.filter((staff) => {
+                    return !a.some((item2) => item2.staffId._id === staff._id);
+                });
+                this.staffs = c.length > 0 ? c : response.data;
+            } catch (error) {
+                console.log(error);
+            }
+        },
         
-      }
-    },
-    async handleDateSelect(selectInfo) {
-      const date = new Date()
-      const selecEnd = new Date(selectInfo.endStr)
-      if(selecEnd<date){
-        if(confirm('Bạn muốn tạo công việc bé hơn ngày hôm nay')){
-          this.selectInfo = selectInfo
-          this.selectInfo.status = 'Quá hạn'
-          this.activeCreate=true
-          this.mesFail=''
-          this.messSuc=''
-          await this.getAllStaff({
-              startDate:selectInfo.start, 
-              endDate:selectInfo.end.getDate()-1 !==selectInfo.start.getDate() ?selectInfo.end : selectInfo.start  
-          })
-          await this.getAllService()
-        }
-      }
-      else{
-        this.selectInfo = selectInfo
-        this.activeCreate=true
-        this.mesFail=''
-        this.messSuc=''
-        await this.getAllStaff({
-            startDate:selectInfo.start, 
-            endDate:selectInfo.end.getDate()-1 !==selectInfo.start.getDate() ?selectInfo.end : selectInfo.start  
-        })
-        await this.getAllService()
-      }
-      
-    },
+        async getAll() {
+            try {
+                // const month = this.currentDate.getMonth()+1
+                // const year = this.currentDate.getFullYear()
+                const response = await taskService.getAll();
+                this.tasks=response.data
+                let data = [];
+                const status = ['Hoàn thành', 'Đang tiến hành', 'Chưa bắt đầu', 'Quá hạn'];
+                const color = ['#A2FF86', '#7091f5', '#7D7C7C', '#FC4F00'];
+                this.tasks.forEach((item) => {
+                    const index = status.indexOf(item.status);
+                    data.push({
+                        id: item._id,
+                        serviceId: item.serviceId,
+                        staffId: item.staffId,
+                        title: `${item.serviceId.name} cho khách: ${item.nameCustomer}`, // a property!
+                        start: item.startDate, // a property!
+                        end: item.endDate,
+                        status: item.status,
+                        allDay: true,
+                        backgroundColor: color[index],
+                        borderColor: 'transparent',
+                        nameCustomer:item.nameCustomer,
+                        nameStaff:item.staffId.fullName,
+                        totalAmount:item.totalAmount
 
-    async addTask(info){
-        try {
-          const response = await taskService.create(info)
-          if(response.data.status){
-            this.getAll()
-            this.infoTask={staffId:'',serviceId:''}
-            this.mesFail=''
-            this.messSuc="Thêm công viêc thành công"
-          }
-          else{
-            this.mesFail='Thêm thất bại'
-            this.messSuc=""
-          }
-        } catch (error) {
-            console.log(error);
-        }
-    },
-    
-    async getAllStaff(dateCreate){
-      try {
-        const fomatDateCreate = {
-          start: dateCreate.startDate.toLocaleDateString('en-US'),
-          end: dateCreate.endDate.toLocaleDateString('en-US')
-        }
-        dateCreate.endDate.setDate(dateCreate.endDate.getDate()-1) 
-        this.staffs=[]
-          const response = await staffService.getAll()
-          const a = this.calendarOptions.events.filter(task =>{
-            task.start = new Date(task.start)
-            task.end = new Date(task.end)
+                    });
+                });
+                this.calendarOptions.events = data;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async filterDate() {
+            this.isSort = true;
+            let { day, month, year, field } = this.dateFilter;
+            const typeDate = ['startDate','endDate','currentDate']
+            const check = typeDate.includes(field)
+            if(check){
+                day-=1
+            }
+            const response = await taskService.filterByDate(day, month, year, field, this.pageNumber, this.pageSize);
+            this.tasks=response.data
+            let data = [];
+            const status = ['Hoàn thành', 'Đang tiến hành', 'Chưa bắt đầu', 'Quá hạn'];
+            const color = ['#A2FF86', '#7091f5', '#7D7C7C', '#FC4F00'];
+            this.tasks.forEach((item) => {
+                    const index = status.indexOf(item.status);
+                    data.push({
+                        id: item._id,
+                        serviceId: item.serviceId,
+                        staffId: item.staffId,
+                        title: `${item.serviceId.name} cho khách: ${item.nameCustomer}`, // a property!
+                        start: item.startDate, // a property!
+                        end: item.endDate,
+                        status: item.status,
+                        allDay: true,
+                        backgroundColor: color[index],
+                        borderColor: 'transparent',
+                        nameCustomer:item.nameCustomer,
+                        nameStaff:item.staffId.fullName,
+                        totalAmount:item.totalAmount
+                    });
+                });
+                this.calendarOptions.events = data;
+        },
+        fillter(name){
+          let status = []
+          const events = this.calendarOptions.events
+          status = events.filter(event => event.status === name)
+          this.calendarOptions.events=status
+          this.isSort=true
+        },
+        offSort(){
+          this.isSort=false
+          this.inputSearch=''
+          this.inputSearch2=''
+          this.dateFilter={
+                day: '0',
+                month: '0',
+                year: '0',
+                field: '',
+            }
+          this.getAll()
+        },
+        closeCreate() {
+            this.activeCreate = false;
+        },
+        async getAllService() {
+            try {
+                const response = await serviceService.getAll();
+                this.services = response.data;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async editStatus(id, status) {
+            try {
+                const response = await taskService.updateStatus(id, { status });
+                this.infoTaskEdit = response.data.data;
+                console.log(response);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async editTask(id) {
+            try {
+                const response = await taskService.update(id, this.infoTaskEdit);
+                if (response.data.status) {
+                    this.getAll();
+                    this.infoTaskEdit = response.data.data;
+                    this.mesFail = '';
+                    this.messSuc = 'sửa công viêc thành công';
+                } else {
+                    this.mesFail = response.data.mes;
+                    this.messSuc = '';
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async deleteTask(id) {
+            try {
+                if (confirm('Xóa công việc này')) {
+                    const response = await taskService.delete(id);
+                    if (response.data.status) {
+                        this.getAll();
+                        this.activeEdit = false;
+                        alert('Xóa tành công');
+                    } else {
+                        this.mesFail = 'Thêm thất bại';
+                        this.messSuc = '';
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getCustomerById(id) {
+            try {
+                const response = await customerService.getById(id);
+                this.customerInfo = response.data;
+                this.activeEditCustomer = true;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getServiceById(id) {
+            try {
+                const response = await serviceService.getById(id);
+                this.serviceInfo = response.data;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async ChangePriceTaskEdit(id){
+          try {
+                const response = await serviceService.getById(id);
+                this.infoTaskEdit.totalAmount = response.data.price;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async editCustomer() {
+            try {
+                const isValid = this.validateForm(this.customerInfo);
+                const data = {
+                    ...this.customerInfo,
+                };
+                data.address = this.activeEditAddress
+                    ? this.customerInfo.address2 +
+                      ', ' +
+                      this.address.ward +
+                      ', ' +
+                      this.address.district +
+                      ', ' +
+                      this.address.city
+                    : this.customerInfo.address;
+                if (isValid) {
+                    const response = await customerService.update(this.customerInfo._id, data);
+                    if (response.data.status) {
+                        this.mesSucCus = response.data.mes;
+                        this.mesFaiCus = '';
+                        this.VmodelAddress = { city: '', district: '', ward: '' };
+                        this.getCustomerById(this.customerInfo._id);
+                        this.activeEditAddress = false;
+                        this.getAllCustomers();
+                    } else {
+                        this.mesFaiCus = response.data.mes;
+                        this.mesSucCus = '';
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        validateForm(infoCustomer) {
+            const phoneRegex = /^[0-9]+$/;
+            if (!phoneRegex.test(infoCustomer.phone) || infoCustomer.phone.length < 10) {
+                this.valid.phone = 'Số điện thoại không hợp lệ';
+            } else {
+                this.valid.phone = undefined;
+            }
 
-            const fomatTaskDate={
-              start:  task.start.toLocaleDateString('en-US'),
-              end: task.end.toLocaleDateString('en-US')
+            let isValid = false;
+            const arrayValid = Object.values(this.valid);
+            for (let i = 0; i < arrayValid.length; i++) {
+                if (arrayValid[i] === undefined) {
+                    isValid = true;
+                } else {
+                    isValid = false;
+                    break;
+                }
             }
-            fomatTaskDate.end = new Date(fomatTaskDate.end)
-            fomatTaskDate.end.setDate(fomatTaskDate.end.getDate()-1)
-            fomatTaskDate.end = fomatTaskDate.end.toLocaleDateString('en-US')
-           if(fomatDateCreate.start <= fomatTaskDate.start && fomatDateCreate.end >= fomatTaskDate.end){
-            return true
-           }
-           else if(fomatDateCreate.start == fomatTaskDate.end){
-            return true
-           }
-          else if(fomatDateCreate.start == fomatDateCreate.end){
-            if(fomatDateCreate.start == fomatTaskDate.end || fomatDateCreate.start == fomatTaskDate.start){
-              return true
+            return isValid;
+        },
+        async addCustomer() {
+            try {
+                const isValid = this.validateForm(this.customer);
+                const data = {
+                    ...this.customer,
+                };
+                data.address =
+                    this.customer.address +
+                    ', ' +
+                    this.address.ward +
+                    ', ' +
+                    this.address.district +
+                    ', ' +
+                    this.address.city;
+                this.address = data.address
+                if (isValid) {
+                    const response = await customerService.create(data);
+                    if (response.data.status) {
+                        this.mesSucCus = response.data.mes;
+                        this.mesFaiCus = '';
+                        this.VmodelAddress = { city: '', district: '', ward: '' };
+                        this.customer = {};
+                        this.getAllCustomers();
+                    } else {
+                        this.mesFaiCus = response.data.mes;
+                        this.mesSucCus = '';
+                    }
+                }
+            } catch (error) {
+                console.log(error);
             }
-          }
-          else{
-            return false
-          }
-          })
-          const c= response.data.filter( staff =>{
-            return !a.some(item2 => item2.staffId._id === staff._id);
-          })
-         this.staffs = c.length>0 ? c : response.data
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async getAll(){
-        try {
-          const month = this.currentDate.getMonth()+1
-          const year = this.currentDate.getFullYear()
-            const response = await taskService.filterByDate(0,month,year,'currentDate')
-            console.log(response);
-            let data=[]
-            const status = ['Hoàn thành', 'Đang tiến hành', 'Chưa bắt đầu', 'Quá hạn']
-            const color = ['#A2FF86', '#7091f5', '#7D7C7C', '#FC4F00']
-            response.data.forEach((item) =>{
-              const index =status.indexOf(item.status)
-                data.push({
-                id:item._id,
-                serviceId: item.serviceId,
-                staffId:item.staffId,
-                title: `${item.serviceId.name} cho khách: ${item.nameCustomer}`, // a property!
-                start: item.startDate, // a property!
-                end: item.endDate,
-                status:item.status,
-                allDay:true,
-                backgroundColor: color[index],
-                borderColor:'transparent'
-            })
-            })
-            
-            this.calendarOptions.events=data
-        } catch (error) {
-            console.log(error);
-        }
-    },
-    closeCreate(){
-      this.activeCreate=false
-    },
-    async getAllService(){
-      try {
-        const response = await serviceService.getAll()
-        this.services = response.data
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async editStatus(id, status){
-      try {
-        const response = await taskService.updateStatus(id, {status})
-        this.infoTaskEdit= response.data.data
-        console.log(response);
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async editTask(id){
-      try {
-        const response =await taskService.update(id, this.infoTaskEdit)
-        if(response.data.status){
-              this.getAll()
-              this.infoTaskEdit=response.data.data
-              this.mesFail=''
-              this.messSuc="sửa công viêc thành công"
+        },
+        async getCity() {
+            const res = await axios.get('https://provinces.open-api.vn/api/');
+            this.city = [...res.data];
+        },
+        async getDistricts(info) {
+            const code = info.code;
+            const res = await axios.get(`https://provinces.open-api.vn/api/p/${code}/?depth=2`);
+            (this.districts = [...res.data.districts]), (this.address.city = info.name);
+        },
+        async getWards(info) {
+            const code = info.code;
+            this.address.district = info.name;
+            const res = await axios.get(`https://provinces.open-api.vn/api/d/${code}/?depth=2`);
+            this.wards = [...res.data.wards];
+        },
+        saveAddress(info) {
+            this.address.ward = info.name;
+        },
+        closeFormCustomer() {
+            this.activeCustomer = false;
+            this.city = [];
+            this.districts = [];
+            (this.wards = []), (this.VmodelAddress = { city: '', district: '', ward: '' });
+        },
+        closeFormCustomerEdit() {
+            this.activeEditCustomer = false;
+            this.activeEditAddress = false;
+            this.city = [];
+            this.districts = [];
+            (this.wards = []), (this.VmodelAddress = { city: '', district: '', ward: '' });
+            this.getAllCustomers();
+        },
+        async getAllCustomers() {
+            try {
+                const response = await customerService.getAll();
+                this.customers = [...response.data];
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        handleFitter(name, value) {
+            if(this.idTimeOut==null){
+                this.isSort=false
+            }
+            clearTimeout(this.idTimeOut);
+            this.getAll();
+            this.idTimeOut = setTimeout(() => {
+                this.filter(name,value);
+            }, 500);
+        },
+        filter(name) {
+            if(this.inputSearch !='' || this.inputSearch2 !=''){
+                this.isSort = true;
+                const regex = new RegExp(this.inputSearch.trim(), 'i');
+                const regex2 = new RegExp(this.inputSearch2.trim(), 'i');
+                let abc=[]
+                if(name === 'nameCustomer'){
+                     abc = this.calendarOptions.events.filter((event) => {
+                        return regex.test(event[name]);
+                    });
+                }
+                else{
+                    abc = this.calendarOptions.events.filter((event) => {
+                        return regex2.test(event[name]);
+                    });
+                }
+                this.calendarOptions.events = abc;
             }
             else{
-              this.mesFail=response.data.mes
-              this.messSuc=""
-            }
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async deleteTask(id){
-      try {
-        if(confirm('Xóa công việc này')){
-          const response = await taskService.delete(id)
-          if(response.data.status){
+                this.isSort = false;
                 this.getAll()
-                this.activeEdit=false
-                alert("Xóa tành công")
-              }
-              else{
-                this.mesFail='Thêm thất bại'
-                this.messSuc=""
-              }
-
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  },
-  mounted(){
-    this.getAll()
-    // setInterval(()=>{
-    //   const currentDate = this.$refs.fullCalendar.getApi().currentData.currentDate
-    //   console.log(currentDate);
-    // }, 1000); 
-    this.$nextTick(() => {
-    this.$watch(() => this.$refs.fullCalendar.getApi().currentData.currentDate, (newDate, oldDate) => {
-      // Xử lý khi có sự thay đổi về ngày
-      console.log('Ngày đã thay đổi từ', oldDate, 'sang', newDate);
-      
-      // Thực hiện các hành động khác dựa trên sự thay đổi của ngày
-      // ...
-    });
-  });
-  },
-}
+            }
+        },
+        async printPDF(id){
+            const task = await taskService.getById(id)
+            const printTemplate= printTemlateTask(task.data)
+            print(printTemplate,'Phiếu đơn hàng' )
+        },
+        getYears() {
+            const yearsTarget = new Date().getFullYear();
+            for (let i = 5; i >= 1; i--) {
+                this.years.push(yearsTarget - i);
+            }
+            this.years.push(yearsTarget);
+        },
+        exportToExcel() {
+            const data=[]
+            this.tasks.forEach(event=>{
+                event.startDate = new Date(event.startDate)
+                event.startDate.setDate(event.startDate.getDate()+1)
+                data.push({
+                    'Mã': event._id,
+                    'Tên khách hàng':event.nameCustomer,
+                    'Số điện thoại':event.phone,
+                    'Địa chỉ':event.address,
+                    'Nhân viên thực hiện':event.staffId.fullName,
+                    'Dịch vụ':event.serviceId.name,
+                    'Giá':format.formatCurrency(event.serviceId.price),
+                    'Tổng giá':format.formatCurrency(event.totalAmount),
+                    'Ngày bắt đầu công việc': format.formatDateNoTime(event.startDate),
+                    'Ngày kết thúc công việc': format.formatDateNoTime(event.endDate),
+                    'Trạng thái':event.status
+                })
+            })
+            exportToExcel(data, 'Congviec');
+        },
+    },
+    mounted() {
+        this.getAll();
+        this.getCity();
+        this.getAllCustomers();
+        this.getYears()
+    },
+};
 </script>
 
 <style scoped>
-    .fc{
-        color: red;
-        text-decoration: none;
-    }
-    
-    form{
-      width: 600px;
-      background: #fff;
-      position: relative;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%,-50%);
-      padding: 20px;
-      border-radius: 5px;
-  }
-  .form-select{
-      width: 100%;
-  }
-  .status{
+.fc {
+    color: red;
+    text-decoration: none;
+}
+
+.form-task {
+    width: 600px;
+    background: #fff;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border-radius: 5px;
+}
+.form-select {
+    width: 100%;
+}
+.status {
     width: 80%;
     height: 10px;
     background: blue;
     margin: auto;
     position: relative;
 }
-.status-item{
-  display: flex;
-  flex-direction: column;
-  width: 120px;
-  align-items: center;
-  position: absolute;
-  top: -13px;
-  left:var(--left);
+.status-item {
+    display: flex;
+    flex-direction: column;
+    width: 120px;
+    align-items: center;
+    position: absolute;
+    top: -13px;
+    left: var(--left);
 }
-.status-item span:nth-child(1){
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 35px;
-  height: 35px;
-  border: 3px solid var(--border-color);
-  border-radius: 50%;
-  background: #fff;
+.status-item span:nth-child(1) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    border: 3px solid var(--border-color);
+    border-radius: 50%;
+    background: #fff;
 }
-.status-progress-color{
-  position: absolute;
-  top:0;
-  left: 0;
-  right: var(--left);
-  bottom: 0;
-  background: var(--colorB);
-
+.status-progress-color {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: var(--left);
+    bottom: 0;
+    background: var(--colorB);
 }
-.note-content{
-  width: 100%;
-  height:calc(100% - 64px);
-  border: 1px solid #ccc;
-  margin-top: 27px;
-  padding: 10px;
+.note-content {
+    width: 100%;
+    height: calc(100% - 64px);
+    border: 1px solid #ccc;
+    margin-top: 27px;
+    padding: 10px;
 }
-.note-color{
-  display: flex;
-  align-items: center;
-  width: 100%;
-  height: 20px;
-  margin-top: 10px;
+.note-color {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 20px;
+    margin-top: 10px;
+    cursor: pointer;
 }
-.note-color span:nth-child(1){
-  width: 40px;
-  height: 100%;
-  background: var(--color);
-  border-radius: 5px;
-  margin-right: 10px;
+.note-color span:nth-child(1) {
+    width: 40px;
+    height: 100%;
+    background: var(--color);
+    border-radius: 5px;
+    margin-right: 10px;
 }
-.group input{
-  width: 100%;
-  padding :5px 10px;
-  outline: none;
-  border-radius: 5px;
+.group input {
+    width: 100%;
+    padding: 5px 10px;
+    outline: none;
+    border-radius: 5px;
+}
+.sort{
+  cursor: pointer;
+  color: rgb(255, 21, 21);
+}
+.input-price{
+  height: 45px;
+  margin-top: 5px;
+  padding: 0 5px;
 }
 </style>

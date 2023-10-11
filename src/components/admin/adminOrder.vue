@@ -361,7 +361,6 @@ export default {
             const { day, month, year, field } = this.dateFilter;
             const response = await orderService.filterByDate(day, month, year, field, this.pageNumber, this.pageSize);
             this.orders = [...response.data];
-            console.log(this.orders)
             this.orders.map(order =>{
                 order.createdAt = format.formatDateNoTime(order.createdAt)
             })
