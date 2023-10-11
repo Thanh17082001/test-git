@@ -1258,4 +1258,14 @@ export default {
   margin-top: 5px;
   padding: 0 5px;
 }
+.customer-form{
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 650px;
+    min-height: 0px;
+    background: #fff;
+    padding: 10px 20px;
+}
 </style>
