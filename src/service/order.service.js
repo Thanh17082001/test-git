@@ -13,8 +13,11 @@ class orderService{
             ? await this.api.get(`/?pageNumber=${pageNumber}&pageSize=${pageSize}`)
             : await this.api.get('/')
     }
-    async payment (url,data){
+    async paymentVNPAY (url,data){
         return await this.api.post(`/create_payment_url/?url=${url}`,data)
+    }
+    async paymentMOMO (url,data){
+        return await this.api.post(`/pay-momo/?url=${url}`,data)
     }
     async getById(id){
         return await this.api.get(`/find/?id=${id}`)

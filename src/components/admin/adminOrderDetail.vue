@@ -125,7 +125,7 @@
             </div>
             <div class="btn btn-danger mt-5 me-2 mb-1" v-if="order.status ==='Đang xử lý' && order.isPayment==false" @click="update(order._id,{status:'Hủy đơn'})">Hủy đơn hàng</div>
             <div class="btn btn-warning mt-5 mb-1" v-if="order.status ==='Đang xử lý'" @click="update(order._id,{status:'Đang vận chuyển'})">Cập nhật</div>
-            <div class="btn btn-warning mt-5 mb-1" v-else-if="order.status ==='Đang vận chuyển'" @click="update(order._id,{status:'Đã giao hàng'})">Cập nhật</div>
+            <div class="btn btn-warning mt-5 mb-1" v-else-if="order.status ==='Đang vận chuyển'" @click="update(order._id,{status:'Đã giao hàng', pricePayed:order.totalAmount})">Cập nhật</div>
             <div class="btn btn-warning mt-5 mb-1" v-else-if="order.status ==='Đã giao hàng'">Hoàn thành</div>
             <button disabled class="btn btn-danger mt-5 mb-1" v-else-if="order.status=='Hủy đơn'">Đơn hàng đã hủy</button>
         </div>
@@ -166,15 +166,18 @@
                         <span class="col-lg-6 mb-2">{{ order.totalCostOfProducts }}</span>
                         <span class="col-lg-6 mb-2"><strong>Phí vận chuyển:</strong></span>
                         <span class="col-lg-6 mb-2">{{ order.transportFee }}</span>
-                        <span class="col-lg-6 mb-2"><strong>VAT(0%):</strong></span>
-                        <span class="col-lg-6 mb-2">{{ order.VAT }}</span>
+                        
                         <span class="col-lg-6 mb-2"><strong>Tổng cộng</strong></span>
                         <span class="col-lg-6 mb-2">{{ formatPrice(order.totalAmount) }}</span>
+                        <span class="col-lg-6 mb-2"><strong>Số tiền đã thanh toán</strong></span>
+                        <span class="col-lg-6 mb-2">{{ formatPrice(order.pricePayed) }}</span>
                         <span class="col-lg-6 mb-2"><strong>Hình thức thanh toán</strong></span>
                         <span class="col-lg-6 mb-2">online</span>
                     </div>
-                    <div class="btn btn-info" v-if="!order.isPayment" @click="paymentByVnPay(order)">Thanh toán VNPay</div>
-                    <div class="btn btn-danger ms-1" @click="printPDF">In phiếu </div>
+                    <div class="btn btn-info me-1" v-if="!order.isPayment && order.status != 'Hủy đơn'" @click="paymentByVnPay(order)">VNPay</div>
+                    <div class="btn btn-danger me-1" v-if="!order.isPayment && order.status != 'Hủy đơn'" @click="paymentByMOMO(order)">MOMO</div>
+                    <div class="btn btn-success" v-if="!order.isPayment && order.status != 'Hủy đơn'" @click="paymentByCOD(order)">COD</div>
+                    <div class="btn btn-warning ms-1" @click="printPDF">In phiếu </div>
                 </div>
             </div>
         </div>
@@ -241,8 +244,42 @@ export default {
                     alert('Đơn hàng đã bị hủy')
                     return ;
                 }
-                const payment = await orderService.payment('admin/order',data)
+                const payment = await orderService.paymentVNPAY('admin/order',data)
                 window.location.href=payment.data
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async paymentByMOMO(order){
+            try {
+                const data ={
+                    totalAmount: order.totalAmount,
+                    orderId:order._id
+                }
+                if(order.status=='Hủy đơn'){
+                    alert('Đơn hàng đã bị hủy')
+                    return ;
+                }
+                const payment = await orderService.paymentMOMO('admin/order',data)
+                window.location.href=payment.data
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async paymentByCOD(order){
+            try {
+                if(confirm(`Số tiền phải trả là :${order.totalAmount}`)){
+                    const data ={
+                        totalAmount:order.totalAmount,
+                        paymentMethod:'COD',
+                        pricePayed:order.totalAmount,
+                        isPayment:true
+                    }
+                    const response =await orderService.update(order._id,data)
+                    if(response.data.status){
+                        this.getOrderById()
+                    }
+                }
             } catch (error) {
                 console.log(error);
             }

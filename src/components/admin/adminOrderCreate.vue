@@ -272,7 +272,7 @@
                 </div>
                 <!-- hình thức thanh toán -->
                 <div class="row mt-4">
-                    <div class="col-lg-6">
+                    <div class="col-lg-4">
                         <label for="payment" :class="{'payment-active': isClassCod, 'payment-error':choosePayent}" class="payment" @click=" paymentMeThod('COD')">
                                 <img src="https://s3-ap-southeast-1.amazonaws.com/pharmacity-ecm-asm-dev/payment-method/cash.webp" alt="">
                                 <div class="payment-content">
@@ -284,8 +284,8 @@
                                 </div>
                         </label>
                     </div>
-                    <div class="col-lg-6">
-                        <label for="payment" :class="{'payment-active': isClassOnl, 'payment-error':choosePayent}" class="payment"  @click=" paymentMeThod('ONL')">
+                    <div class="col-lg-4">
+                        <label for="payment" :class="{'payment-active': isClassOnlVNPAY, 'payment-error':choosePayent}" class="payment"  @click=" paymentMeThod('VNPAY')">
                                 <img src="https://vnpay.vn/s1/statics.vnpay.vn/2023/9/06ncktiwd6dc1694418196384.png" alt="">
                                 <div class="payment-content">
                                     <span>VNPay</span>
@@ -293,7 +293,18 @@
                                 </div>
                                 <div class="payment-checkbox">
                                     <span></span>
-
+                                </div>
+                        </label>
+                    </div>
+                    <div class="col-lg-4">
+                        <label for="payment" :class="{'payment-active': isClassOnlMOMO, 'payment-error':choosePayent}" class="payment"  @click=" paymentMeThod('MOMO')">
+                                <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="">
+                                <div class="payment-content">
+                                    <span>MOMO</span>
+                                    <span>Quét mã QR momo</span>
+                                </div>
+                                <div class="payment-checkbox">
+                                    <span></span>
                                 </div>
                         </label>
                     </div>
@@ -336,7 +347,8 @@ export default {
             isSubmit:true,
             paymentMethod:'',
             isClassCod:false,
-            isClassOnl:false,
+            isClassOnlVNPAY:false,
+            isClassOnlMOMO:false,
             choosePayent:false,
             paymentSuccess:null,
             note:'',
@@ -561,7 +573,6 @@ export default {
         async addOrder(){
             try {
                 const user = JSON.parse(sessionStorage.getItem('user'))
-                console.log(user);
                 if(this.paymentMethod ==''){
                     this.isSubmit=false
                     this.choosePayent=true
@@ -585,15 +596,24 @@ export default {
                     paymentMethod:this.paymentMethod,
                     transportFee: this.transportFee,
                     totalAmount:this.totalAmount,
-                    note:this.note
+                    note:this.note,
+                    pricePayed:0
                 }
 
                 if(this.isSubmit){
-                    if(this.paymentMethod =='Online'){
+                    if(this.paymentMethod =='VNPAY'){
                         const response = await orderService.create(data)
                         const resutl = response.data.data
                         if(response.data.status){
-                            const payment = await orderService.payment('admin/order-create',{totalAmount: resutl.totalAmount, orderId:resutl._id})
+                            const payment = await orderService.paymentVNPAY('admin/order-create',{totalAmount: resutl.totalAmount, orderId:resutl._id})
+                            window.location.href=payment.data
+                        }
+                    }
+                    else if(this.paymentMethod =='MOMO'){
+                        const response = await orderService.create(data)
+                        const resutl = response.data.data
+                        if(response.data.status){
+                            const payment = await orderService.paymentMOMO('admin/order-create',{totalAmount: resutl.totalAmount, orderId:resutl._id})
                             window.location.href=payment.data
                         }
                     }
@@ -616,7 +636,7 @@ export default {
                             this.totalAmount=0
                             this.totalCostOfProducts=0
                             this.transportFee=0
-                            this.note=''
+                            this.note='',
                             alert(response.data.mes)
                             
                         }
@@ -653,17 +673,31 @@ export default {
                 this.isClassCod=!this.isClassCod
                 if(this.isClassCod){
                     this.paymentMethod='COD'
-                    this.isClassOnl=false
+                    this.isClassOnlVNPAY=false
+                    this.isClassOnlMOMO=false
                 }
                 else{
                     this.paymentMethod=''
                 }
             }
-            else{
-                this.isClassOnl=!this.isClassOnl
-                if(this.isClassOnl){
-                    this.paymentMethod='Online'
+            else if(type == 'VNPAY'){
+                this.isClassOnlVNPAY=!this.isClassOnlVNPAY
+                if(this.isClassOnlVNPAY){
+                    this.paymentMethod='VNPAY'
                     this.isClassCod=false
+                    this.isClassOnlMOMO=false
+                }
+                else{
+                    this.paymentMethod=''
+                }
+            }
+            else if(type == 'MOMO'){
+                this.isClassOnlMOMO=!this.isClassOnlMOMO
+                if(this.isClassOnlMOMO){
+                    this.paymentMethod='MOMO'
+                    this.isClassCod=false
+                    this.isClassOnlVNPAY=false
+
                 }
                 else{
                     this.paymentMethod=''

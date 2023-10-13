@@ -34,13 +34,13 @@
         </div>
 
         <div class="order-status d-flex mb-3">
-            <span @click="sort('Đang xử lý','status')" class="order-status-item me-3" style="--color:#1e90ff">Đang xử lý <span>{{ orders.filter(order => order.status =='Đang xử lý').length }}</span></span>
-            <span @click="sort('Đang vận chuyển','status')" class="order-status-item me-3" style="--color:#C63D2F">Đang vận chuyển <span>{{ orders.filter(order => order.status =='Đang vận chuyển').length }}</span></span>
-            <span @click="sort('Đã giao hàng','status')" class="order-status-item me-3" style="--color:green">Đã giao hàng <span>{{ orders.filter(order => order.status =='Đã giao hàng').length }}</span></span>
-            <span @click="sort('Đang sử dụng','status')" class="order-status-item me-3" style="--color:#E9B824">Đang sử dụng <span>{{ orders.filter(order => order.status =='Đang sử dụng').length }}</span></span>
-            <span @click="sort('Dừng thuê','status')" class="order-status-item me-3" style="--color:#61677A">Dừng thuê <span>{{ orders.filter(order => order.status =='Dừng thuê').length }}</span></span>
-            <span @click="sort('Hủy đơn','status')" class="order-status-item me-3" style="--color:#FE0000">Hủy đơn <span>{{ orders.filter(order => order.status =='Hủy đơn').length }}</span></span>
-
+            <span @click="sort('Đang xử lý','status')" class="order-status-item me-3" style="--color:#1e90ff">Đang xử lý <span>{{ data.filter(order => order.status =='Đang xử lý').length }}</span></span>
+            <span @click="sort('Đang vận chuyển','status')" class="order-status-item me-3" style="--color:#C63D2F">Đang vận chuyển <span>{{ data.filter(order => order.status =='Đang vận chuyển').length }}</span></span>
+            <span @click="sort('Đã giao hàng','status')" class="order-status-item me-3" style="--color:green">Đã giao hàng <span>{{ data.filter(order => order.status =='Đã giao hàng').length }}</span></span>
+            <span @click="sort('Đang sử dụng','status')" class="order-status-item me-3" style="--color:#E9B824">Đang sử dụng <span>{{ data.filter(order => order.status =='Đang sử dụng').length }}</span></span>
+            <span @click="sort('Dừng thuê','status')" class="order-status-item me-3" style="--color:#61677A">Dừng thuê <span>{{ data.filter(order => order.status =='Dừng thuê').length }}</span></span>
+            <span @click="sort('Hủy đơn','status')" class="order-status-item me-3" style="--color:#FE0000">Hủy đơn <span>{{ data.filter(order => order.status =='Hủy đơn').length }}</span></span>
+            <span @click="sort2" class="order-status-item me-3" style="--color:#4F709C">Đến hạn thanh toán <span>{{ dealineRental.length }}</span></span>
         </div>
         <div class="isSort" :class="{ 'isSort-active': isSort }">
             <span @click="offSort">Đang lọc</span>
@@ -163,8 +163,8 @@
                     <td class="col">{{ order.status }}</td>
                     <td class="col">{{ order.IsOnlineOrder ? ' Trực tuyến' : 'Tại của hàng' }}</td>
                     <td class="col">{{ order.paymentMethod }}</td>
-                    <td class="col text-center p-0 fs-4 text-success" v-if="order.isPayment "><i class="fa-solid fa-check"></i></td>
-                    <td class="col text-center p-0 fs-4 text-danger" v-else><i class="fa-solid fa-xmark"></i></td>
+                    <td class="col text-center p-0 fs-4 text-danger" v-if="order.isPayment=='Chưa thanh toán'"><i class="fa-solid fa-xmark"></i></td>
+                    <td class="col text-center p-0 fs-4 text-success" v-else><i class="fa-solid fa-check"></i></td>
                     <td class="col">{{ order.createdAt }}</td>
                     <td class="col text-center">
                         <span class="btn btn-outline-info" @click="openDetail(order._id)"><i class="fa-solid fa-circle-info"></i></span>
@@ -226,10 +226,40 @@ export default {
             isSort:false,
             activeDetail:false,
             paymentSuccess:null,
-            id:''
+            id:'',
+            data:[],
+            dealineRental:[]
         }
     },
     methods:{
+        async dealine(){
+            const length = await rentalService.getAll()
+            this.data=[...length.data]
+            const today = new Date
+            // const dueDate = new Date('2023-10-17')
+            // console.log(this.daysUntilDue(today,dueDate));
+            this.data.forEach(rental =>{
+                if(rental.totalAmount >rental.pricePayed && !rental.payInFull){
+                    if(this.daysUntilDue(today,rental.datePay)<=5){
+                        this.dealineRental.push(rental)
+                        console.log('đến hạn');
+                        console.log(this.dealineRental);
+                    }
+                }   
+            })
+        },
+        sort2(){
+            this.orders=this.dealineRental
+            this.isSort=true
+        },
+        daysUntilDue(today, dueDate) {
+            const todayDate = new Date(today);
+            const dueDateObj = new Date(dueDate);
+            const timeDifference = Math.abs(dueDateObj - todayDate);
+            const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
+            const daysRemaining = Math.ceil(timeDifference / oneDayInMilliseconds);
+            return daysRemaining;
+        },
         isPaymentSuccess() {
             const params = new URLSearchParams(window.location.search);
             if(params.get('success') === 'true'){
@@ -419,6 +449,7 @@ export default {
         this.getAll()
         this.getYears()
         this.isPaymentSuccess()
+        this.dealine()
     }
 };
 </script>

@@ -204,10 +204,6 @@
                         <textarea class="note" v-model="note" placeholder="Ghi chú cho đơn hàng"></textarea>
                     </div>
                 </div>
-                <div class="spe-group col-lg-3">
-                         <label  for="" class="mt-0 mb-0">Số tháng thuê<span class="text-danger ms-2">*</span></label>
-                        <input v-model="quantityMonth" @keyup="(event)=>checkQuantityMonth(event)"  required type="number" placeholder="Nhập số tháng thuê" />
-                    </div>
                 <!-- danh sach san pham -->
                 <div class="croll">
                     <span class="d-block mt-3">Danh sách sản phẩm</span>
@@ -233,7 +229,7 @@
                     </div>
                     
                 </div>
-                <div class="row">
+                <div class="row mb-2">
                     <div class="col-3 d-flex justify-content-center align-items-center mt-1">
                         <div class="group me-3">
                             <span class="btn btn-outline-success" @click="pushRow">Thêm dòng</span>
@@ -242,22 +238,38 @@
                             <span class="btn btn-outline-danger" @click="popRow">Bớt dòng</span>
                         </div>
                     </div>
-                    <div class="spe-group col-3">
+                </div>
+                <!--  các thông tin-->
+                <div class="row">
+                    <div class="spe-group col-lg-3">
+                        <label  for="" class="mt-0 mb-0">Số tháng thuê<span class="text-danger ms-2">*</span></label>
+                       <input class="mt-1" v-model="quantityMonth" @keyup="(event)=>checkQuantityMonth(event)"  required type="number" placeholder="Nhập số tháng thuê" />
+                   </div>
+                   <div class="spe-group col-lg-3">
+                        <label  for="" class="mt-0 mb-0">Cách thanh toán<span class="text-danger ms-2">*</span></label>
+                        <select v-model="payinfull" class="form-select mb-0 mt-1" @change="totalProduct">
+                            <option value="" class="form-option">--- Chọn cách thanh toán ---</option>
+                            <option :value="true" class="form-option">Thanh toán toàn bộ</option>
+                            <option :value="false" class="form-option">Thanh toán theo tháng</option>
+                        </select>
+                    </div>
+                    <div class="spe-group col-2">
                         <label  for="" class="mt-0">Tổng tiền sản phẩm</label>
                         <input type="text" v-model="totalCostOfProducts" disabled>
                     </div>
-                    <div class="spe-group col-3">
-                        <label  for="" class="mt-0">Phí vận chuyển</label>
-                        <input type="text" v-model="transportFee" disabled>
-                    </div>
-                    <div class="spe-group col-3">
+                    
+                    <div class="spe-group col-2">
                         <label  for="" class="mt-0">Tổng cộng</label>
                         <input type="text" v-model="totalAmount" disabled>
                     </div>
+                    <div class="spe-group col-2">
+                        <label  for="" class="mt-0">Số tiền thanh toán</label>
+                        <input type="text" v-model="pricePayed" disabled>
+                    </div>
                 </div>
-
+                <!-- hình thức thanh toán -->
                 <div class="row mt-4">
-                    <div class="col-lg-6">
+                    <div class="col-lg-4">
                         <label for="payment" :class="{'payment-active': isClassCod, 'payment-error':choosePayent}" class="payment" @click=" paymentMeThod('COD')">
                                 <img src="https://s3-ap-southeast-1.amazonaws.com/pharmacity-ecm-asm-dev/payment-method/cash.webp" alt="">
                                 <div class="payment-content">
@@ -269,8 +281,8 @@
                                 </div>
                         </label>
                     </div>
-                    <div class="col-lg-6">
-                        <label for="payment" :class="{'payment-active': isClassOnl, 'payment-error':choosePayent}" class="payment"  @click=" paymentMeThod('ONL')">
+                    <div class="col-lg-4">
+                        <label for="payment" :class="{'payment-active': isClassOnlVNPAY, 'payment-error':choosePayent}" class="payment"  @click=" paymentMeThod('VNPAY')">
                                 <img src="https://vnpay.vn/s1/statics.vnpay.vn/2023/9/06ncktiwd6dc1694418196384.png" alt="">
                                 <div class="payment-content">
                                     <span>VNPay</span>
@@ -281,6 +293,18 @@
 
                                 </div>
                         </label>
+                    </div>
+                    <div class="col-lg-4">
+                        <label for="payment" :class="{'payment-active': isClassOnlMOMO, 'payment-error':choosePayent}" class="payment"  @click=" paymentMeThod('MOMO')">
+                            <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="">
+                            <div class="payment-content">
+                                <span>MOMO</span>
+                                <span>Quét mã QR momo</span>
+                            </div>
+                            <div class="payment-checkbox">
+                                <span></span>
+                            </div>
+                    </label>
                     </div>
                 </div>
             </div>
@@ -319,32 +343,49 @@ export default {
             isSubmit:true,
             paymentMethod:'',
             isClassCod:false,
-            isClassOnl:false,
+            isClassOnlVNPAY:false,
+            isClassOnlMOMO:false,
             choosePayent:false,
             paymentSuccess:null,
             note:'',
-            transportFee:0,
             totalCostOfProducts:0,
             totalAmount:0,
             VAT:0,
             quantityMonth:null,
             customerInfo:{},
             activeEditAddress:false,
-            activeEditCustomer:false
+            activeEditCustomer:false,
+            payinfull:'',
+            pricePayed:0
         }
     },
-    
+    watch:{
+        quantityMonth(){
+            if(this.payinfull!=''){
+                this.totalProduct()
+            }
+        }
+    },
     methods:{
         closeSuccess(){
             this.$router.push('/admin/rental-create')
             this.paymentSuccess=null
         },
         totalProduct(){
+            
+            this.totalCostOfProducts=0
+            this.totalAmount=0
+            this.pricePayed=0
             this.ordersProducts.forEach(product =>{
-                this.totalCostOfProducts+=product.priceRental*product.quantity
+                this.totalCostOfProducts+=product.priceRental*product.quantity||0
             })
-            this.transportFee= Math.ceil(this.totalCostOfProducts* 0.01)
-            this.totalAmount=this.transportFee+this.totalCostOfProducts+this.VAT
+            this.totalAmount=(this.totalCostOfProducts*this.quantityMonth)||0
+            if(this.payinfull){
+                this.pricePayed=this.totalAmount
+            }
+            else{
+                this.pricePayed=Math.ceil(this.totalAmount/this.quantityMonth)
+            }
         },
         isPaymentSuccess() {
             const params = new URLSearchParams(window.location.search);
@@ -482,7 +523,6 @@ export default {
                     this.ordersProducts[index].quantity=null
                     this.totalAmount=0
                     this.totalCostOfProducts=0
-                    this.transportFee=0
                 }
                 else{
                     return;
@@ -531,6 +571,7 @@ export default {
                     this.isSubmit=true
                 }
                 const customer = await customerService.getById(this.customerId)
+                
                 const data={
                     createBy:user ? user.user._id : null,
                     customerId:this.customerId,
@@ -542,18 +583,26 @@ export default {
                     ],
                     totalCostOfProducts:this.totalCostOfProducts,
                     paymentMethod:this.paymentMethod,
-                    transportFee: this.transportFee,
                     totalAmount:this.totalAmount,
+                    priceMonth:Math.ceil(this.totalAmount/this.quantityMonth),
+                    payInFull:this.payinfull,
                     note:this.note,
                     quantityMonth:this.quantityMonth
                 }
-                
                 if(this.isSubmit){
-                    if(this.paymentMethod =='Online'){
+                    if(this.paymentMethod =='VNPAY'){
                         const response = await rentalService.create(data)
                         const resutl = response.data.data
                         if(response.data.status){
-                            const payment = await rentalService.payment('admin/rental-create',{totalAmount: resutl.totalAmount, orderId:resutl._id})
+                            const payment = await rentalService.paymentVNPAY('admin/rental-create',{totalAmount: this.payinfull ? resutl.totalAmount : resutl.priceMonth, orderId:resutl._id})
+                            window.location.href=payment.data
+                        }
+                    }
+                    else if(this.paymentMethod =='MOMO'){
+                        const response = await rentalService.create(data)
+                        const resutl = response.data.data
+                        if(response.data.status){
+                            const payment = await rentalService.paymentMOMO('admin/rental-create',{totalAmount: this.payinfull ? resutl.totalAmount : resutl.priceMonth, orderId:resutl._id})
                             window.location.href=payment.data
                         }
                     }
@@ -571,7 +620,6 @@ export default {
                             this.isClassOnl=false
                             this.totalAmount=0
                             this.totalCostOfProducts=0
-                            this.transportFee=0
                             this.quantityMonth=null
                             this.note=''
                             alert(response.data.mes)
@@ -596,10 +644,11 @@ export default {
                 this.isSubmit=false
                 this.totalAmount=0
                 this.totalCostOfProducts=0
-                this.transportFee=0
             }
             else{
-                this.totalProduct()
+                if(this.payinfull !=''){
+                    this.totalProduct()
+                }
                 e.target.style.borderColor='#0E8388'
                 this.isSubmit=true
             }
@@ -621,17 +670,31 @@ export default {
                 this.isClassCod=!this.isClassCod
                 if(this.isClassCod){
                     this.paymentMethod='COD'
-                    this.isClassOnl=false
+                    this.isClassOnlVNPAY=false
+                    this.isClassOnlMOMO=false
                 }
                 else{
                     this.paymentMethod=''
                 }
             }
-            else{
-                this.isClassOnl=!this.isClassOnl
-                if(this.isClassOnl){
-                    this.paymentMethod='Online'
+            else if(type == 'VNPAY'){
+                this.isClassOnlVNPAY=!this.isClassOnlVNPAY
+                if(this.isClassOnlVNPAY){
+                    this.paymentMethod='VNPAY'
                     this.isClassCod=false
+                    this.isClassOnlMOMO=false
+                }
+                else{
+                    this.paymentMethod=''
+                }
+            }
+            else if(type == 'MOMO'){
+                this.isClassOnlMOMO=!this.isClassOnlMOMO
+                if(this.isClassOnlMOMO){
+                    this.paymentMethod='MOMO'
+                    this.isClassCod=false
+                    this.isClassOnlVNPAY=false
+
                 }
                 else{
                     this.paymentMethod=''
@@ -796,5 +859,8 @@ export default {
     padding: 10px;
     border-radius: 5px;
     height: 100px;
+}
+.form-select{
+    height: 45px;
 }
 </style>

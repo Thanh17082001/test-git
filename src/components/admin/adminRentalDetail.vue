@@ -28,8 +28,10 @@
                 <div class="status-info">
                     <h5><i class="fa-solid fa-gear"></i> Thông tin đơn hàng</h5>
                     <hr>
-                    <span class="mb-2"><strong class="me-2">Mã:</strong>{{ order._id }}</span>
-                    <span><strong class="me-2">Ngày tạo:</strong> {{ order.createdAt }}</span>
+                    <span class="mb-1"><strong class="me-2">Mã:</strong>{{ order._id }}</span>
+                    <span class="mb-1"><strong class="me-2">Ngày tạo:</strong> {{ order.createdAt }}</span>
+                    <span class="text-start" v-if="order.totalAmount > order.pricePayed"><strong class="me-2" >Ngày thanh toán tiếp:</strong> {{ order.payInFull ? 'Đã thanh toán toàn bộ' : order.datePay }}</span>
+                    <span class="text-start"  v-else><strong class="me-2">Ngày thanh toán tiếp:</strong> {{ order.payInFull ? 'Đã thanh toán toàn bộ' : 'Thanh toán hoàn tất' }}</span>
                 </div>
             </div>
             <div class="col-lg-3">
@@ -37,7 +39,7 @@
                     <h5><i class="fa-solid fa-credit-card"></i> Thanh toán</h5>
                     <hr>
                     <span class="mb-2"><strong class="me-2">Hình thức thanh toán:</strong>{{ order.paymentMethod }}</span>
-                    <span><strong class="me-2">Trạng thái thanh toán:</strong>{{ order.isPayment ? 'Đã thanh toán' : 'Chưa thanh toán' }}</span>
+                    <span><strong class="me-2">Trạng thái thanh toán:</strong>{{ order.isPayment  }}</span>
                 </div>
             </div>
             <div class="col-lg-3">
@@ -247,18 +249,21 @@
                     <div class="row text-left">
                         <span class="col-lg-6 mb-2"><strong>Tổng tiền hàng:</strong></span>
                         <span class="col-lg-6 mb-2">{{ order.totalCostOfProducts }}</span>
-                        <span class="col-lg-6 mb-2"><strong>Phí vận chuyển:</strong></span>
-                        <span class="col-lg-6 mb-2">{{ order.transportFee }}</span>
-                        <span class="col-lg-6 mb-2"><strong>Tổng cộng</strong></span>
-                        <span class="col-lg-6 mb-2">{{ formatPrice(order.totalAmount) }}</span>
-                        <span class="col-lg-6 mb-2"><strong>Hình thức thanh toán</strong></span>
-                        <span class="col-lg-6 mb-2">{{ order.paymentMethod}}</span>
                         <span class="col-lg-6 mb-2"><strong>Số tháng thuê</strong></span>
                         <span class="col-lg-6 mb-2">{{order.quantityMonth}}</span>
+                        <span class="col-lg-6 mb-2"><strong>Tổng cộng</strong></span>
+                        <span class="col-lg-6 mb-2">{{ formatPrice(order.totalAmount) }}</span>
+                        <span class="col-lg-6 mb-2"><strong>Số tiền đã thanh toán</strong></span>
+                        <span class="col-lg-6 mb-2">{{formatPrice(order.pricePayed ) }}</span>
+                        <span class="col-lg-6 mb-2" ><strong>Số tiền phải thanh toán</strong></span>
+                        <span class="col-lg-6 mb-2">{{order.payInFull ? formatPrice(order.totalAmount): formatPrice( order.priceMonth)}}</span>
+                       
                         
                     </div>
-                    <div class="btn btn-info" v-if="!order.isPayment" @click="paymentByVnPay(order)">Thanh toán VNPay</div>
-                    <div class="btn btn-danger ms-1" @click="printPDF">In phiếu </div>
+                    <div class="btn btn-info me-1" v-if="order.totalAmount> order.pricePayed && order.status !='Hủy đơn'" @click="paymentByVnPay(order)">VNPay</div>
+                    <div class="btn btn-danger me-1" v-if="order.totalAmount> order.pricePayed && order.status !='Hủy đơn'" @click="paymentByMOMO(order)">MOMO</div>
+                    <div class="btn btn-success" v-if="order.totalAmount> order.pricePayed && order.status !='Hủy đơn'" @click="paymentByCOD(order)">COD</div>
+                    <div class="btn btn-warning ms-1" @click="printPDF">In phiếu </div>
                 </div>
             </div>
         </div>
@@ -291,9 +296,9 @@ export default {
                 const response = await rentalService.getById(this.id)
                 this.order=response.data
                 this.order.createdAt = format.formatDate(this.order.createdAt)
+                this.order.datePay = format.formatDateNoTime(this.order.datePay)
                 this.order.totalCostOfProducts= format.formatCurrency( this.order.totalCostOfProducts)
                 this.order.VAT= format.formatCurrency( this.order.VAT)
-                this.order.transportFee= format.formatCurrency( this.order.transportFee)
                 this.order.products.forEach(product =>{
                     product.priceRental=format.formatCurrency(product.priceRental)
                 })
@@ -318,15 +323,47 @@ export default {
        async paymentByVnPay(order){
             try {
                 const data ={
-                    totalAmount: order.totalAmount,
+                    totalAmount: order.payInFull? order.totalAmount: order.priceMonth,
                     orderId:order._id
                 }
                 if(order.status=='Hủy đơn'){
                     alert('Đơn hàng đã bị hủy')
                     return ;
                 }
-                const payment = await rentalService.payment('admin/rental',data)
+                const payment = await rentalService.paymentVNPAY('admin/rental',data)
                 window.location.href=payment.data
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async paymentByMOMO(order){
+            try {
+                const data ={
+                    totalAmount: order.payInFull? order.totalAmount: order.priceMonth,
+                    orderId:order._id
+                }
+                if(order.status=='Hủy đơn'){
+                    alert('Đơn hàng đã bị hủy')
+                    return ;
+                }
+                const payment = await rentalService.paymentMOMO('admin/rental',data)
+                window.location.href=payment.data
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async paymentByCOD(order){
+            try {
+                if(confirm(`Thanh toán tiền mặt với số tiền ${order.payInFull? this.formatPrice(order.totalAmount) :this.formatPrice(order.priceMonth)}`)){
+                   const response = await rentalService.updateByCod(order._id)
+                   if(response.data.status){
+                    alert('Thanh toán thành công')
+                    this.getOrderById()
+                   }
+                   else{
+                        alert('Thanh toán thất bại')
+                   }
+                }
             } catch (error) {
                 console.log(error);
             }
