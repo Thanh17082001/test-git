@@ -1,6 +1,6 @@
 <template>
     <div class="admin-add-order">
-        <h3>Các đơn hàng</h3>
+        <h3>Đơn bảo hành</h3>
         <div class="d-flex justify-content-end align-items-center my-3">
             <div class="input-admin-filter">
                 <form class="filter-admin-date" @submit.prevent.stop="filterDate">
@@ -34,13 +34,9 @@
         </div>
 
         <div class="order-status d-flex mb-3">
-            <span @click="sort('Đang xử lý','status')" class="order-status-item me-3" style="--color:#1e90ff">Đang xử lý <span>{{ data.filter(order => order.status =='Đang xử lý').length }}</span></span>
-            <span @click="sort('Đang vận chuyển','status')" class="order-status-item me-3" style="--color:#C63D2F">Đang vận chuyển <span>{{ data.filter(order => order.status =='Đang vận chuyển').length }}</span></span>
-            <span @click="sort('Đã giao hàng','status')" class="order-status-item me-3" style="--color:green">Đã giao hàng <span>{{ data.filter(order => order.status =='Đã giao hàng').length }}</span></span>
-            <span @click="sort('Đang sử dụng','status')" class="order-status-item me-3" style="--color:#E9B824">Đang sử dụng <span>{{ data.filter(order => order.status =='Đang sử dụng').length }}</span></span>
-            <span @click="sort('Dừng thuê','status')" class="order-status-item me-3" style="--color:#61677A">Dừng thuê <span>{{ data.filter(order => order.status =='Dừng thuê').length }}</span></span>
-            <span @click="sort('Hủy đơn','status')" class="order-status-item me-3" style="--color:#FE0000">Hủy đơn <span>{{ data.filter(order => order.status =='Hủy đơn').length }}</span></span>
-            <span @click="sort2" class="order-status-item me-3" style="--color:#4F709C">Đến hạn thanh toán <span>{{ dealineRental.length }}</span></span>
+            <span @click="sort('Đang xử lý','status')" class="order-status-item me-3" style="--color:#1e90ff">Đang xử lý <span>{{ orders.filter(order => order.status =='Đang xử lý').length }}</span></span>
+            <span @click="sort('Hoàn thành','status')" class="order-status-item me-3" style="--color:#54B435">Hoàn thành <span>{{ orders.filter(order => order.status =='Hoàn thành').length }}</span></span>
+            
         </div>
         <div class="isSort" :class="{ 'isSort-active': isSort }">
             <span @click="offSort">Đang lọc</span>
@@ -62,6 +58,26 @@
                                             placeholder="Nhạp từ khóa..."
                                             v-model="filterInput"
                                             @input="handleFitter('_id')"
+                                        />
+                                    </div>
+                                </ul>
+                            </div>
+                        </div>
+                    </th>
+                    <th class="col">
+                        <div class="admin-table-title">
+                            <p>Sản phẩm</p>
+                            <div class="admin-sort">
+                                <i class="fa-solid fa-sort"></i>
+                                <ul class="admin-sort-list">
+                                    <li @click="sort(1, 'nameProduct')">Từ A đến Z</li>
+                                    <li @click="sort(-1, 'nameProduct')">Từ Z về A</li>
+                                    <div class="filter-admin-input">
+                                        <input
+                                            type="text"
+                                            placeholder="Nhạp từ khóa..."
+                                            v-model="filterInput"
+                                            @input="handleFitter('nameProduct')"
                                         />
                                     </div>
                                 </ul>
@@ -109,48 +125,17 @@
                     </th>
                     <th class="col">
                         <div class="admin-table-title">
-                            <p>Hình thức</p>
+                            <p>Bảo hành</p>
                             <div class="admin-sort">
                                 <i class="fa-solid fa-sort"></i>
                                 <ul class="admin-sort-list">
-                                    <li @click="sort(false, 'IsOnlineOrder')">Tại cửa hàng</li>
-                                    <li @click="sort(true, 'IsOnlineOrder')">Online</li>
+                                    <li @click="sort(false, 'warrantyExpires')">Còn hạn</li>
+                                    <li @click="sort(true, 'warrantyExpires')">Hết hạn</li>
                                 </ul>
                             </div>
                         </div>
                     </th>
-                    <th class="col">
-                        <div class="admin-table-title">
-                            <p>Cách thức <br>thanh toán</p>
-                            <div class="admin-sort">
-                                <i class="fa-solid fa-sort"></i>
-                                <ul class="admin-sort-list">
-                                    <li @click="sort('COD', 'paymentMethod')">COD</li>
-                                    <li @click="sort('Online', 'paymentMethod')">Online</li>
-                                    <div class="filter-admin-input">
-                                        <input
-                                            type="text"
-                                            placeholder="Nhạp từ khóa..."
-                                            v-model="filterInput"
-                                            @input="handleFitter('paymentMethod')"
-                                        />
-                                    </div>
-                                </ul>
-                            </div>
-                        </div>
-                    </th>
-                    <th class="col">
-                        <div class="admin-table-title">
-                            <p>Thanh toán</p>
-                            <div class="admin-sort">
-                                <i class="fa-solid fa-sort"></i>
-                                <ul class="admin-sort-list">
-                                    <li @click="sort(false, 'isPayment')">Chưa thanh toán</li>
-                                    <li @click="sort(true, 'isPayment')">Đã thanh toán  </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </th>
+                    
                     <th class="col">Ngày tạo</th>
                     <th class="col text-center">Hành động</th>
                 </tr>
@@ -159,12 +144,10 @@
                 <tr v-for="(order,index) in orders" :key="order._id">
                     <td class="col-1 text-center">{{ index+1 }}</td>
                     <td class="col-2">{{ order._id }}</td>
-                    <td class="col">{{ order.nameCustomer }}</td>
+                    <td class="col-2">{{ order?.productId.name }}</td>
+                    <td class="col">{{ order?.nameCustomer }}</td>
                     <td class="col">{{ order.status }}</td>
-                    <td class="col">{{ order.IsOnlineOrder ? ' Trực tuyến' : 'Tại của hàng' }}</td>
-                    <td class="col">{{ order.paymentMethod }}</td>
-                    <td class="col text-center p-0 fs-4 text-danger" v-if="order.isPayment=='Chưa thanh toán'"><i class="fa-solid fa-xmark"></i></td>
-                    <td class="col text-center p-0 fs-4 text-success" v-else><i class="fa-solid fa-check"></i></td>
+                    <td class="col">{{ order.warrantyExpires ? ' Hết hạn' : 'Còn hạn' }}</td>
                     <td class="col">{{ order.createdAt }}</td>
                     <td class="col text-center">
                         <span class="btn btn-outline-info" @click="openDetail(order._id)"><i class="fa-solid fa-circle-info"></i></span>
@@ -174,7 +157,7 @@
              </tbody>   
         </table>
         <!--order detail -->
-        <adminRentalDetail v-if="activeDetail" :id="id" :paymentSuccess="paymentSuccess" @close-detail="closeDetail" @close-success="closeSuccess"></adminRentalDetail>
+        <adminWarrantyDetail v-if="activeDetail" :id="id" :paymentSuccess="paymentSuccess" @close-detail="closeDetail" @close-success="closeSuccess"></adminWarrantyDetail>
         <!-- pagination -->
         <div class="product-pagination mt-5">
             <ul class="pagination">
@@ -196,17 +179,17 @@
 </template>
 
 <script>
+import warrantyService from '@/service/warranty.service';
 import format from '@/utils/format';
-import adminRentalDetail from './adminRentalDetail.vue';
+import adminWarrantyDetail from './adminWarrantyDetail.vue';
 import exportToExcel from '@/utils/exportToExcel';
-import templateRental from '@/utils/templateRental'
+import templateWarranty from '@/utils/templateWarranty'
 import productService from '@/service/product.service';
 import print from '@/utils/print'
-import printTemlateRental from '@/utils/printTemplateRental'
-import rentalService from '@/service/rental.service'
+import printTemplateWarranty from '@/utils/printTemplateWarranty'
 export default {
     components:{
-        adminRentalDetail
+        adminWarrantyDetail
     },
     data(){
         return{
@@ -227,35 +210,9 @@ export default {
             activeDetail:false,
             paymentSuccess:null,
             id:'',
-            data:[],
-            dealineRental:[]
         }
     },
     methods:{
-        async dealine(){
-            const length = await rentalService.getAll()
-            this.data=[...length.data]
-            const today = new Date
-            this.data.forEach(rental =>{
-                if(rental.totalAmount >rental.pricePayed && !rental.payInFull){
-                    if(this.daysUntilDue(today,rental.datePay)<=5){
-                        this.dealineRental.push(rental)
-                        console.log('đến hạn');
-                        console.log(this.dealineRental);
-                    }
-                }   
-            })
-        },
-        sort2(){
-            this.orders=this.dealineRental
-            this.isSort=true
-        },
-        daysUntilDue(today, dueDate) {
-            const todayDate = new Date(today);
-            const dueDateObj = new Date(dueDate);
-            const daysDifference = Math.ceil((dueDateObj - todayDate) / (1000 * 60 * 60 * 24));
-            return daysDifference;
-        },
         isPaymentSuccess() {
             const params = new URLSearchParams(window.location.search);
             if(params.get('success') === 'true'){
@@ -270,7 +227,7 @@ export default {
             }
         },
         closeSuccess(){
-            this.$router.push('/admin/rental')
+            this.$router.push('/admin/warranty')
             this.paymentSuccess=null
         },
         openDetail(id){
@@ -313,9 +270,9 @@ export default {
             }
         },
         async getAll(){
-            const length = await rentalService.getAll()
+            const length = await warrantyService.getAll()
             this.lengthPage = Math.ceil(length.data.length / this.pageSize);
-            const response = await rentalService.getAll(this.pageNumber,this.pageSize)
+            const response = await warrantyService.getAll(this.pageNumber,this.pageSize)
             this.orders=[
                 ...response.data
             ]
@@ -347,6 +304,15 @@ export default {
                     }
                 });
             }
+            else if(field =='nameProduct'){
+                this.orders.sort((a, b) => {
+                    if (type == 1) {
+                        return a.productId['name'].localeCompare(b.productId['name']);
+                    } else if (type == -1) {
+                        return b.productId['name'].localeCompare(a.productId['name']);
+                    }
+                });
+            }
             else{
                 await this.getAll();
                 this.orders = this.orders.filter((order) => order[field] == type);
@@ -373,6 +339,11 @@ export default {
                         return regex.test(order.customerId[name]);
                     });
                 }
+                else if(name === 'nameProduct'){
+                     abc = this.orders.filter((order) => {
+                        return regex.test(order.productId['name']);
+                    });
+                }
                 else{
                     abc = this.orders.filter((order) => {
                         return regex.test(order[name]);
@@ -388,9 +359,8 @@ export default {
         async filterDate() {
             this.isSort = true;
             const { day, month, year, field } = this.dateFilter;
-            const response = await rentalService.filterByDate(day, month, year, field, this.pageNumber, this.pageSize);
+            const response = await warrantyService.filterByDate(day, month, year, field, this.pageNumber, this.pageSize);
             this.orders = [...response.data];
-            console.log(this.orders)
             this.orders.map(order =>{
                 order.createdAt = format.formatDateNoTime(order.createdAt)
             })
@@ -400,21 +370,20 @@ export default {
             this.orders.map(order=>{
                 data.push({
                     'Mã': order._id,
-                    'Tên khách hàng':order.customerId.fullName,
-                    'Số điện thoại':order.customerId.phone,
-                    'Địa chỉ':order.customerId.address,
-                    'Hình thức mua hàng': order.IsOnlineOrder ? 'Online' : 'Tại cửa hàng',
+                    'Tên sản phẩm':order.productId.name,
+                    'Tên khách hàng':order.nameCustomer,
+                    'Số điện thoại':order.phone,
+                    'Địa chỉ':order.address,
+                    'Bảo hành': order.warrantyExpires ? 'Hết hạn' : 'Còn hạn',
                     'Trạng thái đơn hàng':order.status,
-                    'Hình thức thanh toán':order.paymentMethod,
-                    'Trạng thái thanh toán':order.isPayment ? 'Đã thanh toán' :'Chưa thanh toán',
                     'Tổng giá':format.formatCurrency(order.totalAmount),
                     'Ngày tạo':order.createdAt
                 })
             })
-            exportToExcel(data, 'donthue');
+            exportToExcel(data, 'BaoHanh');
         },
         async exportToPDF(){
-            const data= templateRental(this.orders)
+            const data= templateWarranty(this.orders)
             const response = await productService.exportPDF({ data: data });
             const blob = new Blob([ response.data], {
                 type: 'application/pdf',
@@ -423,21 +392,21 @@ export default {
             const link = document.createElement('a');
             link.href = url;
             link.target = '_blank';
-            link.setAttribute('download', 'DonThue.pdf');
+            link.setAttribute('download', 'BaoHanh.pdf');
             document.body.appendChild(link);
             link.click();
         },
         async printPDF(id){
-            const response = await rentalService.getById(id)
+            const response = await warrantyService.getById(id)
             const order= response.data
+            
             order.createdAt = format.formatDate(order.createdAt)
-                order.totalCostOfProducts= format.formatCurrency( order.totalCostOfProducts)
-                order.transportFee= format.formatCurrency( order.transportFee)
-                order.products.forEach(product =>{
-                    product.priceRental=format.formatCurrency(product.priceRental)
+                order.accessorys.forEach(product =>{
+                    product.priceSale=format.formatCurrency(product.priceSale)
                 })
-            const printTemplate= printTemlateRental(order)
-            print(printTemplate,'Phiếu đơn hàng' )
+                // console.log(order);
+            const printTemplate= printTemplateWarranty(order)
+            print(printTemplate,'Phiếu Bảo Hành' )
         },
         
     },
@@ -445,7 +414,6 @@ export default {
         this.getAll()
         this.getYears()
         this.isPaymentSuccess()
-        this.dealine()
     }
 };
 </script>
@@ -484,7 +452,6 @@ export default {
         font-weight: 600;
         z-index: 0;
         cursor: pointer;
-        
     }
     .order-status-item span{
         position: absolute;

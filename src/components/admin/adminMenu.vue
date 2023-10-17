@@ -170,6 +170,30 @@
                     </router-link>
                 </li>
             </div>
+
+            <span
+                class="menu-title"
+                data-bs-toggle="collapse"
+                href="#collapseExample6"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapseExample2"
+                >Bảo hành<i class="fa-solid fa-chevron-down ms-1"></i> </span
+            >
+            <div class="collapse" id="collapseExample6">
+                <li class="sec-left__item" v-if="user.isAdmin">
+                    <router-link to="/admin/warranty-search" active-class="active" class="sec-left__link">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                       Tra cứu
+                    </router-link>
+                </li>
+                <li class="sec-left__item" v-if="user.isAdmin">
+                    <router-link to="/admin/warranty" active-class="active" class="sec-left__link">
+                        <i class="fa-solid fa-hammer"></i>
+                       Đơn bảo hành
+                    </router-link>
+                </li>
+            </div>
         </ul>
     </section>
 </template>

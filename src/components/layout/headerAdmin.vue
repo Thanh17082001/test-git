@@ -1,7 +1,7 @@
 <template>
-    <header class="header-admin">
+    <header class="header-admin pe-3">
         <div class="role-user">
-            <span class="role-title" @click="activeRole = !activeRole">
+            <span class="role-title ms-3" @click="activeRole = !activeRole">
                 Quyền của bạn
                 <i class="fa-solid fa-caret-down ms-2"></i>
             </span>
@@ -11,10 +11,10 @@
                 <li>Tạo phiếu nhập kho</li>
             </ul>
         </div>
-        <div class="admin-search">
+        <!-- <div class="admin-search">
             <input v-model="searchVal" placeholder="Nhập từ khóa tìm kiếm" type="text" @input="onSearch" />
             <button class=""><i class="fa-solid fa-magnifying-glass"></i></button>
-        </div>
+        </div> -->
         <div class="admin-action">
             <router-link to="/" class="back-home">
                 Trở về trang người dùng

@@ -374,7 +374,11 @@ export default {
             this.paymentSuccess=null
         },
         totalProduct(){
+            this.totalAmount=0
+            this.transportFee=0
+            this.totalCostOfProducts=0
             this.ordersProducts.forEach(product =>{
+                if(product.priceSale && product.quantity)
                 this.totalCostOfProducts+=product.priceSale*product.quantity
             })
             this.transportFee= Math.ceil(this.totalCostOfProducts* 0.01)
@@ -549,6 +553,7 @@ export default {
                     this.ordersProducts[index].priceSale=product.priceSale
                     this.ordersProducts[index].inputQuantity=product.inputQuantity
                     this.ordersProducts[index].nameProduct=product.name
+                    this.ordersProducts[index].warrantyTime=product.warrantyTime ? product.warrantyTime :null
                 }
                 else{
                     return;
@@ -561,6 +566,7 @@ export default {
                 productId:'',
                 priceSale:0
             })
+            this.totalProduct()
         },
         popRow(){
             if(this.ordersProducts.length <=1){
@@ -568,6 +574,8 @@ export default {
             }
             else{
                 this.ordersProducts.pop()
+                this.totalProduct()
+
             }
         },
         async addOrder(){
@@ -745,6 +753,7 @@ export default {
     border: 1px solid #ccc;
     margin: 10px 0px;
 }
+
 .customer-form{
     position: relative;
     top: 50%;
