@@ -112,8 +112,8 @@
                     >
                 </div>
             </div>
+            <!-- hình thức thanh toán -->
             <div class="row">
-                <!-- hình thức thanh toán -->
                 <div class="row mt-4" v-if="isDealine">
                     <div class="col-lg-4">
                         <label

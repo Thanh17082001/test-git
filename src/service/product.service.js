@@ -54,7 +54,6 @@ class productService{
     }
 
     async exportPDF(data, pageDirection){
-        console.log(pageDirection);
         const headers=undefined
         const baseUrl= "http://localhost:3000/product"
         this.api=createApiClient(baseUrl,headers)

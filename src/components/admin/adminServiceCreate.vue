@@ -11,10 +11,6 @@
                     <label for="">Tên dịch vụ<span>*</span></label>
                     <input v-model="infoService.name" type="text" placeholder="Tên của dịch vụ..." required>
                 </div>
-                <div class="spe-group col-lg-6">
-                    <label for="">Giá dịch vụ<span>*</span></label>
-                    <input v-model="infoService.price" type="number" placeholder="Giá của dịch vụ..." required>
-                </div>
                 <div class="spe-group col-lg-12">
                     <label for="">Mô tả  <span>*</span></label>
                     <textarea v-model="infoService.description" class="note" placeholder="Mô tả" required></textarea>

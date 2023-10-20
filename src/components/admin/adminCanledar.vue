@@ -54,9 +54,9 @@
                         <span style="--color: #a2ff86"></span>
                         <span>: Hoàn thành</span>
                     </div>
-                    <div class="note-color" @click="fillter('Quá hạn')">
+                    <div class="note-color" @click="fillter('Đã báo cáo')">
                         <span style="--color: #fc4f00"></span>
-                        <span>: Quá hạn</span>
+                        <span>: Đã báo cáo</span>
                     </div>
                 </div>
                 <div class="search-task mt-2">
@@ -81,19 +81,20 @@
             </template>
         </FullCalendar>
     </div>
-
-    <!-- tạo mới việc -->
+    <!-- tạo mới cv -->
     <div class="overlay" v-if="activeCreate">
-        <form class="form-task" action="" @submit.prevent.stop="submitCreate">
+        <form class="form-task2" @submit.prevent.stop="submitCreate">
             <div class="d-flex justify-content-end">
                 <i @click="closeCreate" class="fa-solid fa-xmark fs-1 text-danger me-2"></i>
             </div>
             <h3>Tạo công việc</h3>
+            <span class="fs-4" :class="{ 'text-danger': !!mesFail, 'text-success': !!messSuc }">{{
+                !!mesFail ? mesFail : messSuc
+            }}</span>
+            <br>
+            <span class="btn btn-warning" v-if="!!printTaskId" @click="printPDF(printTaskId)">In Phiếu việc</span>
             <div class="row">
-                <span class="fs-4" :class="{ 'text-danger': !!mesFail, 'text-success': !!messSuc }">{{
-                    !!mesFail ? mesFail : messSuc
-                }}</span>
-                <div class="group col-lg-6">
+                <div class="group col-lg-4">
                     <div class="d-flex mb-1">
                         <label for="" class="mt-0">Tên Khách hàng <span class="required">*</span></label>
                         <span class="btn btn-info btn-brand mt-0" @click="activeCustomer = true">Mới</span>
@@ -334,20 +335,21 @@
                         </form>
                     </div>
                 </div>
-                <div class="group col-lg-6">
+                <div class="group col-lg-4">
                     <div class="d-flex mb-1">
                         <label for="" class="mt-0">Chọn nhân viên <span class="required">*</span></label>
                     </div>
-                    <select v-model="infoTask.staffId" class="form-select mt-2" required>
+                    <select v-model="infoTask.staffId" class="form-select mt-1" required>
                         <option value="" class="form-option">--- Chọn ---</option>
                         <option v-for="staff in staffs" :value="staff._id" :key="staff._id">
                             {{ staff.fullName }}
                         </option>
                     </select>
                 </div>
-                <div class="group col-lg-6">
+                <div class="group col-lg-4">
                     <div class="d-flex mb-1">
                         <label for="" class="mt-0">Chọn dịch vụ<span class="required">*</span></label>
+                        <span class="btn btn-info btn-brand mt-0" @click="activeServiceCreate = true">Mới</span>
                     </div>
                     <select v-model="infoTask.serviceId" class="form-select" required @change="getServiceById(infoTask.serviceId)">
                         <option value="" class="form-option">--- Chọn ---</option>
@@ -356,22 +358,27 @@
                         </option>
                     </select>
                 </div>
-                <div class="col-lg-6">
-                  <div class="group">
-                    <label for="" class="mt-0">Giá của dịch vụ</label>
-                    <input type="number" v-model="serviceInfo.price" class="input-price" v-if="!!serviceInfo?.price" required disabled>
-                  </div>
+            </div>
+            <div class="row">
+                <div class="group col-lg-12">
+                    <div class="w-100">
+                        <div class="d-flex">
+                            <label for="" class="mt-0"><strong>Ghi chú</strong></label>
+                        </div>
+                        <textarea class="note" v-model="note" placeholder="Ghi chú..."></textarea>
+                    </div>
                 </div>
             </div>
-            <button class="btn btn-success mt-3">Tạo</button>
+            <button class="btn btn-success px-5 mt-3">Tạo</button>
         </form>
     </div>
+    
 
     <!-- edit cong việc -->
     <div class="overlay" v-if="activeEdit">
         <form class="form-task" action="" @submit.prevent.stop>
             <div class="d-flex justify-content-end">
-                <i @click="activeEdit = false" class="fa-solid fa-xmark fs-1 text-danger me-2"></i>
+                <i @click="closeEdit" class="fa-solid fa-xmark fs-1 text-danger me-2"></i>
             </div>
             <h3>Sửa công việc</h3>
             <div class="row">
@@ -393,15 +400,15 @@
                 <div class="col-lg-12 mb-5">
                     <div class="status" v-if="infoTaskEdit.status == 'Quá hạn'">
                         <div class="status-progress-color" style="--left: 0%; --colorB: #fc4f00"></div>
-                        <div class="status-item" style="--left: 2%">
+                        <div class="status-item" style="--left: 10%">
                             <span style="--border-color: #fc4f00">1</span>
                             <span>Chưa bắt đầu</span>
                         </div>
-                        <div class="status-item" style="--left: 35%">
+                        <div class="status-item" style="--left: 43%">
                             <span style="--border-color: #fc4f00">2</span>
                             <span>Đang tiến hành</span>
                         </div>
-                        <div class="status-item" style="--left: 70%">
+                        <div class="status-item" style="--left: 75%">
                             <span style="--border-color: #fc4f00">3</span>
                             <span>Hoàn thành</span>
                         </div>
@@ -424,15 +431,15 @@
                     </div>
                     <div class="status" v-if="infoTaskEdit.status == 'Chưa bắt đầu'">
                         <div class="status-progress-color" style="--left: 80%; --colorB: #11e911"></div>
-                        <div class="status-item" style="--left: 2%">
+                        <div class="status-item" style="--left: 10%">
                             <span style="--border-color: #11e911">1</span>
                             <span>Chưa bắt đầu</span>
                         </div>
-                        <div class="status-item" style="--left: 35%">
+                        <div class="status-item" style="--left: 43%">
                             <span style="--border-color: blue">2</span>
                             <span>Đang tiến hành</span>
                         </div>
-                        <div class="status-item" style="--left: 70%">
+                        <div class="status-item" style="--left: 75%">
                             <span style="--border-color: blue">3</span>
                             <span>Hoàn thành</span>
                         </div>
@@ -453,15 +460,15 @@
 
                     <div class="status" v-if="infoTaskEdit.status == 'Đang tiến hành'">
                         <div class="status-progress-color" style="--left: 45%; --colorB: #11e911"></div>
-                        <div class="status-item" style="--left: 2%">
+                        <div class="status-item" style="--left: 10%">
                             <span style="--border-color: #11e911">1</span>
                             <span>Chưa bắt đầu</span>
                         </div>
-                        <div class="status-item" style="--left: 35%">
+                        <div class="status-item" style="--left: 43%">
                             <span style="--border-color: #11e911">2</span>
                             <span>Đang tiến hành</span>
                         </div>
-                        <div class="status-item" style="--left: 70%">
+                        <div class="status-item" style="--left: 75%">
                             <span style="--border-color: blue">3</span>
                             <span>Hoàn thành</span>
                         </div>
@@ -482,32 +489,44 @@
 
                     <div class="status" v-if="infoTaskEdit.status == 'Hoàn thành'">
                         <div class="status-progress-color" style="--left: 0%; --colorB: #11e911"></div>
-                        <div class="status-item" style="--left: 2%">
+                        <div class="status-item" style="--left: 10%">
                             <span style="--border-color: #11e911">1</span>
                             <span>Chưa bắt đầu</span>
                         </div>
-                        <div class="status-item" style="--left: 35%">
+                        <div class="status-item" style="--left: 43%">
                             <span style="--border-color: #11e911">2</span>
                             <span>Đang tiến hành</span>
                         </div>
-                        <div class="status-item" style="--left: 70%">
+                        <div class="status-item" style="--left: 75%">
                             <span style="--border-color: #11e911">3</span>
                             <span>Hoàn thành</span>
                         </div>
-                        <span
-                            class="btn btn-info my-5"
-                            v-if="infoTaskEdit.status == 'Chưa bắt đầu'"
-                            @click="editStatus(infoTaskEdit._id, 'Đang tiến hành')"
-                            >Cập nhật thành đang tiến hành</span
-                        >
-                        <span
-                            class="btn btn-info my-5"
-                            v-if="infoTaskEdit.status == 'Đang tiến hành'"
-                            @click="editStatus(infoTaskEdit._id, 'Hoàn thành')"
-                            >Cập nhật thành hoàn thành</span
-                        >
-                        <button class="btn btn-info my-5" v-if="infoTaskEdit.status == 'Hoàn thành'" disabled>
-                            Đã hoàn thành
+                        <button class="btn btn-info my-5" v-if="!infoTaskEdit.isReport" @click="activeOrderTask=true">
+                            Báo cáo
+                        </button>
+                        <button class="btn btn-info my-5" v-else @click="activeReportDetail=true">
+                            Xem Báo cáo
+                        </button>
+                    </div>
+                    <div class="status" v-if="infoTaskEdit.status == 'Đã báo cáo'">
+                        <div class="status-progress-color" style="--left: 0%; --colorB: #FC4F00"></div>
+                        <div class="status-item" style="--left: 10%">
+                            <span style="--border-color: #11e911">1</span>
+                            <span>Chưa bắt đầu</span>
+                        </div>
+                        <div class="status-item" style="--left: 43%">
+                            <span style="--border-color: #11e911">2</span>
+                            <span>Đang tiến hành</span>
+                        </div>
+                        <div class="status-item" style="--left: 75%">
+                            <span style="--border-color: #11e911">3</span>
+                            <span>Hoàn thành</span>
+                        </div>
+                        <button class="btn btn-info my-5" v-if="!infoTaskEdit.isReport" @click="activeOrderTask=true">
+                            Báo cáo
+                        </button>
+                        <button class="btn btn-info my-5" v-else @click="activeReportDetail=true">
+                            Xem Báo cáo
                         </button>
                     </div>
                 </div>
@@ -535,16 +554,304 @@
                 </div>
                 <div class="col-lg-4 mt-5">
                   <div class="group">
-                    <label for="" class="mt-0">Giá của dịch vụ</label>
-                    <input type="number" v-model="infoTaskEdit.totalAmount" class="input-price" required disabled>
+                    <label for="" class="mt-0">Ghi chú</label>
+                    <input type="text" v-model="infoTaskEdit.note" class="input-price">
                   </div>
                 </div>
             </div>
             <button class="btn btn-success me-3 mt-3" @click="editTask(infoTaskEdit._id)">Sửa</button>
             <button class="btn btn-danger me-3 mt-3" @click="deleteTask(infoTaskEdit._id)">Xóa</button>
-            <button class="btn btn-warning mt-3" @click="printPDF(infoTaskEdit._id)">In phiếu</button>
+            <button v-if="!infoTaskEdit.isReport" class="btn btn-warning mt-3" @click="printPDF(infoTaskEdit._id)">In phiếu</button>
         </form>
     </div>
+    <!-- bao cao cv -->
+    <div class="overlay" v-if="activeOrderTask">
+        <form class="form-task" action="" @submit.prevent.stop="submitReport">
+            <div class="d-flex justify-content-end">
+                <i @click="closeReportCreate" class="fa-solid fa-xmark fs-1 text-danger me-2"></i>
+            </div>
+            <h3>Báo cáo công việc</h3>
+            <div class="row">
+                <span class="fs-4" :class="{ 'text-danger': !!mesReportF, 'text-success': !!mesReportS }">{{
+                    !!mesReportF ? mesReportF : mesReportS
+                }}</span>
+                <!-- thông tin về công việc -->
+                <div class="d-flex justify-content-center ms-5">
+                    <div class="row w-75">
+                        <div class="col-lg-6">
+                            <div class="row mb-1 text-start">
+                                <span class="col-6"><strong>Tên Khách hàng:</strong></span>
+                                <span class="col-6">{{infoTaskEdit.nameCustomer}}</span>
+                                <span class="col-6"><strong>Địa chỉ</strong></span>
+                                <span class="col-6">{{infoTaskEdit.address  }}</span>
+                                <span class="col-6"><strong>SĐT:</strong></span>
+                                <span class="col-6">{{infoTaskEdit.phone  }}</span>
+                                
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row mb-1 text-start">
+                                <span class="col-6"><strong>Tên nhân viên:</strong></span>
+                                <span class="col-6">{{staffs[staffs.findIndex(item => item._id == infoTaskEdit.staffId)].fullName  }}</span>
+                                <span class="col-6"><strong>Tên dịch vụ:</strong></span>
+                                <span class="col-6">{{services[services.findIndex(item => item._id == infoTaskEdit.serviceId)].name  }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- danh sách phụ kiện -->
+                
+                <div class="row gx-0 mt-3">
+                    <div class="scroll2 col-lg-8" >
+                        <h6 class="text-uppercase">Danh sách sản phẩm</h6>
+                        <div class="scroll">
+                            <div class="row" v-for="(item, index) in infoAccessorys" :key="index">
+                                <div class="group col-lg-4">
+                                    <div class="d-flex mb-1">
+                                        <label for="" class="mt-0">Danh sách phụ kiện <span class="required">*</span></label>
+                                    </div>
+                                    <select
+                                        v-model="item.accessoryId"
+                                        class="form-select"
+                                        @change="getproductById(item.accessoryId, index)"
+                                        
+                                    >
+                                        <option value="" class="form-option">--- Chọn ---</option>
+                                        <option v-for="product in accessorys" :value="product._id" :key="product._id">
+                                            {{ product.name}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="spe-group col-lg-4">
+                                    <label for="" class="mt-0 mb-0">Giá bán</label>
+                                    <span class="price">Giá: {{ item.priceSale }}</span>
+                                </div>
+                                <div class="spe-group col-lg-4">
+                                    <label for="" class="mt-0 mb-0">Số lượng<span class="text-danger ms-2">*</span></label>
+                                    <input
+                                        v-model="item.quantity"
+                                        @keyup="(event) => checkQuantity(event, item)"
+                                        type="number"
+                                        placeholder="Nhập số lượng hàng"
+                                    />
+                                    <span v-if="!!mesValid && idValid==item.accessoryId" class="text-danger">{{ mesValid }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row control">
+                            <div class="d-flex justify-content-center align-items-center mt-1">
+                                <div class="group me-3">
+                                    <span class="btn btn-outline-success" @click="pushRow">Thêm dòng</span>
+                                </div>
+                                <div class="group">
+                                    <span class="btn btn-outline-danger" @click="popRow">Bớt dòng</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 scroll2">
+                        <div class="entry-group col-lg-12">
+                            <label for="">Ảnh chụp thực tế</label>
+                            <input class="entry-file-input" ref="entryInputFile" type="file" @change="handleImage" required>
+                        </div>
+                        <div class="spe-group col-lg-12">
+                            <label for="" class="mt-0 mb-0">Tiền công<span class="text-danger ms-2">*</span></label>
+                            <input
+                                class="input-price"
+                                v-model="infoTask.wage"
+                                min="0"
+                                @keyup="(event)=>checkWage(event)"
+                                @focus="infoTask.wage=''"
+                                @blur="infoTask.wage!='' ? infoTask.wage =infoTask.wage : infoTask.wage =0"
+                                type="number"
+                                placeholder="Tiền công của dịch vụ"
+                            />
+                            <span v-if="!!mesValidWage" class="text-danger">{{ mesValidWage }}</span>
+                        </div>
+                       
+                        <div class="row mb-1 text-start">
+                            <span class="col-6"><strong>Tiền công:</strong></span>
+                            <span class="col-6">{{infoTask.wage? formatCurrency(infoTask.wage) : formatCurrency(0)}}</span>
+                        </div>
+                        <div class="row mb-1 text-start">
+                            <span class="col-6"><strong>Số tiền của phụ kiện:</strong></span>
+                            <span class="col-6">{{formatCurrency(totalOfAccessory)  }}</span>
+                        </div>
+                        <div class="row mb-1 text-start mt-2">
+                            <span class="col-6"><strong>Tổng tiền:</strong></span>
+                            <span class="col-6">{{formatCurrency(totalAmount)  }}</span>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                 <!-- hình thức thanh toán -->
+                 <!-- <div class="row mt-4">
+                     <div class="col-lg-4">
+                         <label
+                             for="payment"
+                             :class="{ 'payment-active': isClassCod, 'payment-error': choosePayent }"
+                             class="payment"
+                             @click="paymentMeThod('COD')"
+                         >
+                             <img
+                                 src="https://s3-ap-southeast-1.amazonaws.com/pharmacity-ecm-asm-dev/payment-method/cash.webp"
+                                 alt=""
+                             />
+                             <div class="payment-content">
+                                 <span>Tiền mặt</span>
+                                 <span>Thanh toán khi nhận hàng</span>
+                             </div>
+                             <div class="payment-checkbox">
+                                 <span></span>
+                             </div>
+                         </label>
+                     </div>
+                     <div class="col-lg-4">
+                         <label
+                             for="payment"
+                             :class="{ 'payment-active': isClassOnlVNPAY, 'payment-error': choosePayent }"
+                             class="payment"
+                             @click="paymentMeThod('VNPAY')"
+                         >
+                             <img
+                                 src="https://vnpay.vn/s1/statics.vnpay.vn/2023/9/06ncktiwd6dc1694418196384.png"
+                                 alt=""
+                             />
+                             <div class="payment-content">
+                                 <span>VNPay</span>
+                                 <span>Thanh toán qua ví VNPay</span>
+                             </div>
+                             <div class="payment-checkbox">
+                                 <span></span>
+                             </div>
+                         </label>
+                     </div>
+                     <div class="col-lg-4">
+                         <label
+                             for="payment"
+                             :class="{ 'payment-active': isClassOnlMOMO, 'payment-error': choosePayent }"
+                             class="payment"
+                             @click="paymentMeThod('MOMO')"
+                         >
+                             <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="" />
+                             <div class="payment-content">
+                                 <span>MOMO</span>
+                                 <span>Quét mã QR momo</span>
+                             </div>
+                             <div class="payment-checkbox">
+                                 <span></span>
+                             </div>
+                         </label>
+                     </div>
+                 </div> -->
+            </div>
+            <div class="image" v-if="!!imgSrc">
+                <img :src="imgSrc" alt="">
+                <i class="fa-solid fa-xmark" @click="deleteEntryImg"></i>
+            </div>
+            <button class="btn btn-success mt-3 px-5">Cập nhật</button>
+        </form>
+    </div>
+
+    <!-- chi tiet bao cao -->
+    <div class="overlay" v-if="activeReportDetail">
+        <div class="form-task" action="" @submit.prevent.stop="submitReport">
+            <div class="d-flex justify-content-end">
+                <i @click="activeReportDetail=false" class="fa-solid fa-xmark fs-1 text-danger me-2"></i>
+            </div>
+            <h3>Chi tiết công việc</h3>
+            <div class="row">
+                <!-- thông tin về công việc -->
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="row mb-1 text-start">
+                            <span class="col-6"><strong>Tên Khách hàng:</strong></span>
+                            <span class="col-6">{{infoTaskEdit.nameCustomer}}</span>
+                            <span class="col-6"><strong>Địa chỉ</strong></span>
+                            <span class="col-6">{{infoTaskEdit.address  }}</span>
+                            <span class="col-6"><strong>SĐT:</strong></span>
+                            <span class="col-6">{{infoTaskEdit.phone  }}</span>
+                            
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="row mb-1 text-start">
+                            <span class="col-6"><strong>Tên nhân viên:</strong></span>
+                            <span class="col-6">{{staffs[staffs.findIndex(item => item._id == infoTaskEdit.staffId)].fullName  }}</span>
+                            <span class="col-6"><strong>Tên dịch vụ:</strong></span>
+                            <span class="col-6">{{services[services.findIndex(item => item._id == infoTaskEdit.serviceId)].name  }}</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 img-detail-report">
+                        <img class="" :src="'http://localhost:3000/'+infoTaskEdit.image" alt="">
+                    </div>
+                </div>
+                <!-- danh sách phụ kiện -->
+                
+                <div class="row gx-0 mt-3">
+                    <div class="scroll2 col-lg-8" >
+                        <h6 class="text-uppercase">Danh sách sản phẩm</h6>
+                        <div class="scroll">
+                           <table class="table">
+                                <thead>
+                                   <tr class="row">
+                                        <th class="col-1 text-center">
+                                            STT
+                                        </th>
+                                        <th class="col">
+                                            Tên phụ kiện
+                                        </th>
+                                        <th class="col">
+                                            Giá phụ kiện
+                                        </th>
+                                        <th class="col">
+                                            Số lượng
+                                        </th>
+                                   </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="row" v-for="(accessory, index) in infoTaskEdit.accessorys" :key="index">
+                                        <td class="col-1 text-center">
+                                            {{ index+1 }}
+                                        </td>
+                                        <td class="col">
+                                            {{ accessory.nameProduct }}
+                                        </td>
+                                        <td class="col">
+                                            {{ formatCurrency(accessory.priceSale) }}
+                                        </td>
+                                        <td class="col">
+                                            {{ accessory.quantity }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                           </table>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 scroll2">
+                       
+                        <div class="row mb-1 text-start">
+                            <span class="col-6"><strong>Tiền công:</strong></span>
+                            <span class="col-6">{{ formatCurrency(infoTaskEdit.wage)}}</span>
+                        </div>
+                        <div class="row mb-1 text-start">
+                            <span class="col-6"><strong>Số tiền của phụ kiện:</strong></span>
+                            <span class="col-6">{{formatCurrency(infoTaskEdit.totalOfAccessory)  }}</span>
+                        </div>
+                        <div class="row mb-1 text-start mt-2">
+                            <span class="col-6"><strong>Tổng tiền:</strong></span>
+                            <span class="col-6">{{formatCurrency(infoTaskEdit.totalAmount)  }}</span>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-warning mt-3 px-5" @click="printPDFReporyt(infoTaskEdit._id)">In phiếu báo cáo</button>
+        </div>
+    </div>
+    <adminServiceCreate v-if="activeServiceCreate" @closeCreate="closeServiceCreate"></adminServiceCreate>
 </template>
 
 <script>
@@ -556,17 +863,41 @@ import taskService from '@/service/task.service';
 import staffService from '@/service/staff.service';
 import serviceService from '@/service/service.service';
 import customerService from '@/service/customer.service';
+import accessoryService from '@/service/accessory.service';
 import axios from 'axios';
 import print from '@/utils/print'
 import printTemlateTask from '@/utils/printTemplateTask'
 import exportToExcel from '@/utils/exportToExcel';
 import format from '@/utils/format';
+import adminServiceCreate from './adminServiceCreate.vue';
+import printTemplateTaskReport from '@/utils/printTemplateTaskReport'
 export default {
     components: {
         FullCalendar,
+        adminServiceCreate
     },
     data() {
         return {
+            resultReport:{},
+            activeReportDetail:false,
+            printTaskId:'',
+            mesReportS:'',
+            mesReportF:'',
+            imgSrc:'',
+            activeOrderTask:false,
+            activeServiceCreate:false,
+            mesValidWage:'',
+            infoAccessorys: [{ accessoryId: '' }],
+            idValid:'',
+            mesValid:'',
+            isSubmit:false,
+            totalAmount:0,
+            pricePayed:0,
+            totalOfAccessory:0,
+            accessorys:[],
+            isClassCod:false,
+            isClassOnlVNPAY:false,
+            isClassOnlMOMO:false,
             tasks:[],
             years:[],
             dateFilter: {
@@ -595,7 +926,7 @@ export default {
             customerId: '',
             mesFail: '',
             messSuc: '',
-            infoTask: { staffId: '', serviceId: '' },
+            infoTask: { staffId: '', serviceId: '', wage:0 },
             infoTaskEdit: {},
             activeCreate: false,
             activeEdit: false,
@@ -605,19 +936,14 @@ export default {
             selectInfo: {},
             currentDate: null,
             address:'',
+            note:'',
             calendarOptions: {
                 plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
                 initialView: 'dayGridMonth',
 
                 themeSystem: 'bootstrap5',
-                // headerToolbar: {
-                //   left: 'prev,next today',
-                //   center: 'title',
-                //   right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                // },
                 locale: 'vi',
                 events: [],
-
                 // alternatively, use the `events` setting to fetch from a feed
                 editable: true,
                 selectable: true,
@@ -641,7 +967,13 @@ export default {
                         endDate: arg.event.end ? arg.event.end : arg.event.start,
                         status: this.selectInfo.status ? this.selectInfo.status : 'Chưa bắt đầu',
                         currentDate: currentDate,
-                        totalAmount: this.serviceInfo.price
+                        totalAmount: this.totalAmount,
+                        totalOfAccessory:this.totalOfAccessory,
+                        pricePayed:0,
+                        priceService:this.serviceInfo.price,
+                        accessorys:this.infoAccessorys[0].accessoryId!='' ? this.infoAccessorys : [],
+                        note:this.note,
+                        wage:0
                     };
                     this.addTask(info);
                     this.getAll();
@@ -653,11 +985,6 @@ export default {
             },
         };
     },
-    // watch:{
-    //   currentDate(){
-    //     this.getAll()
-    //   }
-    // },
 
     methods: {
         handleEvents(events) {
@@ -697,7 +1024,6 @@ export default {
         async submitCreate() {
             let calendarApi = this.selectInfo.view.calendar;
             calendarApi.unselect(); // clear date selection
-            // this.selectInfo.end.setDate(this.selectInfo.end.getDate()-1)
             if (this.activeCreate) {
                 calendarApi.addEvent({
                     id: 3,
@@ -714,7 +1040,6 @@ export default {
             if (selecEnd < date) {
                 if (confirm('Bạn muốn tạo công việc bé hơn ngày hôm nay')) {
                     this.selectInfo = selectInfo;
-                    this.selectInfo.status = 'Quá hạn';
                     this.activeCreate = true;
                     this.mesFail = '';
                     this.messSuc = '';
@@ -751,6 +1076,11 @@ export default {
                     this.messSuc = 'Thêm công viêc thành công';
                     this.customerId=''
                     this.serviceInfo={}
+                    this.totalAmount=0
+                    this.totalOfAccessory=0
+                    this.infoAccessorys= [{ accessoryId: '' }]
+                    this.note=''
+                    this.printTaskId=response.data.result._id
                 } else {
                     this.mesFail = 'Thêm thất bại';
                     this.messSuc = '';
@@ -806,12 +1136,10 @@ export default {
         
         async getAll() {
             try {
-                // const month = this.currentDate.getMonth()+1
-                // const year = this.currentDate.getFullYear()
                 const response = await taskService.getAll();
                 this.tasks=response.data
                 let data = [];
-                const status = ['Hoàn thành', 'Đang tiến hành', 'Chưa bắt đầu', 'Quá hạn'];
+                const status = ['Hoàn thành', 'Đang tiến hành', 'Chưa bắt đầu', 'Đã báo cáo'];
                 const color = ['#A2FF86', '#7091f5', '#7D7C7C', '#FC4F00'];
                 this.tasks.forEach((item) => {
                     const index = status.indexOf(item.status);
@@ -819,7 +1147,7 @@ export default {
                         id: item._id,
                         serviceId: item.serviceId,
                         staffId: item.staffId,
-                        title: `${item.serviceId.name} cho khách: ${item.nameCustomer}`, // a property!
+                        title: `${item.serviceId.name}`, // a property!
                         start: item.startDate, // a property!
                         end: item.endDate,
                         status: item.status,
@@ -891,6 +1219,7 @@ export default {
         },
         closeCreate() {
             this.activeCreate = false;
+            this.printTaskId=''
         },
         async getAllService() {
             try {
@@ -911,6 +1240,7 @@ export default {
         },
         async editTask(id) {
             try {
+                console.log(this.infoTaskEdit)
                 const response = await taskService.update(id, this.infoTaskEdit);
                 if (response.data.status) {
                     this.getAll();
@@ -1130,6 +1460,11 @@ export default {
             const printTemplate= printTemlateTask(task.data)
             print(printTemplate,'Phiếu đơn hàng' )
         },
+        async printPDFReporyt(id){
+            const task = await taskService.getById(id)
+            const printTemplate= printTemplateTaskReport(task.data)
+            print(printTemplate,'Phiếu đơn hàng' )
+        },
         getYears() {
             const yearsTarget = new Date().getFullYear();
             for (let i = 5; i >= 1; i--) {
@@ -1158,12 +1493,194 @@ export default {
             })
             exportToExcel(data, 'Congviec');
         },
+
+        pushRow() {
+            this.infoAccessorys.push({
+                accessoryId: '',
+                priceSale: 0,
+            });
+        },
+        popRow() {
+            if (this.infoAccessorys.length <= 1) {
+                alert('Dòng cuối');
+            } else {
+                this.infoAccessorys.pop();
+                this.total()
+            }
+        },
+        async getAllAccessory() {
+            try {
+                const response = await accessoryService.getAll();
+                this.accessorys = response.data;
+                this.accessorys= this.accessorys.filter(item=>item.inputQuantity>0)
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        getproductById(id, index) {
+            this.accessorys.map((product) => {
+                if (product._id === id) {
+                    this.infoAccessorys[index].priceSale = product.priceSale;
+                    this.infoAccessorys[index].nameProduct = product.name;
+                    this.infoAccessorys[index].inputQuantity=product.inputQuantity
+                } else {
+                    return;
+                }
+            });
+        },
+        checkQuantity(e, product) {
+            this.total()
+            if (e.target.value <= 0) {
+                e.target.style.borderColor = 'red';
+                this.isSubmit = false;
+                this.mesValid='Số lượng phải lớn hơn 0'
+                this.idValid=product.accessoryId
+            }
+            else if(e.target.value > product.inputQuantity){
+                e.target.style.borderColor = 'red';
+                this.isSubmit = false;
+                this.totalAmount = 0;
+                this.pricePayed=0
+                this.mesValid='Số lượng trong kho không đủ'
+                this.idValid=product.accessoryId
+            }
+            else {
+                e.target.style.borderColor = '#0E8388';
+                this.isSubmit = true;
+                this.mesValid=''
+                this.idValid=''
+            }
+        },
+        checkWage(e){
+            this.total()
+            if(e.target.value < 0){
+                e.target.style.borderColor = 'red';
+                this.isSubmit = false;
+                this.mesValidWage='Không được nhập số bé hơn 0'
+            }
+            else if(e.target.value ==''){
+                this.wage=0
+                e.target.style.borderColor = '#0E8388';
+                this.isSubmit = true;
+                this.mesValidWage=''
+            }
+            else{
+                e.target.style.borderColor = '#0E8388';
+                this.isSubmit = true;
+                this.mesValidWage=''
+            }
+        },
+        formatCurrency(price) {
+            return format.formatCurrency(price);
+        },
+        total() {
+            this.totalAmount=0
+            this.totalOfAccessory=0
+            this.infoAccessorys.forEach(item =>{
+                this.totalOfAccessory+=item.priceSale*item.quantity || 0
+            })
+            this.totalAmount=this.totalOfAccessory+ this.infoTask.wage
+            if(this.totalAmount>0){
+                this.isSubmit=true
+            }
+        },
+        async paymentMeThod(type) {
+            this.choosePayent = false;
+            if (type == 'COD') {
+                this.isClassCod = !this.isClassCod;
+                if (this.isClassCod) {
+                    this.paymentMethod = 'COD';
+                    this.isClassOnlVNPAY = false;
+                    this.isClassOnlMOMO = false;
+                } else {
+                    this.paymentMethod = '';
+                }
+            } else if (type == 'VNPAY') {
+                this.isClassOnlVNPAY = !this.isClassOnlVNPAY;
+                if (this.isClassOnlVNPAY) {
+                    this.paymentMethod = 'VNPAY';
+                    this.isClassCod = false;
+                    this.isClassOnlMOMO = false;
+                } else {
+                    this.paymentMethod = '';
+                }
+            } else if (type == 'MOMO') {
+                this.isClassOnlMOMO = !this.isClassOnlMOMO;
+                if (this.isClassOnlMOMO) {
+                    this.paymentMethod = 'MOMO';
+                    this.isClassCod = false;
+                    this.isClassOnlVNPAY = false;
+                } else {
+                    this.paymentMethod = '';
+                }
+            }
+        },
+        closeServiceCreate(){
+            this.activeServiceCreate=false
+            this.getAllService()
+        },
+        handleImage(event){
+            this.infoTask.image = event.target.files[0] || '';
+            const src = URL.createObjectURL(this.infoTask.image)
+            this.imgSrc= src
+        },
+        deleteEntryImg(){
+            this.infoTask.image=null,
+            this.imgSrc=''
+            this.$refs.entryInputFile.value=''
+        },
+        async submitReport(){
+            try{
+                const id= this.infoTaskEdit._id
+                const data={
+                    accessorys:this.infoAccessorys,
+                    wage:this.infoTask.wage,
+                    image:this.infoTask.image,
+                    totalOfAccessory:this.totalOfAccessory,
+                    totalAmount:this.totalAmount,
+                    isReport:true,
+                    status:'Đã báo cáo'
+                }
+                const response = await taskService.report(id, data)
+                if(response.data.status){
+                    this.resultReport=response.data.result
+                    this.mesReportS=response.data.mes
+                    this.mesReportF=''
+                    this.infoAccessorys=[{ accessoryId: '' }]
+                    this.imgSrc=''
+                    this.infoTask.wage=0
+                    this.$refs.entryInputFile.value=''
+                   
+                }
+                else{
+                    this.mesReportF=response.data.mes
+                    this.mesReportS=''
+                }
+            }
+            catch(error){
+                console.log(error);
+            }
+        },
+        closeReportCreate(){
+            this.activeOrderTask=false
+            if(Object.keys(this.resultReport).length>0){
+                this.infoTaskEdit = this.resultReport;
+                this.infoTaskEdit.staffId = this.resultReport.staffId;
+                this.infoTaskEdit.serviceId = this.resultReport.serviceId;
+            }
+        },
+        closeEdit(){
+            this.activeEdit = false
+            this.getAll()
+        }
     },
     mounted() {
         this.getAll();
         this.getCity();
         this.getAllCustomers();
         this.getYears()
+        this.getAllAccessory()
+        this.getAllService()
     },
 };
 </script>
@@ -1175,12 +1692,22 @@ export default {
 }
 
 .form-task {
-    width: 600px;
+    width: 1200px;
     background: #fff;
     position: relative;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-40%, -50%);
+    padding: 20px;
+    border-radius: 5px;
+}
+.form-task2 {
+    width: 1000px;
+    background: #fff;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-40%, -50%);
     padding: 20px;
     border-radius: 5px;
 }
@@ -1255,8 +1782,9 @@ export default {
 }
 .input-price{
   height: 45px;
-  margin-top: 5px;
+  margin-top: 6px;
   padding: 0 5px;
+  border-color: #0e8388;
 }
 .customer-form{
     position: relative;
@@ -1268,4 +1796,124 @@ export default {
     background: #fff;
     padding: 10px 20px;
 }
+.payment {
+    width: 100%;
+    height: 80px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    cursor: pointer;
+}
+.payment-active {
+    background: #f2f6fe;
+    border-color: #0072bc;
+}
+.payment img {
+    width: 40px;
+    height: 40px;
+}
+.payment-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 70%;
+}
+.payment-content span:nth-child(1) {
+    font-weight: 600;
+    font-size: 18px;
+}
+.payment-checkbox span {
+    width: 25px;
+    height: 25px;
+    border: 1px solid #ccc;
+    display: block;
+    border-radius: 50%;
+    position: relative;
+    background: #ccc;
+}
+.payment-checkbox span::before {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+}
+.payment-active .payment-checkbox span {
+    background: #0072bc;
+}
+.payment-error {
+    border-color: red;
+}
+.scroll {
+    height: 130px;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+.height-scroll{
+    height: 160px;
+}
+.scroll::-webkit-scrollbar {
+    width: 0;
+}
+.control {
+    height: 40px;
+}
+.scroll2 {
+    min-height: 230px;
+    border: 1px solid #ccc;
+    margin: 10px 0px;
+    padding: 20px;
+}
+.note {
+    background-color: #fff;
+    margin: 0;
+    width: 100%;
+    outline: none;
+    padding: 10px;
+    border-radius: 5px;
+    height: 70px;
+}
+.spe-group .price {
+    display: flex;
+    height: 45px;
+    align-items: center;
+    width: 100%;
+    border: 1px solid #0e8388;
+    border-radius: 5px;
+    padding-left: 10px;
+    background: #ccc;
+}
+.image img{
+    width:100px;
+    height:100px;
+}
+
+.image{
+    position: relative;
+    display:flex;
+    justify-content: flex-end;
+}
+.image i{
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    font-size: 25px;
+    color: red;
+    cursor: pointer;
+}
+.img-detail-report{
+    height: 170px;
+}
+.img-detail-report img{
+    width: 100%;
+    height: 100%;
+}
+
 </style>

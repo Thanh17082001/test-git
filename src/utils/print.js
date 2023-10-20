@@ -22,7 +22,7 @@ function printPDF(content, title='Phiếu in') {
     mywindow.focus();
 
     mywindow.print();
-    mywindow.close();
+    // mywindow.close();
 }
 
 

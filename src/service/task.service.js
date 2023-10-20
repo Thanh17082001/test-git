@@ -34,6 +34,15 @@ class newsService{
     async delete(id){
         return await this.api.get(`/delete/?id=${id}`)
     }
+    async report(id, data){
+        const baseUrl='http://localhost:3000/task'
+        const headers={
+        'Content-Type': 'multipart/form-data'
+        }
+        this.api=createApiClient(baseUrl,headers)
+
+        return await this.api.post(`/report/?id=${id}`, data)
+    }
 }
 
 export default new newsService()
