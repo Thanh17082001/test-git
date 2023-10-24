@@ -1,8 +1,6 @@
 import format from "./format";
 function print(info = {}) {
   const src= info.image ? 'http://localhost:3000/'+info.image :''
-  info.startDate= new Date(info.startDate)
-    info.startDate.setDate(info.startDate.getDate()+1)
     let productTemplate=''
     info?.accessorys.forEach((product, index) => {
         productTemplate+=` 

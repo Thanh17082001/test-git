@@ -27,6 +27,7 @@ import adminService from '@/components/admin/adminService.vue'
 import canlendar from '@/components/admin/adminCanledar.vue';
 import adminWarrantySearch from '@/components/admin/adminSearchWarranty.vue'
 import adminWarrantyVue from '@/components/admin/adminWarranty.vue';
+import adminStatistical from '@/components/admin/adminStatistical.vue'
 const routes = [
     {
         path: '/',
@@ -126,6 +127,7 @@ const routes = [
             {path:'task', component:canlendar,meta:{title:'Admin'}},
             {path:'warranty-search', component:adminWarrantySearch,meta:{title:'Admin'}},
             {path:'warranty', component:adminWarrantyVue,meta:{title:'Admin'}},
+            {path:'statistical', component:adminStatistical,meta:{title:'Admin'}},
 
         ],
     },

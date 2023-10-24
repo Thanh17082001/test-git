@@ -1068,6 +1068,10 @@ export default {
 
         async addTask(info) {
             try {
+                    info.startDate=new Date(info.startDate)
+                    info.startDate.setDate(info.startDate.getDate()+1)
+                    info.endDate=new Date(info.endDate)
+                    info.endDate.setDate(info.endDate.getDate()+1)
                 const response = await taskService.create(info);
                 if (response.data.status) {
                     this.getAll();
@@ -1143,6 +1147,10 @@ export default {
                 const color = ['#A2FF86', '#7091f5', '#7D7C7C', '#FC4F00'];
                 this.tasks.forEach((item) => {
                     const index = status.indexOf(item.status);
+                    item.startDate=new Date(item.startDate)
+                    item.startDate.setDate(item.startDate.getDate()-1)
+                    item.endDate=new Date(item.endDate)
+                    item.endDate.setDate(item.endDate.getDate()-1)
                     data.push({
                         id: item._id,
                         serviceId: item.serviceId,

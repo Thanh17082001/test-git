@@ -194,6 +194,25 @@
                     </router-link>
                 </li>
             </div>
+            
+            <span
+            class="menu-title"
+            data-bs-toggle="collapse"
+            href="#collapseExample7"
+            role="button"
+            aria-expanded="false"
+            aria-controls="collapseExample2"
+            >Thống kê<i class="fa-solid fa-chevron-down ms-1"></i> </span
+        >
+        <div class="collapse" id="collapseExample7">
+            <li class="sec-left__item" v-if="user.isAdmin">
+                <router-link to="/admin/statistical" active-class="active" class="sec-left__link">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                   Thống kê doanh thu
+                </router-link>
+            </li>
+            
+        </div>
         </ul>
     </section>
 </template>
