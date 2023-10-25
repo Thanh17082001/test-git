@@ -19,6 +19,9 @@ class newsService{
     async update(id, data){
         return await this.api.post(`/update/?id=${id}`, data)
     }
+    async changeTime(id, data){
+        return await this.api.post(`/change-time/?id=${id}`, data)
+    }
     async filterByDate(day, month, year, field, pageNumber, pageSize) {
         if(pageNumber && pageSize){
             return await this.api.get(`/filter-date/?pageNumber=${pageNumber}&pageSize=${pageSize}&field=${field}&month=${month}&day=${day}&year=${year}`);

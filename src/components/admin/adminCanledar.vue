@@ -93,6 +93,7 @@
             }}</span>
             <br>
             <span class="btn btn-warning" v-if="!!printTaskId" @click="printPDF(printTaskId)">In Phiếu việc</span>
+            
             <div class="row">
                 <div class="group col-lg-4">
                     <div class="d-flex mb-1">
@@ -385,6 +386,15 @@
                 <span class="fs-4" :class="{ 'text-danger': !!mesFail, 'text-success': !!messSuc }">{{
                     !!mesFail ? mesFail : messSuc
                 }}</span>
+                <div v-if="infoTaskEdit.allDay">
+                    <span><strong>Ngày thực hiện</strong>:{{formatDateNoTime(infoTaskEdit.startDate)}}</span>
+                    <span class="ms-4"><strong>Thời gian</strong>:Cả ngày</span>
+                </div>
+                <div v-if="!infoTaskEdit.allDay">
+                    <span><strong>Ngày thực hiện</strong>:{{formatDateNoTime(infoTaskEdit.startDate)}}</span>
+                    <span class="ms-4"><strong>Giờ bắt đầu</strong>:{{formatHour(infoTaskEdit.startDate)}}</span>
+                    <span class="ms-4"><strong>Giờ kết thúc</strong>:{{formatHour(infoTaskEdit.endDate)}}</span>
+                </div>
                 <div class="spe-group col-lg-4 mb-4">
                     <label for="">Tên khách hàng<span class="text-danger ms-2">*</span></label>
                     <input v-model="infoTaskEdit.nameCustomer" type="text" placeholder="Tên khách hàng..." required />
@@ -939,10 +949,20 @@ export default {
             note:'',
             calendarOptions: {
                 plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
-                initialView: 'dayGridMonth',
-
+                initialView: 'timeGridWeek',
+                headerToolbar:{
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'timeGridWeek,timeGridDay'
+                },
                 themeSystem: 'bootstrap5',
                 locale: 'vi',
+                businessHours:{
+                    startTime: "07:00", 
+                    endTime: "22:00",
+                },
+                slotMinTime: "07:00", // Giờ bắt đầu của khoảng thời gian hiển thị
+                slotMaxTime: "22:00",
                 events: [],
                 // alternatively, use the `events` setting to fetch from a feed
                 editable: true,
@@ -973,7 +993,8 @@ export default {
                         priceService:this.serviceInfo.price,
                         accessorys:this.infoAccessorys[0].accessoryId!='' ? this.infoAccessorys : [],
                         note:this.note,
-                        wage:0
+                        wage:0,
+                        allDay:arg.event._def.allDay
                     };
                     this.addTask(info);
                     this.getAll();
@@ -982,14 +1003,26 @@ export default {
                     const currentDate2 = this.$refs.fullCalendar.getApi().currentData.currentDate;
                     this.currentDate = currentDate2;
                 },
+                eventDrop:(info)=>{
+                    const data={
+                        startDate:info.event.startStr,
+                        endDate:info.event.endStr
+                    }
+                    this.changeTime(info.event._def.publicId,data)
+                },
+                eventResize:(info)=>{
+                    const data={
+                        startDate:info.event.startStr,
+                        endDate:info.event.endStr
+                    }
+                    this.changeTime(info.event._def.publicId,data)
+                },
             },
         };
     },
 
     methods: {
-        handleEvents(events) {
-            this.currentEvents = events;
-        },
+        
         async detatilTask(arg) {
             try {
                 const id = arg.event._def.publicId;
@@ -1028,8 +1061,8 @@ export default {
                 calendarApi.addEvent({
                     id: 3,
                     title: `${this.infoTask.serviceId}`,
-                    start: new Date(this.selectInfo.startStr),
-                    end: new Date(this.selectInfo.endStr),
+                    start: new Date(this.selectInfo.startStr).toISOString(),
+                    end: new Date(this.selectInfo.endStr).toISOString(),
                     allDay: this.selectInfo.allDay,
                 });
             }
@@ -1058,6 +1091,7 @@ export default {
                 this.mesFail = '';
                 this.messSuc = '';
                 await this.getAllStaff({
+                    allDay:selectInfo.allDay,
                     startDate: selectInfo.start,
                     endDate:
                         selectInfo.end.getDate() - 1 !== selectInfo.start.getDate() ? selectInfo.end : selectInfo.start,
@@ -1068,10 +1102,6 @@ export default {
 
         async addTask(info) {
             try {
-                    info.startDate=new Date(info.startDate)
-                    info.startDate.setDate(info.startDate.getDate()+1)
-                    info.endDate=new Date(info.endDate)
-                    info.endDate.setDate(info.endDate.getDate()+1)
                 const response = await taskService.create(info);
                 if (response.data.status) {
                     this.getAll();
@@ -1096,37 +1126,60 @@ export default {
 
         async getAllStaff(dateCreate) {
             try {
+                const allDay=dateCreate.allDay
+                
                 const fomatDateCreate = {
-                    start: dateCreate.startDate.toLocaleDateString('en-US'),
-                    end: dateCreate.endDate.toLocaleDateString('en-US'),
+                    start: dateCreate.startDate.getTime(),
+                    end: dateCreate.endDate.getTime()
                 };
                 dateCreate.endDate.setDate(dateCreate.endDate.getDate() - 1);
                 this.staffs = [];
                 const response = await staffService.getAll();
-                const a = this.calendarOptions.events.filter((task) => {
+                const events = this.calendarOptions.events.filter(task => task.status!='Hoàn thành')
+                const a = events.filter((task) => {
                     task.start = new Date(task.start);
                     task.end = new Date(task.end);
-
                     const fomatTaskDate = {
-                        start: task.start.toLocaleDateString('en-US'),
-                        end: task.end.toLocaleDateString('en-US'),
+                        start: task.start.getTime(),
+                        end: task.end.getTime()
                     };
-                    fomatTaskDate.end = new Date(fomatTaskDate.end);
-                    fomatTaskDate.end.setDate(fomatTaskDate.end.getDate() - 1);
-                    fomatTaskDate.end = fomatTaskDate.end.toLocaleDateString('en-US');
-                    if (fomatDateCreate.start <= fomatTaskDate.start && fomatDateCreate.end >= fomatTaskDate.end) {
-                        return true;
-                    } else if (fomatDateCreate.start == fomatTaskDate.end) {
-                        return true;
-                    } else if (fomatDateCreate.start == fomatDateCreate.end) {
-                        if (
-                            fomatDateCreate.start == fomatTaskDate.end ||
-                            fomatDateCreate.start == fomatTaskDate.start
-                        ) {
+                    if(!allDay){
+                         if (fomatDateCreate.start >= fomatTaskDate.start && fomatDateCreate.start < fomatTaskDate.end) {
                             return true;
                         }
-                    } else {
-                        return false;
+                        else if (fomatDateCreate.end > fomatTaskDate.start && fomatDateCreate.end < fomatTaskDate.end) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                    else{
+                        fomatDateCreate.start= new Date(fomatDateCreate.start)
+                        fomatDateCreate.end= new Date(fomatDateCreate.end)
+                        fomatTaskDate.start= new Date(fomatTaskDate.start)
+                        fomatTaskDate.end= new Date(fomatTaskDate.end)
+                        fomatTaskDate.start = fomatTaskDate.start.toLocaleDateString('en-US');
+                        fomatTaskDate.end = fomatTaskDate.end.toLocaleDateString('en-US');
+                        fomatDateCreate.start = fomatDateCreate.start.toLocaleDateString('en-US');
+                        fomatTaskDate.end = new Date(fomatTaskDate.end);
+                        fomatTaskDate.end.setDate(fomatTaskDate.end.getDate() - 1);
+                        fomatTaskDate.end = fomatTaskDate.end.toLocaleDateString('en-US');
+                         if (fomatDateCreate.start >= fomatTaskDate.start && fomatDateCreate.start < fomatTaskDate.end) {
+                                return true;
+                        } 
+                        else if (fomatDateCreate.end >= fomatTaskDate.start && fomatDateCreate.end < fomatTaskDate.end) {
+                                return true;
+                        }
+                        else if (fomatDateCreate.start == fomatTaskDate.end) {
+
+                            return true;
+                        } 
+                        else if (fomatDateCreate.start == fomatTaskDate.start) {
+                           return true
+                        } 
+                        else {
+                            return false;
+                        }
                     }
                 });
                 const c = response.data.filter((staff) => {
@@ -1147,10 +1200,6 @@ export default {
                 const color = ['#A2FF86', '#7091f5', '#7D7C7C', '#FC4F00'];
                 this.tasks.forEach((item) => {
                     const index = status.indexOf(item.status);
-                    item.startDate=new Date(item.startDate)
-                    item.startDate.setDate(item.startDate.getDate()-1)
-                    item.endDate=new Date(item.endDate)
-                    item.endDate.setDate(item.endDate.getDate()-1)
                     data.push({
                         id: item._id,
                         serviceId: item.serviceId,
@@ -1159,12 +1208,13 @@ export default {
                         start: item.startDate, // a property!
                         end: item.endDate,
                         status: item.status,
-                        allDay: true,
+                        allDay: item.allDay,
                         backgroundColor: color[index],
                         borderColor: 'transparent',
                         nameCustomer:item.nameCustomer,
                         nameStaff:item.staffId.fullName,
-                        totalAmount:item.totalAmount
+                        totalAmount:item.totalAmount,
+                        isReport:item.isReport
 
                     });
                 });
@@ -1176,11 +1226,11 @@ export default {
         async filterDate() {
             this.isSort = true;
             let { day, month, year, field } = this.dateFilter;
-            const typeDate = ['startDate','endDate','currentDate']
-            const check = typeDate.includes(field)
-            if(check){
-                day-=1
-            }
+            // const typeDate = ['startDate','endDate','currentDate']
+            // const check = typeDate.includes(field)
+            // if(check){
+            //     day-=1
+            // }
             const response = await taskService.filterByDate(day, month, year, field, this.pageNumber, this.pageSize);
             this.tasks=response.data
             let data = [];
@@ -1192,16 +1242,17 @@ export default {
                         id: item._id,
                         serviceId: item.serviceId,
                         staffId: item.staffId,
-                        title: `${item.serviceId.name} cho khách: ${item.nameCustomer}`, // a property!
+                        title: `${item.serviceId.name}`, // a property!
                         start: item.startDate, // a property!
                         end: item.endDate,
                         status: item.status,
-                        allDay: true,
+                        allDay: item.allDay,
                         backgroundColor: color[index],
                         borderColor: 'transparent',
                         nameCustomer:item.nameCustomer,
                         nameStaff:item.staffId.fullName,
-                        totalAmount:item.totalAmount
+                        totalAmount:item.totalAmount,
+                        isReport:item.isReport
                     });
                 });
                 this.calendarOptions.events = data;
@@ -1258,6 +1309,21 @@ export default {
                 } else {
                     this.mesFail = response.data.mes;
                     this.messSuc = '';
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async changeTime(id,data){
+            try {
+                const response = await taskService.changeTime(id, data)
+                if(response.data.status){
+                    alert('Thay đổi thời gian thành công')
+                    this.getAll()
+                }
+                else{
+                    alert('Thay đổi thời gian không  thành công')
+                    this.getAll()
                 }
             } catch (error) {
                 console.log(error);
@@ -1492,7 +1558,8 @@ export default {
                     'Địa chỉ':event.address,
                     'Nhân viên thực hiện':event.staffId.fullName,
                     'Dịch vụ':event.serviceId.name,
-                    'Giá':format.formatCurrency(event.serviceId.price),
+                    'Báo cáo': event.isReport ? 'Đã báo cáo' : 'Chưa báo cáo',
+                    'Tổng số tiền phụ kiện':format.formatCurrency(event.totalOfAccessory),
                     'Tổng giá':format.formatCurrency(event.totalAmount),
                     'Ngày bắt đầu công việc': format.formatDateNoTime(event.startDate),
                     'Ngày kết thúc công việc': format.formatDateNoTime(event.endDate),
@@ -1501,7 +1568,15 @@ export default {
             })
             exportToExcel(data, 'Congviec');
         },
-
+        formatDate(date){
+            return format.formatDate(date)
+        },
+        formatDateNoTime(date){
+            return format.formatDateNoTime(date)
+        },
+        formatHour(date){
+            return format.formatHour(date)
+        },
         pushRow() {
             this.infoAccessorys.push({
                 accessoryId: '',
@@ -1657,6 +1732,8 @@ export default {
                     this.infoAccessorys=[{ accessoryId: '' }]
                     this.imgSrc=''
                     this.infoTask.wage=0
+                    this.totalAmount=0
+                    this.totalOfAccessory=0
                     this.$refs.entryInputFile.value=''
                    
                 }
@@ -1697,6 +1774,7 @@ export default {
 .fc {
     color: red;
     text-decoration: none;
+    z-index:1;
 }
 
 .form-task {
@@ -1708,6 +1786,7 @@ export default {
     transform: translate(-40%, -50%);
     padding: 20px;
     border-radius: 5px;
+    z-index: 1000;
 }
 .form-task2 {
     width: 1000px;
