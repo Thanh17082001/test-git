@@ -151,7 +151,7 @@
                             </div>
                         </div>
                     </th>
-                    <th class="col">Ngày tạo</th>
+                    <th class="col">Ngày thanh toán tiếp theo</th>
                     <th class="col text-center">Hành động</th>
                 </tr>
              </thead>
@@ -163,9 +163,15 @@
                     <td class="col">{{ order.status }}</td>
                     <td class="col">{{ order.IsOnlineOrder ? ' Trực tuyến' : 'Tại của hàng' }}</td>
                     <td class="col">{{ order.paymentMethod }}</td>
-                    <td class="col text-center p-0 fs-4 text-danger" v-if="order.isPayment=='Chưa thanh toán'"><i class="fa-solid fa-xmark"></i></td>
-                    <td class="col text-center p-0 fs-4 text-success" v-else><i class="fa-solid fa-check"></i></td>
-                    <td class="col">{{ order.createdAt }}</td>
+                    <td class="col text-center p-0 fs-4 " v-if="order.payInFull || order.totalAmount == order.pricePayed">
+                        <i v-if="order.totalAmount > order.pricePayed" class="fa-solid fa-xmark text-danger"></i>
+                        <i v-else class="fa-solid fa-check text-success"></i>
+                    </td>
+                    <td v-if="!order.payInFull && order.totalAmount > order.pricePayed" class="col text-center p-0 fs-4 text-success">
+                        <i v-if="daysUntilDue(new Date(), order.datePay) <0 && order.totalAmount > order.pricePayed" class="fa-solid fa-xmark text-danger"></i>
+                        <i v-else class="fa-solid fa-check"></i>
+                    </td>
+                    <td class="col">{{ !order.payInFull ? order.totalAmount > order.pricePayed ? formatDate(order.datePay) : 'Thanh toán xong' :'Thanh toán toàn bộ' }}</td>
                     <td class="col text-center">
                         <span class="btn btn-outline-info" @click="openDetail(order._id)"><i class="fa-solid fa-circle-info"></i></span>
                         <span class="btn btn-outline-warning ms-3" @click="printPDF(order._id)"><i class="fa-solid fa-print"></i></span>
@@ -235,13 +241,11 @@ export default {
         async dealine(){
             const length = await rentalService.getAll()
             this.data=[...length.data]
-            const today = new Date
+            const today = new Date()
             this.data.forEach(rental =>{
                 if(rental.totalAmount >rental.pricePayed && !rental.payInFull){
                     if(this.daysUntilDue(today,rental.datePay)<=5){
                         this.dealineRental.push(rental)
-                        console.log('đến hạn');
-                        console.log(this.dealineRental);
                     }
                 }   
             })
@@ -277,9 +281,10 @@ export default {
             this.activeDetail=true
             this.id=id
         },
-        closeDetail(){
+        async closeDetail(){
             this.activeDetail=false
-            this.getAll()
+            await this.getAll()
+            this.dealine()
         },
         getYears() {
             const yearsTarget = new Date().getFullYear();
@@ -312,16 +317,22 @@ export default {
                 this.getAll();
             }
         },
-        async getAll(){
+        formatDate(date){
+            return format.formatDateNoTime(date)
+        },
+        async   getAll(){
             const length = await rentalService.getAll()
             this.lengthPage = Math.ceil(length.data.length / this.pageSize);
             const response = await rentalService.getAll(this.pageNumber,this.pageSize)
             this.orders=[
                 ...response.data
             ]
-            this.orders.map(order =>{
-                order.createdAt = format.formatDateNoTime(order.createdAt)
-            })
+            // const today = new Date()
+            // this.orders.map(order =>{
+            //     // console.log(this.daysUntilDue(today,order.datePay));
+            //     order.createdAt = format.formatDateNoTime(order.createdAt)
+            //     order.datePay = format.formatDateNoTime(order.datePay)
+            // })
         },
         offSort() {
             this.isSort = false;

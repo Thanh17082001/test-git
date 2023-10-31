@@ -1,10 +1,16 @@
+// CUSTOMER
 import { createRouter, createWebHistory } from 'vue-router';
 import homePageVue from '@/view/homePage.vue';
 import registerVue from '@/view/registerPage.vue';
 import loginPage from '@/view/loginPage.vue';
 import adminPage from '@/view/adminPage.vue';
 import productPage from '@/view/productPage.vue';
+import cartPage from '@/view/cartPage.vue';
+import orderPage from '@/view/orderPage.vue';
+import orderHistoryPage from '@/view/orderHistoryPage.vue';
+import orderDetailPage from '@/view/orderDetailPage.vue';
 
+//ADMIN 
 import adminProduct from '@/components/admin/adminProduct.vue';
 import adminProductForm from '@/components/admin/adminForm.vue';
 import headerVue from '@/components/layout/headerVue.vue';
@@ -53,8 +59,48 @@ const routes = [
             footer: footerVue,
         },
     },
+    {
+        path:'/cart',
+        components:{
+            default: cartPage,
+            header: headerVue,
+            footer: footerVue,
+        }
+    },
+    {
+        path:'/order/:typeOrder',
+        components:{
+            default: orderPage,
+            header: headerVue,
+            footer: footerVue,
+        },
+        name:'order',
+        props:true
+    },
+    {
+        path:'/order-history',
+        components:{
+            default: orderHistoryPage,
+            header: headerVue,
+            footer: footerVue,
+        }
+    },
+    {
+        path:'/order-detail/:id',
+        name: "order.detail",
+        components:{
+            default: orderDetailPage,
+            header: headerVue,
+            footer: footerVue,
+        },
+        props:true
+    },
+
+    // USER ROUTER
     { path: '/register', component: registerVue },
     { path: '/login', component: loginPage },
+
+    // ADMIN ROUTER
     {
         path: '/admin',
         name: 'admin',

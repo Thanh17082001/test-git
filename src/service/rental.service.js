@@ -25,6 +25,9 @@ class rentalService{
     async updateByCod(id){
         return await this.api.get(`/update-cod/?id=${id}`)
     }
+    async search(data){
+        return await this.api.post(`/search/`,data)
+    }
     async update(id,data){
         return this.api.post(`/update/?id=${id}`,data)
     }

@@ -83,13 +83,13 @@
                         <span class="btn btn-login"><router-link to="/register"> Đăng ký</router-link></span>
                     </div>
                 </div>
-                <div class="header-cart">
+                <router-link to="/cart" class="header-cart">
                     <div class="cart-icon">
                         <i class="fa-solid fa-cart-shopping"></i>
                         <span>1</span>
                     </div>
                     <span>Giỏ hàng</span>
-                </div>
+                </router-link>
             </div>
         </nav>
     </header>
@@ -142,6 +142,7 @@ export default {
                 sessionStorage.removeItem('user');
                 this.Checklogin();
                 this.islogin = false;
+                this.$router.push('/')
             } catch (error) {
                 console.log(error);
             }

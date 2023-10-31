@@ -59,7 +59,7 @@
     min-height: 120px;
     display: flex;
     align-items: center;
-    z-index: 1000;
+    /* z-index: 1000; */
 }
 .search {
     position: relative;
@@ -192,6 +192,8 @@
     align-items: center;
     justify-content: space-evenly;
     transition: all linear 0.3s;
+    color: #0e8388;
+    text-decoration: none;
 }
 .header-cart:hover .cart-icon,
 .header-cart:hover span {

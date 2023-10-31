@@ -361,7 +361,7 @@ export default {
     },
     watch:{
         quantityMonth(){
-            if(this.payinfull!=''){
+            if(this.payinfull.toString()!=''){
                 this.totalProduct()
             }
         }

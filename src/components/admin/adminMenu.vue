@@ -154,15 +154,15 @@
                 role="button"
                 aria-expanded="false"
                 aria-controls="collapseExample2"
-                >Dịch vụ & công việc <i class="fa-solid fa-chevron-down ms-1"></i> </span
+                >Lịch công việc <i class="fa-solid fa-chevron-down ms-1"></i> </span
             >
             <div class="collapse" id="collapseExample5">
-                <li class="sec-left__item" v-if="user.isAdmin">
+                <!-- <li class="sec-left__item" v-if="user.isAdmin">
                     <router-link to="/admin/service" active-class="active" class="sec-left__link">
                         <i class="fa-solid fa-newspaper" id="icon3"></i>
                        Dịch vụ
                     </router-link>
-                </li>
+                </li> -->
                 <li class="sec-left__item" v-if="user.isAdmin">
                     <router-link to="/admin/task" active-class="active" class="sec-left__link">
                         <i class="fa-solid fa-newspaper" id="icon3"></i>

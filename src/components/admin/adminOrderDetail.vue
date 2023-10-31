@@ -48,6 +48,7 @@
                         <span><strong class="me-2">Tên:</strong>{{ order.nameCustomer }}</span>
                         <span><strong class="me-2">Số điện thoại:</strong>{{ order.phone }}</span>
                         <span><strong class="me-2">Địa chỉ:</strong>{{ order.address }}</span>
+                        <span><strong class="me-2">Email:</strong>{{ order.email }}</span>
                     </div>
                 </div>
             </div>
@@ -174,9 +175,9 @@
                         <span class="col-lg-6 mb-2"><strong>Hình thức thanh toán</strong></span>
                         <span class="col-lg-6 mb-2">online</span>
                     </div>
-                    <div class="btn btn-info me-1" v-if="!order.isPayment && order.status != 'Hủy đơn'" @click="paymentByVnPay(order)">VNPay</div>
-                    <div class="btn btn-danger me-1" v-if="!order.isPayment && order.status != 'Hủy đơn'" @click="paymentByMOMO(order)">MOMO</div>
-                    <div class="btn btn-success" v-if="!order.isPayment && order.status != 'Hủy đơn'" @click="paymentByCOD(order)">COD</div>
+                    <div class="btn btn-info me-1" v-if="!order.isPayment && order.status == 'Đang xử lý'" @click="paymentByVnPay(order)">VNPay</div>
+                    <div class="btn btn-danger me-1" v-if="!order.isPayment && order.status == 'Đang xử lý'" @click="paymentByMOMO(order)">MOMO</div>
+                    <div class="btn btn-success" v-if="!order.isPayment && order.status == 'Đang xử lý'" @click="paymentByCOD(order)">COD</div>
                     <div class="btn btn-warning ms-1" @click="printPDF">In phiếu </div>
                 </div>
             </div>
@@ -260,6 +261,10 @@ export default {
                     alert('Đơn hàng đã bị hủy')
                     return ;
                 }
+                if(data.totalAmount > 50000000){
+                        alert('Số tiền thanh toán với momo phải bé hơn 50 triệu')
+                        return;
+                    }
                 const payment = await orderService.paymentMOMO('admin/order',data)
                 window.location.href=payment.data
             } catch (error) {

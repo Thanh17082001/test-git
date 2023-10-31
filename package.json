@@ -21,7 +21,10 @@
     "chartjs-plugin-datalabels": "^2.2.0",
     "core-js": "^3.8.3",
     "jspdf": "^2.5.1",
+    "mitt": "^3.0.1",
     "vue": "^3.2.13",
+    "vue-cookie": "^1.1.4",
+    "vue-cookies": "^1.8.3",
     "vue-router": "^4.2.4",
     "xlsx": "^0.18.5",
     "yup": "^1.2.0"

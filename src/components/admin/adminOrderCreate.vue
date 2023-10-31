@@ -57,7 +57,19 @@
                                             valid.phone
                                         }}</span>
                                     </div>
-                                    <div class="spe-group col-lg-12">
+                                    <div class="spe-group col-lg-6">
+                                        <label for="">Email<span class="required">*</span></label>
+                                        <input
+                                            type="email"
+                                            required
+                                            placeholder="Nhập email của bạn"
+                                            v-model="customer.email"
+                                        />
+                                        <span v-if="!!valid.email" :class="{ 'text-danger': !!valid.email }">{{
+                                            valid.email
+                                        }}</span>
+                                    </div>
+                                    <div class="spe-group col-lg-6">
                                         <label for="">Địa chỉ<span class="required">*</span></label>
                                         <input
                                             type="text"
@@ -120,7 +132,7 @@
                                 <span class="mes-failed" v-if="!!mesFaiCus">{{ mesFaiCus }}</span>
                             </div>
                             <div class="row">
-                                <div class="spe-group col-lg-6">
+                                <div class="spe-group col-lg-4">
                                     <label for="">Tên khách hàng <span class="required">*</span></label>
                                     <input
                                         type="text"
@@ -129,7 +141,7 @@
                                         v-model="customerInfo.fullName"
                                     />
                                 </div>
-                                <div class="spe-group col-lg-6">
+                                <div class="spe-group col-lg-4">
                                     <label for="">Số điện thoại<span class="required">*</span></label>
                                     <input
                                         type="text"
@@ -141,6 +153,18 @@
                                         valid.phone
                                     }}</span>
                                 </div>
+                                <div class="spe-group col-lg-4">
+                                    <label for="">Email<span class="required">*</span></label>
+                                    <input
+                                        type="email"
+                                        required
+                                        placeholder="Nhập email của bạn"
+                                        v-model="customerInfo.email"
+                                    />
+                                    <span v-if="!!valid.email" :class="{ 'text-danger': !!valid.email }">{{
+                                        valid.email
+                                    }}</span>
+                                </div>
                                 <div class="spe-group col-lg-12" v-if="!activeEditAddress">
                                     <label for="">Địa chỉ<span class="required">*</span> 
                                     </label>
@@ -149,10 +173,9 @@
                                         required
                                         placeholder="Nhập tên đường, hẻm, số nhà"
                                         v-model="customerInfo.address"
-                                        disabled
                                         />
                                 </div>
-                                <span class="col-lg-3 ms-2 btn btn-warning" @click="activeEditAddress=!activeEditAddress">{{activeEditAddress ? 'Giữ địa chỉ cũ' : 'Tạo địa chỉ mới'}}</span>
+                                <div class="row"><span class="col-lg-3 ms-2 btn btn-warning" @click="activeEditAddress=!activeEditAddress">{{activeEditAddress ? 'Giữ địa chỉ cũ' : 'Tạo địa chỉ mới'}}</span></div>
                                 <div class="spe-group col-lg-12" v-if="activeEditAddress">
                                     <label for="">Địa chỉ<span class="required">*</span></label>
                                     <input
@@ -466,10 +489,10 @@ export default {
                 if(isValid){
                     const response = await customerService.update(this.customerInfo._id,data)
                     if(response.data.status){
+                        await this.getCustomerById(this.customerInfo._id)
                         this.mesSucCus=response.data.mes
                         this.mesFaiCus=''
                         this.VmodelAddress={city:'',district:'',ward:''}
-                        this.getCustomerById(this.customerInfo._id)
                         this.activeEditAddress=false
                     }
                     else{
@@ -487,16 +510,25 @@ export default {
                 const response = await customerService.getById(id)
                 this.customerInfo = response.data
                 this.activeEditCustomer=true
+                this.mesSucCus=''
+                this.mesFaiCus=''
             } catch (error) {
                 console.log(error);
             }
         },
         validateForm(infoCustomer) {
             const phoneRegex = /^[0-9]+$/;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!phoneRegex.test(infoCustomer.phone) || infoCustomer.phone.length < 10) {
                 this.valid.phone = 'Số điện thoại không hợp lệ';
             } else {
                 this.valid.phone = undefined;
+            }
+
+            if (!emailRegex.test(infoCustomer.email) || infoCustomer.email.length < 10) {
+                this.valid.email = 'Email không hợp lệ';
+            } else {
+                this.valid.email = undefined;
             }
 
             let isValid = false;
@@ -596,6 +628,7 @@ export default {
                     customerId:this.customerId,
                     address:customer.data.address,
                     phone:customer.data.phone,
+                    email:customer.data.email || '',
                     nameCustomer:customer.data.fullName,
                     products:[
                         ...this.ordersProducts

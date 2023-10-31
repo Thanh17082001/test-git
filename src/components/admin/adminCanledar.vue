@@ -133,7 +133,19 @@
                                         valid.phone
                                     }}</span>
                                 </div>
-                                <div class="spe-group col-lg-12">
+                                <div class="spe-group col-lg-6">
+                                    <label for="">Email<span class="required">*</span></label>
+                                    <input
+                                        type="email"
+                                        required
+                                        placeholder="Nhập email của bạn"
+                                        v-model="customer.email"
+                                    />
+                                    <span v-if="!!valid.email" :class="{ 'text-danger': !!valid.email }">{{
+                                        valid.email
+                                    }}</span>
+                                </div>
+                                <div class="spe-group col-lg-6">
                                     <label for="">Địa chỉ<span class="required">*</span></label>
                                     <input
                                         type="text"
@@ -228,7 +240,7 @@
                                 <span class="mes-failed" v-if="!!mesFaiCus">{{ mesFaiCus }}</span>
                             </div>
                             <div class="row">
-                                <div class="spe-group col-lg-6">
+                                <div class="spe-group col-lg-4">
                                     <label for="">Tên khách hàng <span class="required">*</span></label>
                                     <input
                                         type="text"
@@ -237,7 +249,7 @@
                                         v-model="customerInfo.fullName"
                                     />
                                 </div>
-                                <div class="spe-group col-lg-6">
+                                <div class="spe-group col-lg-4">
                                     <label for="">Số điện thoại<span class="required">*</span></label>
                                     <input
                                         type="text"
@@ -247,6 +259,18 @@
                                     />
                                     <span v-if="!!valid.phone" :class="{ 'text-danger': !!valid.phone }">{{
                                         valid.phone
+                                    }}</span>
+                                </div>
+                                <div class="spe-group col-lg-4">
+                                    <label for="">Email<span class="required">*</span></label>
+                                    <input
+                                        type="email"
+                                        required
+                                        placeholder="Nhập email của bạn"
+                                        v-model="customerInfo.email"
+                                    />
+                                    <span v-if="!!valid.email" :class="{ 'text-danger': !!valid.email }">{{
+                                        valid.email
                                     }}</span>
                                 </div>
                                 <div class="spe-group col-lg-12" v-if="!activeEditAddress">
@@ -259,11 +283,7 @@
                                         disabled
                                     />
                                 </div>
-                                <span
-                                    class="col-lg-3 ms-2 btn btn-warning"
-                                    @click="activeEditAddress = !activeEditAddress"
-                                    >{{ activeEditAddress ? 'Giữ địa chỉ cũ' : 'Tạo địa chỉ mới' }}</span
-                                >
+                                <div class="row"><span class="col-lg-3 ms-2 btn btn-warning" @click="activeEditAddress=!activeEditAddress">{{activeEditAddress ? 'Giữ địa chỉ cũ' : 'Tạo địa chỉ mới'}}</span></div>
                                 <div class="spe-group col-lg-12" v-if="activeEditAddress">
                                     <label for="">Địa chỉ<span class="required">*</span></label>
                                     <input
@@ -399,13 +419,18 @@
                     <label for="">Tên khách hàng<span class="text-danger ms-2">*</span></label>
                     <input v-model="infoTaskEdit.nameCustomer" type="text" placeholder="Tên khách hàng..." required />
                 </div>
+                
                 <div class="spe-group col-lg-4 mb-4">
-                    <label for="">Địa chỉ<span class="text-danger ms-2">*</span></label>
-                    <input v-model="infoTaskEdit.address" type="text" placeholder="Địa chỉ..." required />
+                    <label for="">email<span class="text-danger ms-2">*</span></label>
+                    <input v-model="infoTaskEdit.phone" type="text" placeholder="Số điện thoại..." required />
                 </div>
                 <div class="spe-group col-lg-4 mb-4">
                     <label for="">Số điện thoại<span class="text-danger ms-2">*</span></label>
-                    <input v-model="infoTaskEdit.phone" type="text" placeholder="Số điện thoại..." required />
+                    <input v-model="infoTaskEdit.email" type="text" placeholder="Số điện thoại..." required />
+                </div>
+                <div class="spe-group col-lg-6 mb-4">
+                    <label for="">Địa chỉ khách hàng<span class="text-danger ms-2">*</span></label>
+                    <input v-model="infoTaskEdit.address" type="text" placeholder="Địa chỉ..." required />
                 </div>
                 <div class="col-lg-12 mb-5">
                     <div class="status" v-if="infoTaskEdit.status == 'Quá hạn'">
@@ -982,6 +1007,7 @@ export default {
                         staffId: this.infoTask.staffId,
                         nameCustomer: this.customerInfo.fullName,
                         phone: this.customerInfo.phone,
+                        email: this.customerInfo.email,
                         address: this.customerInfo.address,
                         startDate: arg.event.start,
                         endDate: arg.event.end ? arg.event.end : arg.event.start,
@@ -1351,6 +1377,9 @@ export default {
                 const response = await customerService.getById(id);
                 this.customerInfo = response.data;
                 this.activeEditCustomer = true;
+                this.mesSucCus=''
+                this.mesFaiCus=''
+
             } catch (error) {
                 console.log(error);
             }
@@ -1389,10 +1418,10 @@ export default {
                 if (isValid) {
                     const response = await customerService.update(this.customerInfo._id, data);
                     if (response.data.status) {
+                        await this.getCustomerById(this.customerInfo._id);
                         this.mesSucCus = response.data.mes;
                         this.mesFaiCus = '';
                         this.VmodelAddress = { city: '', district: '', ward: '' };
-                        this.getCustomerById(this.customerInfo._id);
                         this.activeEditAddress = false;
                         this.getAllCustomers();
                     } else {

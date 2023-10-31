@@ -29,7 +29,7 @@
                     <h5><i class="fa-solid fa-gear"></i> Thông tin đơn hàng</h5>
                     <hr>
                     <span class="mb-1"><strong class="me-2">Mã:</strong>{{ order._id }}</span>
-                    <span class="mb-1"><strong class="me-2">Ngày tạo:</strong> {{ order.createdAt }}</span>
+                    <span class="mb-1"><strong class="me-2">Ngày thuê:</strong> {{ order.createdAt }}</span>
                     <span class="text-start" v-if="order.totalAmount > order.pricePayed"><strong class="me-2" >Ngày thanh toán tiếp:</strong> {{ order.payInFull ? 'Đã thanh toán toàn bộ' : order.datePay }}</span>
                     <span class="text-start"  v-else><strong class="me-2">Ngày thanh toán tiếp:</strong> {{ order.payInFull ? 'Đã thanh toán toàn bộ' : 'Thanh toán hoàn tất' }}</span>
                 </div>
@@ -50,6 +50,7 @@
                         <span><strong class="me-2">Tên:</strong>{{ order.nameCustomer }}</span>
                         <span><strong class="me-2">Số điện thoại:</strong>{{ order.phone }}</span>
                         <span><strong class="me-2">Địa chỉ:</strong>{{ order.address }}</span>
+                        <span><strong class="me-2">Email:</strong>{{ order.email }}</span>
                     </div>
                 </div>
             </div>
@@ -346,6 +347,10 @@ export default {
                     alert('Đơn hàng đã bị hủy')
                     return ;
                 }
+                if(data.totalAmount > 50000000){
+                        alert('Số tiền thanh toán với momo phải bé hơn 50 triệu')
+                        return;
+                    }
                 const payment = await rentalService.paymentMOMO('admin/rental',data)
                 window.location.href=payment.data
             } catch (error) {

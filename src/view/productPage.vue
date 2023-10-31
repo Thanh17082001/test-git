@@ -3,18 +3,29 @@
     <h5 class="product-title">Sản phẩm của cửa hàng</h5>
     <div class="row">
         <div class="col-lg-2">
-            <product-category @filter="filter"></product-category>
+            <product-category @filter="filter" v-if="typeProduct=='product'"></product-category>
+            <accessory-category @filter="filter" v-else></accessory-category>
         </div>
         <div class="col-lg-10">
             <!-- Sap xep -->
-            <div class="product-filter">
-                <span>Sắp xếp</span>
-                <select v-model="sortV" value="">
-                    <option :value="{}">Không sắp xếp</option>
-                    <option :value="{type:-1,field:'priceSale'}">Giá giảm dần</option >
-                    <option :value="{type:1,field:'priceSale'}">Giá tăng dần</option >
-                </select>
-            </div>
+           <div class="d-flex">
+                <div class="product-filter">
+                    <span>Sắp xếp</span>
+                    <select v-model="sortV" value="">
+                        <option :value="{}">Không sắp xếp</option>
+                        <option :value="{type:-1,field:'priceSale'}">Giá giảm dần</option >
+                        <option :value="{type:1,field:'priceSale'}">Giá tăng dần</option >
+                    </select>
+                </div>
+                <!-- loại sản phẩm -->
+                <div class="product-filter ms-4">
+                    <span>Sản phẩm</span>
+                    <select v-model="typeProduct" value="">
+                        <option value="accessory">Phụ kiện</option >
+                        <option value="product">Máy</option >
+                    </select>
+                </div>
+           </div>
             <!-- Danh sach san pham -->
             <div class="row">
                 <div class="my-5" v-if="products.length==0">
@@ -25,6 +36,7 @@
                 </div>
 
             </div>
+            <!-- phân trang -->
             <div class="product-pagination my-4">
             <ul class="pagination  ">
                 <li>
@@ -48,11 +60,14 @@
 <script>
 import productCard from '@/components/product/cardVue.vue'
 import productService from '@/service/product.service'
+import accessoryService from '@/service/accessory.service'
 import productCategory from '@/components/product/productCategory.vue'
+import accessoryCategory from '@/components/product/accessoryCategory.vue'
 export default {
     components:{
         productCard,
-        productCategory
+        productCategory,
+        accessoryCategory
     },
     data(){
         return {
@@ -62,12 +77,16 @@ export default {
             lengthProducts:0,
             isFilter:false,
             keyFilter:{},
-            sortV:{}
+            sortV:{},
+            typeProduct:'product'
         }
     },
     watch:{
         sortV(){
             this.sort()
+        },
+        async typeProduct(){
+            await this.getproduct()
         }
     },
     methods:{
@@ -93,9 +112,17 @@ export default {
         },
         async getproduct(){
             try {
-                const length = await productService.getProducts();
+                let length
+                let response
+                if(this.typeProduct=='product'){
+                    length = await productService.getProducts();
+                    response = await productService.getProducts(this.pageNumber, this.pageSize)
+                }
+                else{
+                    length = await accessoryService.getAll();
+                    response = await accessoryService.getAll(this.pageNumber, this.pageSize)
+                }
                 this.lengthProducts = Math.ceil(length.data.length / this.pageSize);
-                const response = await productService.getProducts(this.pageNumber, this.pageSize)
                 this.products= [...response.data]
             } catch (error) {
                 console.log(error);
@@ -115,11 +142,16 @@ export default {
         },
         async filterServer(){
             try {
-                console.log(this.keyFilter);
-                const response = await productService.filterProduct(this.keyFilter.type, this.keyFilter.field, this.pageNumber, this.pageSize)
+                let response
+                if(this.typeProduct =='product'){
+                    response = await productService.filterProduct(this.keyFilter.type, this.keyFilter.field, this.pageNumber, this.pageSize)
+                }
+                else{
+                    response = await accessoryService.filterProduct(this.keyFilter.type, this.keyFilter.field, this.pageNumber, this.pageSize)
+                }
+                console.log(response);
                 this.products=[]
                 this.products= [...response.data]
-                console.log(response);
             } catch (error) {
                 console.log(error);
             }
@@ -138,7 +170,6 @@ export default {
                         this.getproduct()
                       }
                   });
-                  console.log(this.products);
         },
         
     },

@@ -33,6 +33,9 @@ class entryReceiptService{
     async filterByDate(day,month,year,field,pageNumber,pageSize){
         return await this.api.get(`/filter-date/?pageNumber=${pageNumber}&pageSize=${pageSize}&field=${field}&month=${month}&day=${day}&year=${year}`)
     }
+    async filterProduct(type, field, pageNumber, pageSize){
+        return await this.api.get(`/filter/?type=${type}&field=${field}&pageNumber=${pageNumber}&pageSize=${pageSize}`)
+    }
 }
 
 export default new entryReceiptService()

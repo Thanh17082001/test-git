@@ -258,9 +258,9 @@
 .table-head tr{
     text-align: left;
 }
- tr{
+.table-body tr{
     text-align: left;
-    max-height: 50px !important;
+    max-height: 50px;
 }
 .column1-th{
     width: 220px;
