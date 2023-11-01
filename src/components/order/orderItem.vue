@@ -1,6 +1,28 @@
 <template>
-    
-   <form class="container mb-5" @submit.prevent.stop="typeOrder=='Buy'? addOrder() : addRental()">
+    <div class="overlay" v-if="isLoading">
+        <div class="loading-order">
+            <div class="spinner-border text-info" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+    <div class="overlay" v-if="isConfirm">
+        <form action="" class="form-confirm-order" @submit.prevent.stop="confirm()">
+            <div class="d-flex justify-content-end">
+                <i class="fa-solid fa-xmark fs-2 text-danger" @click="isConfirm=false"></i>
+            </div>
+            <h3 class="text-uppercase">Xác nhận đơn hàng</h3>
+            <span class="text-warning fst-italic mb-3 d-block" v-if="!errorMes">Nhập mã 6 số được gửi tới email của bạn</span>
+            <span class="text-danger fst-italic mb-3 d-block" v-if="errorMes">{{errorMes}}</span>
+           <div class="spe-group">
+                <input type="number" v-model="code" placeholder="Nhập mã gồm 6 số" required>
+                <span class="text-danger text-start" v-if="validCode">{{validCode}}</span>
+            </div>
+            <button class="btn btn-success px-5 my-2">Xác nhận</button>
+            <span class="d-block text-primary btn" @click="sendMail()">Gửi lại mã</span>
+        </form>
+    </div>
+   <form class="container mb-5" @submit.prevent.stop="sendMail()">
         <div class="row">
             <div class="col-lg-5 me-5">
             <h4 class="text-start text-uppercase">Thông tin khách hàng</h4>
@@ -153,8 +175,12 @@ export default {
             note:'',
             payinfull:'',
             pricePayed:0, 
-            quantityMonth:null
-           
+            quantityMonth:null,
+            isConfirm:false,
+            code:'',
+            errorMes:'',
+            validCode:'',
+            isLoading:false
         }
     },
     watch:{
@@ -274,7 +300,6 @@ export default {
                     this.isSubmit=true
                 }
                 const validCus = this.validateForm(this.customer)
-                console.log(validCus);
                 let customerRes
                 if(validCus){
                     customerRes = await customerService.create(this.customer)
@@ -283,7 +308,6 @@ export default {
                     this.isSubmit=false
                     return;
                 }
-                console.log(customerRes);
                 const data={
                     createBy: Object.keys(user).length>0 ? user._id : null,
                     customerId:customerRes.data.result._id,
@@ -352,10 +376,64 @@ export default {
                 console.log(error);
             }
         },
+        async sendMail(){
+            try {
+                const validCus = this.validateForm(this.customer)
+                if(this.paymentMethod ==''){
+                    this.isSubmit=false
+                    this.choosePayent=true
+                }
+                else{
+                    this.isSubmit=true
+                }
+                if(validCus && this.isSubmit){
+                    this.isConfirm=false
+                    this.isLoading=true
+                    const response = await orderService.sendMail({email:this.customer.email})
+                    this.isLoading=false
+                    this.isConfirm=true
+                    if(response.data.status){
+                        this.isConfirm=true
+                        this.code=''
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        validateCode(){
+            if(this.code.length>=7){
+                this.validCode='Mã chỉ gồm 6 ký tự'
+                return false
+            }
+            else{
+                return true
+            }
+        },
+        async confirm(){
+            try {
+                const valid = this.validateCode()
+                if(valid){
+                    const  response = await orderService.confirm({code:this.code, email:this.customer.email})
+                    if(response.data.status){
+                        if(this.typeOrder=='Buy'){
+                            await this.addOrder()
+                        }
+                        else{
+                            await this.addRental()
+                        } 
+                    }
+                    else{
+                        this.errorMes=response.data.mes
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
         async addOrder(){
             try {
                 const products=[]
-                console.log(this.orderData);
                 this.orderData.forEach(item =>{
                     products.unshift({
                         productId:item._id,
@@ -376,7 +454,6 @@ export default {
                     this.isSubmit=true
                 }
                 const validCus = this.validateForm(this.customer)
-                console.log(validCus);
                 let customerRes
                 if(validCus){
                     customerRes = await customerService.create(this.customer)
@@ -613,5 +690,27 @@ export default {
 }
 .success-icon span i{
     font-size: 50px;
+}
+.form-confirm-order{
+    position: relative;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 500px;
+    background: #fff;
+    padding: 20px 25px;
+    z-index: 9999;
+}
+.loading-order{
+    position: relative;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    z-index: 1000;
+    
+}
+.loading-order div{
+    width: 80px;
+    height: 80px;
 }
 </style>

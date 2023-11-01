@@ -25,7 +25,12 @@ class orderService{
     async search(data){
         return await this.api.post(`/search/`,data)
     }
-
+    async sendMail(data){
+        return await this.api.post(`/sendMail/`,data)
+    }
+    async confirm(data){
+        return await this.api.post(`/confirm/`,data)
+    }
     async update(id,data){
         return this.api.post(`/update/?id=${id}`,data)
     }
