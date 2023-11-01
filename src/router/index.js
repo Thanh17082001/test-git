@@ -60,6 +60,16 @@ const routes = [
         },
     },
     {
+        path: '/product-detail/:id',
+        name:'product.detail',
+        props:true,
+          components: {
+              default: productPage,
+              header: headerVue,
+              footer: footerVue,
+        },
+    },
+    {
         path:'/cart',
         components:{
             default: cartPage,

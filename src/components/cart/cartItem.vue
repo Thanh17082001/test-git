@@ -24,8 +24,8 @@
         </div>
     </div>
     <div class="d-flex">
-        <button @click="typeOrder = 'Buy'" class="btn btn-secondary me-3" :class="{'btn-danger': typeOrder=='Buy'}">Mua máy</button>
-        <button @click="typeOrder = 'Rental'" type="button" class="btn btn-secondary" :class="{'btn-danger': typeOrder=='Rental'}">Thuê máy</button>
+        <button @click="handelBuy()" class="btn btn-secondary me-3" :class="{'btn-danger': typeOrder=='Buy'}">Mua máy</button>
+        <button @click="handelRental()" type="button" class="btn btn-secondary" :class="{'btn-danger': typeOrder=='Rental'}">Thuê máy</button>
     </div>
     <div class="d-flex">
         <span class="text-warning fst-italic">Chọn 1 trong 2 hình thức trên</span>
@@ -346,8 +346,22 @@ export default {
                 alert('Bạn chưa chọn sản phẩm nào')
                 return;
             }
-           localStorage.setItem('order', JSON.stringify(this.productsOrder))
-            this.$router.push({name:'order', params:{typeOrder: this.typeOrder.toString()}});
+            const valid = this.productsOrder.some(item => item.quantityCart > item.inputQuantity)
+            if(!valid){
+                localStorage.setItem('order', JSON.stringify(this.productsOrder))
+                this.$router.push({name:'order', params:{typeOrder: this.typeOrder.toString()}});
+            }
+            else{
+                alert('Bạn đang chọn sản phẩm không đủ số lượng')
+            }
+        },
+        handelRental(){
+            this.cartList=this.cartList.filter(item => item.typeProduct !='accessory')
+            this.typeOrder='Rental'
+        },
+        async handelBuy(){
+            await this.getItemToCart()
+            this.typeOrder='Buy'
         }
     },
     mounted(){
