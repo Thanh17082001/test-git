@@ -167,9 +167,15 @@
                         <i v-if="order.totalAmount > order.pricePayed" class="fa-solid fa-xmark text-danger"></i>
                         <i v-else class="fa-solid fa-check text-success"></i>
                     </td>
-                    <td v-if="!order.payInFull && order.totalAmount > order.pricePayed" class="col text-center p-0 fs-4 text-success">
-                        <i v-if="daysUntilDue(new Date(), order.datePay) <0 && order.totalAmount > order.pricePayed" class="fa-solid fa-xmark text-danger"></i>
+                    <td v-else-if="daysUntilDue(new Date(), order.datePay) >0 && !order.payInFull && order.totalAmount > order.pricePayed" class="col text-center p-0 fs-4 text-success">
+                        <i v-if="order.totalAmount > order.pricePayed && order.isPayment=='Chưa thanh toán'" class="fa-solid fa-xmark text-danger"></i>
                         <i v-else class="fa-solid fa-check"></i>
+                    </td>
+                    <td v-else-if="daysUntilDue(new Date(), order.datePay) ==0" class="col text-center p-0">
+                        Đến hạn thanh toán
+                    </td>
+                    <td v-else-if="daysUntilDue(new Date(), order.datePay) <0" class="col text-center p-0">
+                        Quá hạn thanh toán {{ Math.abs(daysUntilDue(new Date(), order.datePay)) }} ngày
                     </td>
                     <td class="col">{{ !order.payInFull ? order.totalAmount > order.pricePayed ? formatDate(order.datePay) : 'Thanh toán xong' :'Thanh toán toàn bộ' }}</td>
                     <td class="col text-center">

@@ -40,7 +40,7 @@
             <thead>
                 <tr class="row gx-0">
                     <th class="col-1 text-center">STT</th>
-                    <th class="col">
+                    <th class="col-3">
                         <div class="admin-table-title">
                             <p>Tên phụ kiện</p>
                             <div class="admin-sort">
@@ -150,7 +150,7 @@
             <tbody>
                 <tr class="row gx-0" v-for="(acc, index) in accessorys" :key="acc._id">
                     <td class="col-1 text-center">{{ index + 1 }}</td>
-                    <td class="col">{{ acc.name }}</td>
+                    <td class="col-3"><span class="truncate-text" :title="acc.name">{{ acc.name }}</span></td>
                     <td class="col">{{ fomatCurency(acc.priceImport) }}</td>
                     <td class="col">{{ acc.inputQuantity }}</td>
                     <td class="col">{{ fomatCurency(acc.priceSale) }}</td>
@@ -263,7 +263,7 @@
                                 </form>
                             </div>
                         </div>
-                        <select name="" id="" class="form-select" v-model="infoAccessory.idType"> 
+                        <select name="" id="" class="form-select" v-model="infoAccessory.typeId"> 
                             <option value="" class="form-option">--- Chọn loại ---</option>
                             <option v-for="(type, index) in types" :key="index" class="form-option" :value="type._id">
                                 {{ type.name }}
@@ -308,7 +308,7 @@
                                 </form>
                             </div>
                         </div>
-                        <select name="" id="" class="form-select" v-model="infoAccessory.idBrand">
+                        <select name="" id="" class="form-select" v-model="infoAccessory.brandId">
                             <option value="" class="form-option">--- Chọn thương hiệu ---</option>
                             <option v-for="brand in brands" :key="brand._id" class="form-option" :value="brand._id">
                                 {{ brand.name }}
@@ -428,7 +428,7 @@
                                 </form>
                             </div>
                         </div>
-                        <select name="" id="" class="form-select" v-model="accessory.idType"> 
+                        <select name="" id="" class="form-select" v-model="accessory.typeId"> 
                             <option value="" class="form-option">--- Chọn loại ---</option>
                             <option v-for="(type, index) in types" :key="index" class="form-option" :value="type._id">
                                 {{ type.name }}
@@ -473,7 +473,7 @@
                                 </form>
                             </div>
                         </div>
-                        <select name="" id="" class="form-select" v-model="accessory.idBrand">
+                        <select name="" id="" class="form-select" v-model="accessory.brandId">
                             <option value="" class="form-option">--- Chọn thương hiệu ---</option>
                             <option v-for="brand in brands" :key="brand._id" class="form-option" :value="brand._id">
                                 {{ brand.name }}
@@ -555,8 +555,8 @@ export default {
             lengthPage: 1,
             activePage: 1,
             infoAccessory: {
-                idType:'',
-                idBrand:'',
+                typeId:'',
+                brandId:'',
                 fits: [],
             },
             valid: {},
@@ -700,8 +700,8 @@ export default {
             this.acctiveAccessory = true;
             (this.infoAccessory = {
                 fits: [],
-                idType:'',
-                idBrand:''
+                typeId:'',
+                brandId:''
             }),
                 (this.mesFaild = ''),
                 (this.mesSuccess = ''),
@@ -820,7 +820,7 @@ export default {
                 if (response.data.status) {
                     this.mesSuccess = response.data.mes;
                     this.mesFaild = false;
-                    this.infoAccessory = { fits: [],idType:'',idBrand:'' };
+                    this.infoAccessory = { fits: [],typeId:'',brandId:'' };
                     this.getAllAccesory();
                     if(this.$refs.checboxProduct){
                         this.$refs.checboxProduct.map((check) => {
@@ -938,8 +938,8 @@ export default {
             try {
                 const response = await accessoryService.getById(id);
                 this.accessory = { ...response.data };
-                this.accessory.idType= this.accessory.idType._id
-                this.accessory.idBrand= this.accessory.idBrand._id
+                this.accessory.typeId= this.accessory.typeId._id
+                this.accessory.brandId= this.accessory.brandId._id
                 const covertFits = this.accessory.fits.map((fit) => ({ product: fit.product._id }));
                 this.accessory.fits = [];
                 this.accessory.fits = [...covertFits];
@@ -1098,5 +1098,12 @@ textarea {
 select {
     border: 1px solid #2c2e33;
 }
+.truncate-text {
+    white-space: nowrap; 
+    overflow: hidden;         
+    text-overflow: ellipsis;
+    width: 100%;  
+    padding: 5px;             
+  }
 
 </style>

@@ -12,7 +12,10 @@
             <span class="d-block" >Hết hàng</span>
         </div>
         <div class="product-overlay">
-            <router-link :to="{name:'product.detail', params:{id:product._id}}" class="product-see-detail">
+            <router-link v-if="product?.typeProduct=='product'" :to="{name:'product.detail', params:{id:product._id}, query:{typeProduct:'product'}}" class="product-see-detail">
+                <span  >Xem chi tiết</span>
+            </router-link>
+            <router-link v-if="product?.typeProduct=='accessory'" :to="{name:'product.detail', params:{id:product._id}, query:{typeProduct:'accessory'}}" class="product-see-detail">
                 <span  >Xem chi tiết</span>
             </router-link>
             <button class="product-btn" v-if="product.inputQuantity !==0"   data-bs-toggle="modal" :data-bs-target="'#staticBackdrop'+product._id">Thêm vào giỏ hàng</button>

@@ -192,7 +192,6 @@ export default {
     },
     props: ['typeOrder'],
     methods:{
-        
         formatPrice(price){
             return format.formatCurrency(price)
         },

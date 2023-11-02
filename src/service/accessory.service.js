@@ -36,6 +36,9 @@ class entryReceiptService{
     async filterProduct(type, field, pageNumber, pageSize){
         return await this.api.get(`/filter/?type=${type}&field=${field}&pageNumber=${pageNumber}&pageSize=${pageSize}`)
     }
+    async findCondition(condition){
+        return this.api.post('/condition', condition)
+    }
 }
 
 export default new entryReceiptService()

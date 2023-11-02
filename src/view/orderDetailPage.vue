@@ -259,7 +259,7 @@
                     <div class="col-lg-4"><strong>Ngày mua:</strong></div>
                     <div class="col-lg-6"><span>{{order.createdAt}}</span></div>
                     <div class="col-lg-4" v-if="typeOrder=='Rental'"><strong>Ngày thanh toán tiếp theo:</strong></div>
-                    <div class="col-lg-6" v-if="typeOrder=='Rental'"><span>{{ order.payInFull ? 'Đã thanh toán toàn bộ' : order.totalAmount>order.pricePayed ? order.datePay :'Thanh toán hoàn tất' }}</span></div>
+                    <div class="col-lg-6" v-if="typeOrder=='Rental'"><span>{{ order.payInFull ? 'Đã thanh toán toàn bộ' : order.totalAmount>order.pricePayed ? formatDate(order.datePay) :'Thanh toán hoàn tất' }}</span></div>
                     <div class="col-lg-4"><strong>Hính thức thanh toán:</strong></div>
                     <div class="col-lg-6"> <span>{{order.paymentMethod}}</span></div>
                     <div class="col-lg-4"><strong>Hình thức mua hàng:</strong></div>
@@ -315,6 +315,28 @@
                         <div class="col col-lg-6 mt-1" v-if="typeOrder =='Buy' && order.isPayment"><span class="text-success fs-5 fw-800 d-block">Đã thanh toán</span></div>
                         <span class="col-lg-6 mt-1"  v-if="typeOrder =='Rental'"><strong>Số tiền phải thanh toán</strong></span>
                         <span class="col-lg-6 mt-1" v-if="typeOrder =='Rental'">{{order.payInFull ?  formatPrice(order.totalAmount): order.totalAmount>order.pricePayed ? formatPrice( order.priceMonth) : 'Thanh toán hoàn tất'}}</span>
+                        <div v-if="typeOrder =='Rental' && order.payInFull" class="fs-5">
+                            <span v-if="order.totalAmount <= order.pricePayed">
+                                Đã thanh toán toàn bộ 
+                            </span>
+                            <span v-else>
+                                Chưa thanh toán
+                            </span>
+                        </div>
+                        <div v-if="typeOrder =='Rental' && !order.payInFull" class="fs-5">
+                            <span v-if="order.totalAmout<= order.pricePayed">
+                                Đã thanh toán hoàn tất
+                            </span>
+                            <span v-else-if=" daysUntilDue(new Date(), order.datePay)>0">
+                                Thanh toán theo tháng 
+                            </span>
+                            <span v-else-if="daysUntilDue(new Date(), order.datePay)==0" class="text-danger">
+                                Đến hạn thanh toán
+                            </span>
+                            <span v-else-if="daysUntilDue(new Date(), order.datePay)<0" class="text-danger">
+                                Quá hạn thanh toán {{ Math.abs(daysUntilDue(new Date(), order.datePay)) }} ngày
+                            </span>
+                        </div>
                 </div>
                 <div class="row mt-2" v-if="typeOrder =='Buy'">
                     <div class="col btn btn-info me-1" v-if="!order.isPayment && order.status == 'Đang xử lý'" @click="paymentByVnPay(order)">VNPay</div>
@@ -345,6 +367,12 @@ export default {
         id:String
     },
     methods:{
+        daysUntilDue(today, dueDate) {
+            const todayDate = new Date(today);
+            const dueDateObj = new Date(dueDate);
+            const daysDifference = Math.ceil((dueDateObj - todayDate) / (1000 * 60 * 60 * 24));
+            return daysDifference;
+        },
         closeSuccess(){
             const params = new URLSearchParams(window.location.search);
             this.$router.push(`/order-detail/${this.order._id}?typeOrder=${params.get('typeOrder')}`)
@@ -371,14 +399,14 @@ export default {
                     console.log(response);
                     this.order = response.data
                     this.order.createdAt = format.formatDate(this.order.createdAt)
-                    this.order.datePay = format.formatDateNoTime(this.order.datePay)
+                    // this.order.datePay = format.formatDateNoTime(this.order.datePay)
                 }
             } catch (error) {
                 console.log(error);
             }
         },
         formatDate(date){
-            return format.formatDate(date)
+            return format.formatDateNoTime(date)
         },
         formatPrice(price){
             return format.formatCurrency(price)
@@ -394,11 +422,11 @@ export default {
                     return ;
                 }
                 if(this.typeOrder=='Buy'){
-                    const payment = await orderService.paymentVNPAY(`order-detail/${order._id}/?typeOrder=${this.typeOrder}`,data)
+                    const payment = await orderService.paymentVNPAY(`order-detail/${order._id}?typeOrder=${this.typeOrder}`,data)
                     window.location.href=payment.data
                 }
                 else{
-                    const payment = await rentalService.paymentVNPAY(`order-detail/${order._id}/?typeOrder=${this.typeOrder}`,data)
+                    const payment = await rentalService.paymentVNPAY(`order-detail/${order._id}?typeOrder=${this.typeOrder}`,data)
                     window.location.href=payment.data
                 }
             } catch (error) {
@@ -421,11 +449,11 @@ export default {
                         alert('Số tiền thanh toán với momo phải bé hơn 50 triệu')
                         return;
                     }
-                    const payment = await orderService.paymentMOMO(`order-detail/${order._id}/?typeOrder=${this.typeOrder}`,data)
+                    const payment = await orderService.paymentMOMO(`order-detail/${order._id}?typeOrder=${this.typeOrder}`,data)
                     window.location.href=payment.data
                 }
                 else if(this.typeOrder =='Rental'){
-                    const payment = await rentalService.paymentMOMO(`order-detail/${order._id}/?typeOrder=${this.typeOrder}`,data)
+                    const payment = await rentalService.paymentMOMO(`order-detail/${order._id}?typeOrder=${this.typeOrder}`,data)
                     window.location.href=payment.data
                 }
             } catch (error) {

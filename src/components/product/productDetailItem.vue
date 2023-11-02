@@ -24,7 +24,7 @@
                             <div>
                                 <strong>Giá bán:</strong> <span>{{formatPrice(product?.priceSale)}}</span>
                             </div>
-                            <div>
+                            <div v-if="product.typeProduct=='product'">
                                 <strong>Giá thuê:</strong> <span>{{formatPrice(product?.priceRental)}}</span>
                             </div>
                         </div>
@@ -42,7 +42,7 @@
                                                 <span class="text-capitalize">{{product?.brandId?.name}}</span>
                                             </div>
                                         </div>
-                                        <div class="row text-start mt-2">
+                                        <div class="row text-start mt-2" v-if="typeProduct=='product'">
                                             <div class="col-lg-6">
                                                 <strong>Loại máy:</strong>
                                             </div>
@@ -50,7 +50,15 @@
                                                 <span class="text-capitalize">{{product?.typeId?.name}}</span>
                                             </div>
                                         </div>
-                                        <div class="row text-start mt-2">
+                                        <div class="row text-start mt-2" v-if="typeProduct=='accessory'">
+                                            <div class="col-lg-6">
+                                                <strong>Loại:</strong>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <span class="text-capitalize">{{product?.typeId?.name}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="row text-start mt-2" v-if="typeProduct=='product'">
                                             <div class="col-lg-6">
                                                 <strong>Chức năng:</strong>
                                             </div>
@@ -58,7 +66,7 @@
                                                 <span class="text-capitalize">{{product?.categoryId?.name}}</span>
                                             </div>
                                         </div>
-                                        <div class="row text-start mt-2">
+                                        <div class="row text-start mt-2" v-if="typeProduct=='product'">
                                             <div class="col-lg-6">
                                                 <strong>Bảo hành:</strong>
                                             </div>
@@ -69,7 +77,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-6" v-if="Object.keys(spes).length>0">
+                            <div class="col-lg-6" v-if="Object.keys(spes).length>0 && typeProduct=='product'">
                                 <div class="detail-specification">
                                     <h5 class="text-start text-capitalize text-info">Một số thông số kỹ thuật cơ bản</h5>
                                     <div class="intro-info" >
@@ -98,6 +106,18 @@
                                             </div>
                                         </div>
                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6" v-if="typeProduct=='accessory' && product?.fits?.length>0">
+                                <div>
+                                    <h5 class="text-start text-capitalize text-info">phù hợp với các sản phẩm</h5>
+                                    <div class="intro-info fits">
+                                        <div class="row text-start mt-2" v-for="item in product?.fits" :key="item._id">
+                                            <div class="col-lg-12">
+                                                <strong><li>{{ item.product.name }}</li></strong>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -131,7 +151,7 @@
                     </p>
                 </div>
                 <!-- thông số kỹ thuật -->
-                <div class="detail-content mt-2 " v-if="activeNav=='Thông số kỹ thuật'">
+                <div class="detail-content mt-2 " v-if="activeNav=='Thông số kỹ thuật'  && typeProduct=='product' && Object.keys(spes).length>0">
                     <h5 class="text-start mt-2 text-capitalize text-warning">thông số kỹ thuật máy {{ product?.name }}</h5>
                     <div class="detail-spe">
                         <div class="row">
@@ -273,6 +293,12 @@
                         
                     </div>
                 </div>
+                <div class="detail-content-empty mt-2 text-start"  v-if="activeNav=='Thông số kỹ thuật' && typeProduct=='accessory' &&  Object.keys(spes).length<=0">
+                    <span>Không có</span>
+                </div>
+                <div class="detail-content-empty mt-2 text-start"  v-if="activeNav=='Thông số kỹ thuật' && typeProduct=='product' &&  Object.keys(spes).length<=0">
+                    <span>Chưa cập nhật</span>
+                </div>
                 <!-- đánh giá -->
                 <div class="detail-comment" v-if="activeNav=='Đánh giá'">
                     <h5 class="text-start mt-2 text-capitalize text-warning">Đánh giá về máy {{product?.name}}</h5>
@@ -411,7 +437,7 @@ export default {
             added:false,
         }
     },
-    props:['product','spes', 'products'], 
+    props:['product','spes', 'products', 'typeProduct'], 
     methods:{
         formatPrice(price){
             return format.formatCurrency(price)
@@ -571,6 +597,10 @@ export default {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
+.detail-content-empty{
+    height: 290px;
+    display: flex;
+}
 .detail-content p{
     font-size: 17px;
 }
@@ -672,5 +702,10 @@ export default {
     z-index: 9999;
     background: rgb(112, 255, 112);
     color:#fff;
+}
+.fits{
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 300px;
 }
 </style>

@@ -124,6 +124,7 @@ export default {
                 }
                 this.lengthProducts = Math.ceil(length.data.length / this.pageSize);
                 this.products= [...response.data]
+                this.products.forEach(item=> item.typeProduct=this.typeProduct)
             } catch (error) {
                 console.log(error);
             }
