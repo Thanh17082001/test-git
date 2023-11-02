@@ -12,9 +12,9 @@
             <span class="d-block" >Hết hàng</span>
         </div>
         <div class="product-overlay">
-            <a href="" class="product-see-detail">
-                <span >Xem chi tiết</span>
-            </a>
+            <router-link :to="{name:'product.detail', params:{id:product._id}}" class="product-see-detail">
+                <span  >Xem chi tiết</span>
+            </router-link>
             <button class="product-btn" v-if="product.inputQuantity !==0"   data-bs-toggle="modal" :data-bs-target="'#staticBackdrop'+product._id">Thêm vào giỏ hàng</button>
             <button class="product-btn" v-else>Sản phẩm đã hết</button>
             
@@ -179,7 +179,7 @@ export default {
     right: 20px;
     width: 500px;
     z-index: 9999;
-    background: rgb(80, 255, 80);
+    background: rgb(112, 255, 112);
     color:#fff;
 }
 </style>

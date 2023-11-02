@@ -9,6 +9,7 @@ import cartPage from '@/view/cartPage.vue';
 import orderPage from '@/view/orderPage.vue';
 import orderHistoryPage from '@/view/orderHistoryPage.vue';
 import orderDetailPage from '@/view/orderDetailPage.vue';
+import productDetailPage from '@/view/productDetailPage.vue';
 
 //ADMIN 
 import adminProduct from '@/components/admin/adminProduct.vue';
@@ -64,7 +65,7 @@ const routes = [
         name:'product.detail',
         props:true,
           components: {
-              default: productPage,
+              default: productDetailPage,
               header: headerVue,
               footer: footerVue,
         },

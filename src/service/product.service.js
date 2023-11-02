@@ -64,8 +64,18 @@ class productService{
         return await this.api.get(`/filter-date/?pageNumber=${pageNumber}&pageSize=${pageSize}&field=${field}&month=${month}&day=${day}&year=${year}`)
     }
 
-    async getProductsByBrandId(brandId){
-        return await this.api.get(`/get-brand-id/?brandId=${brandId}`)
+    async getProductsByBrandId(brandId, pageNumber, pageSize){
+        return pageNumber && pageSize
+        ? this.api.get(`/get-brand-id/?brandId=${brandId}&pageNumber=${pageNumber}&pageSize=${pageSize}`) 
+        : await this.api.get(`/get-brand-id/?brandId=${brandId}`)
+    }
+
+    async findCondition(condition){
+        const headers=undefined
+        const baseUrl= "http://localhost:3000/product"
+        this.api=createApiClient(baseUrl,headers)
+
+        return this.api.post('/condition', condition)
     }
 }
 
