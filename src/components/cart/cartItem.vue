@@ -216,6 +216,7 @@ export default {
                 if (index2 !== -1) {
                     this.cartList.splice(index2, 1); 
                 }
+                this.$store.commit('addToCart')
             }
             else{
                 const response = await cartService.getByUserId(user._id)
@@ -226,6 +227,7 @@ export default {
                     carts.splice(index, 1); 
                 }
                 const update = await cartService.update(user._id, {products:carts})
+                this.$store.commit('addToCart', carts)
                 if (index2 !== -1 && update.data.status) {
                     this.cartList.splice(index2, 1); 
                 }

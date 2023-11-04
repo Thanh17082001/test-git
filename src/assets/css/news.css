@@ -2,7 +2,7 @@
     display: block;
     text-decoration: none;
     color: #000;
-    min-height: 400px;
+    height: 450px;
     background-color: #f5f5f5;
     position: relative;
     overflow: hidden;
@@ -37,7 +37,7 @@
 }
 .news-info h5{
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-transform: uppercase;
@@ -46,7 +46,7 @@
 
 .news-info p{
     display: -webkit-box;
-    -webkit-line-clamp: 4;
+    -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
     margin: 5px;

@@ -46,7 +46,9 @@
                         >
                     </li>
                     <li>
-                        <a href=""><span class="not-active"></span>Giới thiệu</a>
+                        <router-link to="/introduce" class="nav__link me-2" active-class="active-nav"
+                        ><span class="not-active"></span>Giới thiệu</router-link
+                    >
                     </li>
                     <li>
                         <router-link to="/product" class="nav__link me-2" active-class="active-nav"
@@ -54,16 +56,24 @@
                         >
                     </li>
                     <li>
-                        <a href=""><span class="not-active"></span>Bảo hành</a>
+                        <router-link to="/warranty" class="nav__link me-2" active-class="active-nav"
+                            ><span class="not-active"></span>Bảo hành</router-link
+                        >
                     </li>
                     <li>
-                        <a href=""><span class="not-active"></span>Sữa chưa và bảo trì</a>
+                        <router-link to="/service" class="nav__link me-2" active-class="active-nav"
+                        ><span class="not-active"></span>Sửa chữa & Bảo trì</router-link
+                    >
                     </li>
                     <li>
-                        <a href=""><span class="not-active"></span>Liên hệ</a>
+                        <router-link to="/contact" class="nav__link me-2" active-class="active-nav"
+                            ><span class="not-active"></span>Liên hệ</router-link
+                        >
                     </li>
                     <li>
-                        <a href=""><span class="not-active"></span>Tin tức</a>
+                        <router-link to="/news" class="nav__link me-2" active-class="active-nav"
+                            ><span class="not-active"></span>Tin Tức</router-link
+                        >
                     </li>
                 </ul>
 
@@ -86,7 +96,7 @@
                 <router-link to="/cart" class="header-cart">
                     <div class="cart-icon">
                         <i class="fa-solid fa-cart-shopping"></i>
-                        <span>1</span>
+                        <span>{{test()}}</span>
                     </div>
                     <span>Giỏ hàng</span>
                 </router-link>
@@ -117,6 +127,9 @@ export default {
         },
     },
     methods: {
+        test(){
+            return this.$store.getters.cartItemCount;
+        },
         Checklogin() {
             const user = JSON.parse(sessionStorage.getItem('user'));
             if (user) {
@@ -142,6 +155,7 @@ export default {
                 sessionStorage.removeItem('user');
                 this.Checklogin();
                 this.islogin = false;
+                this.$store.commit('addToCart')
                 this.$router.push('/')
             } catch (error) {
                 console.log(error);

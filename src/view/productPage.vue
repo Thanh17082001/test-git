@@ -86,6 +86,8 @@ export default {
             this.sort()
         },
         async typeProduct(){
+            this.pageNumber=1
+            this.pageSize=8
             await this.getproduct()
         }
     },

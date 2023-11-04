@@ -1,22 +1,22 @@
 <template>
-  
-    <a  href="" class="news-card">
+
+    <router-link :to="{name:'news.detail', params:{id:news._id}}" class="news-card">
       <div class="overlay-news">
       </div>
-      <img src="https://media.loveitopcdn.com/21740/thumb/346x259/may-photocopy-tot-nhat.jpg?zc=1" alt="">
+      <img :src="'http://localhost:3000/'+news.image" alt="">
       <div class="news-info">
-        <h5>MÁY PHOTOCOPY VĂN PHÒNG - THIẾT BỊ THIẾT YẾU CHO MỌI DOANH NGHIỆP</h5>
-        <span><i class="fa-regular fa-calendar"></i> 22/12/2022</span>
+        <h5>{{ news.title }}</h5>
+        <span><i class="fa-regular fa-calendar"></i> {{ news.createdAt }}</span>
         <p>
-          Máy photocopy văn phòng hiện nay đang trở nên rất phổ biến và hữu dụng để lưu trữ, cung cấp những thông tin quan trọng trong và ngoài văn phòng. Những thông tin dưới đây giúp bạn hiểu hơn về sự cần thiết của nó đối với mọi doanh nghiệp.
+          {{ news.content }}
         </p>
       </div>
-    </a>
+    </router-link>
 </template>
 
 <script>
 export default {
-
+  props:['news'],
 }
 </script>
 

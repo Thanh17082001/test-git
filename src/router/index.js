@@ -10,6 +10,12 @@ import orderPage from '@/view/orderPage.vue';
 import orderHistoryPage from '@/view/orderHistoryPage.vue';
 import orderDetailPage from '@/view/orderDetailPage.vue';
 import productDetailPage from '@/view/productDetailPage.vue';
+import warrantyPage from '@/view/warrantyPage.vue'
+import introducePage from '@/view/introducePage.vue'
+import newsPage from '@/view/newsPage.vue'
+import newsDetailPage from '@/view/newsDetailPage.vue'
+import contactPage from '@/view/contactPage.vue'
+import servicePage from '@/view/servicePage.vue'
 
 //ADMIN 
 import adminProduct from '@/components/admin/adminProduct.vue';
@@ -105,6 +111,56 @@ const routes = [
             footer: footerVue,
         },
         props:true
+    },
+    {
+        path:'/warranty',
+        components:{
+            default: warrantyPage,
+            header: headerVue,
+            footer: footerVue,
+        }
+    },
+    {
+        path:'/introduce',
+        components:{
+            default: introducePage,
+            header: headerVue,
+            footer: footerVue,
+        }
+    },
+    {
+        path:'/news',
+        components:{
+            default: newsPage,
+            header: headerVue,
+            footer: footerVue,
+        }
+    },
+    {
+        path:'/news-detail/:id',
+        name:'news.detail',
+        props:true,
+        components:{
+            default: newsDetailPage,
+            header: headerVue,
+            footer: footerVue,
+        }
+    },
+    {
+        path:'/contact',
+        components:{
+            default: contactPage,
+            header: headerVue,
+            footer: footerVue,
+        }
+    },
+    {
+        path:'/service',
+        components:{
+            default: servicePage,
+            header: headerVue,
+            footer: footerVue,
+        }
     },
 
     // USER ROUTER

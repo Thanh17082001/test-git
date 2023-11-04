@@ -75,6 +75,7 @@
 <script>
 import userService from '@/service/user.service';
 import forgetPassVue from '@/components/user/forgetPass.vue';
+import cartService from '@/service/cart.service';
 export default {
     components:{
         forgetPassVue
@@ -102,6 +103,8 @@ export default {
                     const response = await userService.login(this.inforUser);
                     if (response.status == 200) {
                         if (response.data.status) {
+                            const cart = await cartService.getByUserId(response.data.user.user._id)
+                            this.$store.commit('addToCart', cart.data.products)
                             this.inforUser = {};
                             this.messageSuccess = response.data.mes;
                             this.messageFailure = '';
@@ -111,6 +114,7 @@ export default {
                             if(inforUser.user.isAdmin || inforUser.user.roles.length>0){
                                 this.$router.push('/admin')
                             }else{
+                                
                                 this.$router.push('/');
                             }
                         } else {
