@@ -15,6 +15,7 @@ if(Object.keys(user).length>0){
 const store = createStore({
     state: {
         cart: Object.keys(user).length>0 ? products : VueCookies.isKey('cart')? VueCookies.get('cart') : [],
+        inforuser:JSON.parse(sessionStorage.getItem('user')) ? JSON.parse(sessionStorage.getItem('user')).user :{}
       },
       mutations: {
         addToCart(state, products) {
@@ -23,9 +24,13 @@ const store = createStore({
                 state.cart=products
             }
         },
+        changeInfo(state, user){
+          state.inforuser=user
+        }
       },
       getters: {
         cartItemCount: state => state.cart.length ||0,
+        inforuser: state => state.inforuser || {}
       },
   })
 

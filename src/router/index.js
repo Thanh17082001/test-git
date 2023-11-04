@@ -16,6 +16,7 @@ import newsPage from '@/view/newsPage.vue'
 import newsDetailPage from '@/view/newsDetailPage.vue'
 import contactPage from '@/view/contactPage.vue'
 import servicePage from '@/view/servicePage.vue'
+import changeInfoUserPage from '@/view/changeInfoUserPage.vue';
 
 //ADMIN 
 import adminProduct from '@/components/admin/adminProduct.vue';
@@ -158,6 +159,14 @@ const routes = [
         path:'/service',
         components:{
             default: servicePage,
+            header: headerVue,
+            footer: footerVue,
+        }
+    },
+    {
+        path:'/change-info',
+        components:{
+            default: changeInfoUserPage,
             header: headerVue,
             footer: footerVue,
         }

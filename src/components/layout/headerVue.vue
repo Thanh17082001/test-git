@@ -77,18 +77,24 @@
                     </li>
                 </ul>
 
-                <div class="header-user">
-                    <div class="logined" v-if="islogin && !!infoUser" @click="isActive = !isActive">
-                        <img v-if="!!infoUser" :src="'http://localhost:3000/' + infoUser.avatar" alt="" class="header-avt" />
-                        <span class="header-name">{{ infoUser.fullName }}</span>
+                <div class="header-user" v-if="Object.keys(test2).length>0">
+                    <div class="logined" v-if="islogin && !!test2" @click="isActive = !isActive">
+                        <img v-if="!!test2" :src="'http://localhost:3000/' + test2.avatar" alt="" class="header-avt" />
+                        <span class="header-name">{{ test2.fullName }}</span>
                         <i class="fa-solid fa-sort-down"></i>
                         <ul class="user-drop-down" v-if="islogin && isActive">
                             <li @click="logout">Đăng xuất</li>
-                            <li>Chỉnh sửa thông tin</li>
-                            <li v-if="infoUser.isAdmin ||infoUser.roles.length>0"><router-link to="/admin">Quay lại trang Admin</router-link></li>
+                            <li><router-link to="/change-info">Chỉnh sửa thông tin</router-link></li>
+                            <li v-if="test2.isAdmin ||test2.roles.length>0"><router-link to="/admin">Quay lại trang Admin</router-link></li>
                         </ul>
                     </div>
                     <div class="login" v-else>
+                        <span class="btn btn-login"><router-link to="/login"> Đăng nhập</router-link></span>
+                        <span class="btn btn-login"><router-link to="/register"> Đăng ký</router-link></span>
+                    </div>
+                </div>
+                <div class="header-user" v-if="Object.keys(test2).length<=0">
+                    <div class="login">
                         <span class="btn btn-login"><router-link to="/login"> Đăng nhập</router-link></span>
                         <span class="btn btn-login"><router-link to="/register"> Đăng ký</router-link></span>
                     </div>
@@ -124,6 +130,12 @@ export default {
             if (this.searchVal === '') {
                 this.productsSearch = [];
             }
+        }
+        
+    },
+    computed:{
+        test2(){
+           return this.$store.getters.inforuser ;
         },
     },
     methods: {
@@ -156,6 +168,7 @@ export default {
                 this.Checklogin();
                 this.islogin = false;
                 this.$store.commit('addToCart')
+                this.$store.commit('changeInfo', {})
                 this.$router.push('/')
             } catch (error) {
                 console.log(error);
