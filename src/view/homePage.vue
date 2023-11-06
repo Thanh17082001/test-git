@@ -130,7 +130,6 @@ export default {
                     }
                 }
                 const response = await productService.findCondition(data)
-                console.log(response);
                 this.productsBestSeller=[...response.data]
                 this.productsBestSeller.forEach(item=>item.typeProduct='product')
             } catch (error) {

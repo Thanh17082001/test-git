@@ -7,7 +7,7 @@
                     <span>Thiên Thanh</span>
                     <p>Photocopy Company</p>
                 </div>
-                <div class="search col-4">
+                <div class="search col-4"  @blur="productsSearch = []" tabindex="0">
                     <input
                         @focus="onSearch"
                         v-model="searchVal"
@@ -15,7 +15,7 @@
                         class="top-input"
                         placeholder="Tìm kiếm ..."
                         @input="onSearch"
-                        @blur="productsSearch = []"
+                       
                     />
                     <button class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
                     <div v-if="loading" class="spinner-border text-danger loading" role="status">
@@ -24,8 +24,8 @@
                     <div class="delete-test" v-if="!loading && searchVal !== ''" @click="searchVal = ''">
                         <i class="fa-regular fa-circle-xmark"></i>
                     </div>
-                    <ul class="search-list" v-if="productsSearch.length !== 0">
-                        <li v-for="product in productsSearch" :key="product._id">{{ product.name }}</li>
+                    <ul class="search-list" v-if="productsSearch.length !== 0 ">
+                        <li @click="detailPage(product)" v-for="product in productsSearch" :key="product._id">{{ product.name }}</li>
                     </ul>
                 </div>
                 <div class="top-tact col-4">
@@ -183,9 +183,10 @@ export default {
             try {
                 if (this.searchVal !== '') {
                     this.loading = true;
-                    const response = await productService.search(this.searchVal, 1, 6);
+                    const response = await productService.search(this.searchVal);
                     this.loading = false;
                     this.productsSearch = [...response.data];
+                    console.log(this.productsSearch);
                 } else {
                     this.productsSearch = [];
                 }
@@ -193,6 +194,9 @@ export default {
                 console.log(error);
             }
         },
+        detailPage(product){
+            this.$router.push({name:'product.detail', params:{id:product._id}, query:{typeProduct:product.typeProduct}})
+        }
     },
     mounted() {
         this.Checklogin();

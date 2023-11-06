@@ -104,7 +104,7 @@ export default {
                     if (response.status == 200) {
                         if (response.data.status) {
                             const cart = await cartService.getByUserId(response.data.user.user._id)
-                            this.$store.commit('addToCart', cart.data.products)
+                            this.$store.commit('addToCart', cart?.data?.products ||[])
                             this.inforUser = {};
                             this.messageSuccess = response.data.mes;
                             this.messageFailure = '';

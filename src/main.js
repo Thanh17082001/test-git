@@ -10,7 +10,7 @@ const user = JSON.parse(sessionStorage.getItem('user'))?.user ||{}
 var products
 if(Object.keys(user).length>0){
     const cart = await cartService.getByUserId(user._id)
-     products= cart.data.products ||[]
+     products= cart.data?.products || []
 }
 const store = createStore({
     state: {

@@ -29,6 +29,7 @@ export default {
     methods:{
         async getproductById(){
             try {
+                this.typeProduct=this.$route.query.typeProduct
                 if(this.typeProduct=='product'){
                     const response = await productService.getProductById(this.id)
                     this.product=response.data
@@ -101,9 +102,9 @@ export default {
             }
         }
     },
-    mounted(){
+    async mounted(){
         this.typeProduct=this.$route.query.typeProduct
-        this.getproductById()
+        await this.getproductById()
     }
 }
 </script>

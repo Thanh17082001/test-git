@@ -1,14 +1,14 @@
 <template>
-  <div class="d-flex mt-2">
-    <span class="btn btn-warning text-start" v-if="btnChange" @click="changeType">Đổi dạng biểu đồ</span>
-  </div>
     <div class="chart">
-        <canvas ref="chart"></canvas>
+        <button class="btn btn-warning px-2 d-flex" @click="exportPDF">InPDF</button>
+        <canvas ref="chart" class="myChart1"></canvas>
     </div>
 </template>
 
 <script>
 import Chart from 'chart.js/auto';
+import { jsPDF } from "jspdf"
+import unidecode from 'unidecode';
 export default {
     props: {
         dynamicLabels: {
@@ -19,29 +19,21 @@ export default {
             type: Array,
             required: true,
         },
-        
+        year:Number,
+        month:Number,
+        typeStatistical:String,
+        chartType:String,
+        color:String,
+        name:String
     },
     data() {
         return {
             chart: null,
-            chartType: 'bar',
             btnChange: true,
         };
     },
     watch: {
         data: {
-            handler() {
-                this.updateChart();
-            },
-            deep: true,
-        },
-        chartType: {
-            handler() {
-                this.updateChart();
-            },
-            deep: true,
-        },
-        data2: {
             handler() {
                 this.updateChart();
             },
@@ -66,8 +58,8 @@ export default {
                             label: 'Doanh thu',
                             data: this.data,
                             borderWidth: 1,
-                            backgroundColor : '#F55050'
-                        }
+                            backgroundColor : this.color
+                        },
                     ],
                 },
                 options: {
@@ -85,22 +77,25 @@ export default {
             });
         },
         updateChart() {
-            if (this.chart) {
+            if (Object.keys(this.chart).length>0) {
                 this.chart.destroy();
                 this.renderChart();
             }
         },
-        changeType() {
-            if (this.chartType == 'bar') {
-                this.chartType = 'line';
-            } else {
-                this.chartType = 'bar';
+        exportPDF(e) {
+            const parent= e.target.parentElement
+            const canvas1 = parent.querySelector('.myChart1');
+            const pdf = new jsPDF();
+            const image1 = canvas1.toDataURL("image/png", 1.0);
+            if(this.typeStatistical=='month'){
+                pdf.text(`BIEU DO DOANH THU ${unidecode(this.name).toUpperCase()} THANG ${this.month} NAM ${this.year}`, 20, 0,)
             }
-            this.btnChange = false;
-            setTimeout(() => {
-                this.btnChange = true;
-            }, 600);
-        },
+            else{
+                pdf.text(`BIEU DO DOANH THU ${unidecode(this.name).toUpperCase()} NAM ${this.year}`, 50, 20)
+            }
+            pdf.addImage(image1, 'JPEG', 15, 30, 180, 100);
+            pdf.save('chart.pdf');
+        }
     },
     mounted() {
         this.renderChart();
@@ -110,6 +105,6 @@ export default {
 
 <style>
 .chart {
-    height: 480px;
+    height: 600px;
 }
 </style>

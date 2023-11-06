@@ -24,7 +24,7 @@
                             <div>
                                 <strong>Giá bán:</strong> <span>{{formatPrice(product?.priceSale)}}</span>
                             </div>
-                            <div v-if="product.typeProduct=='product'">
+                            <div v-if="product?.typeProduct=='product'">
                                 <strong>Giá thuê:</strong> <span>{{formatPrice(product?.priceRental)}}</span>
                             </div>
                         </div>
@@ -141,7 +141,7 @@
             <div class="row">
                 <div class="detail-nav" >
                     <ul>
-                        <li @click="activeNav=nav" :class="{'active-nav': activeNav== nav}" v-for="nav in navs" :key="nav">{{nav}}</li>
+                        <li @click="changeNav(nav)" :class="{'active-nav': activeNav== nav}" v-for="nav in navs" :key="nav">{{nav}}</li>
                     </ul>
                 </div>
                 <div class="detail-content mt-2 " v-if="activeNav=='Giới thiệu'">
@@ -303,11 +303,11 @@
                 <div class="detail-comment" v-if="activeNav=='Đánh giá'">
                     <h5 class="text-start mt-2 text-capitalize text-warning">Đánh giá về máy {{product?.name}}</h5>
                     <div class="comment">
-                        <div class="row mt-2 text-start comment-item" v-for="( i) in 5" :key="i">
-                            <span class="col-lg-12">Nguyễn thiên thanh</span>
-                            <span class="col-lg-12"><i class="fa-solid fa-star" :class="{'active-star': int<=star}" v-for="int in 5" :key="int"></i></span>
-                            <img src="https://inkythuatso.com/uploads/thumbnails/800/2023/03/6-anh-dai-dien-trang-inkythuatso-03-15-26-36.jpg" alt="">
-                            <p class="col-lg-12">Sản phẩm rất tốt.</p>
+                        <div class="row mt-2 text-start comment-item" v-for="( comment) in comments" :key="comment._id">
+                            <span class="col-lg-12">{{comment.name}}</span>
+                            <span class="col-lg-12"><i class="fa-solid fa-star" :class="{'active-star': int<=comment.rate}" v-for="int in 5" :key="int"></i></span>
+                            <img :src="'http://localhost:3000'+ comment.image" alt="">
+                            <p class="col-lg-12">{{comment.content}}</p>
                             <div class="mb-2 reply"><div class="p-2" @click="activeReply=!activeReply; indexReply=i ">Trả lời <i class="fa-solid fa-reply"></i></div></div>
                             <div class="d-flex align-items-center mb-2 " v-if="activeReply && indexReply==i">
                                 <div class="spe-group w-50">
@@ -318,58 +318,60 @@
                         </div>
                     </div>
 
-                    <form action="" class="comment-form">
+                    <form action="" class="comment-form" @submit.prevent.stop="addComment">
                         <h5 class="text-start mt-2  text-warning">Hãy là người đánh giá máy {{product?.name}}</h5>
                         <div class="text-start mb-3">
                             <div class="spe-group"><label class=" d-block">Chọn số sao <span class="text-danger"></span></label></div>
-                            <span class="me-3 start-select"><i class="fa-solid fa-star"></i></span>|
-                            <span class="me-3 start-select">
+                            <span class="me-3 start-select" :class="{'active-star':rate==1}" @click="rate=1"><i class="fa-solid fa-star"></i></span>|
+                            <span class="me-3 start-select" :class="{'active-star':rate==2}" @click="rate=2">
                                 <i class="fa-solid fa-star"></i>
                                 <i class="fa-solid fa-star"></i>
                             </span>|
-                            <span class="me-3 start-select">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                            </span>|
-                            <span class="me-3 start-select">
-                                <i class="fa-solid fa-star"></i>
+                            <span class="me-3 start-select" :class="{'active-star':rate==3}" @click="rate=3">
                                 <i class="fa-solid fa-star"></i>
                                 <i class="fa-solid fa-star"></i>
                                 <i class="fa-solid fa-star"></i>
                             </span>|
-                            <span class="start-select">
+                            <span class="me-3 start-select" :class="{'active-star':rate==4}" @click="rate=4">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </span>|
+                            <span class="start-select" :class="{'active-star':rate==5}" @click="rate=5">
                                 <i class="fa-solid fa-star"></i>
                                 <i class="fa-solid fa-star"></i>
                                 <i class="fa-solid fa-star"></i>
                                 <i class="fa-solid fa-star"></i>
                                 <i class="fa-solid fa-star"></i>
                             </span>
-                            
+                            <div v-if="selectRate">
+                                <span class="text-danger">Chọn số 1 trong 5 lựa chọn trên</span>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-lg-4">
                                 <div class="spe-group">
                                     <label for="">Tên của bạn <span class="text-danger">*</span></label>
-                                    <input type="text" placeholder="Họ và tên">
+                                    <input type="text" placeholder="Họ và tên" v-model="infoComment.name" required>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="spe-group">
                                     <label for="">Email của bạn <span class="text-danger">*</span></label>
-                                    <input type="text" placeholder="Địa chỉ email">
+                                    <input type="email" placeholder="Địa chỉ email" v-model="infoComment.email" required>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="spe-group">
                                     <label for="">Ảnh</label>
-                                    <input type="file" class="pt-1">
+                                    <input type="file" ref="fileComment" class="pt-1" @change="handleImage">
                                 </div>
                             </div>
                             <div class="col-lg-12">
                                 <div class="spe-group">
                                     <label for="">Nội dung <span class="text-danger">*</span></label>
-                                    <textarea name="" id="" class="w-100" placeholder="Nội dung đánh giá"></textarea>
+                                    <textarea name="" id="" class="w-100" placeholder="Nội dung đánh giá" v-model="infoComment.content" required></textarea>
                                 </div>
                             </div>
                         </div>
@@ -421,6 +423,7 @@
 import cardVue from './cardVue.vue';
 import format from '@/utils/format';
 import cartService from '@/service/cart.service';
+import commentService from '@/service/comment.service'
 export default {
     components:{
         cardVue
@@ -435,6 +438,10 @@ export default {
             isValid:'',
             inputQuantity:1,
             added:false,
+            infoComment:{},
+            rate:'',
+            selectRate:false,
+            comments:[]
         }
     },
     props:['product','spes', 'products', 'typeProduct'], 
@@ -521,6 +528,63 @@ export default {
 
             return this.isValid == '' ? true : false
         },
+        handleImage(event){
+            this.infoComment.image = event.target.files[0] || '';
+        },
+        async addComment(){
+            try {
+                this.selectRate=false
+                const data ={
+                    ...this.infoComment,
+                    productId:this.product._id,
+                    typeProduct:this.typeProduct,
+                    rate:this.rate
+                }
+                console.log(data);
+                if(this.rate==''){
+                    this.selectRate=true
+                    return;
+                }
+                else{
+                    const response = await commentService.create(data)
+                    if(response.data.status){
+                        this.infoComment={}
+                        this.rate=''
+                        this.$refs.fileComment.value=''
+                        alert('Đánh giá của bạn đã được gửi và sẽ được phê duyệt trước khi hiển thị')
+                    }
+                    else{
+                        alert('Đánh giá không thành công')
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getCommentByIdProduct(){
+            try {
+                const data={
+                    productId:this.product?._id,
+                    approve:true
+                }
+                const response = await commentService.findByIdProduct(data)
+                if(response.data.status){
+                    this.comments=response.data.data
+                }
+                console.log(response);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        changeNav(nav){
+            this.activeNav=nav
+            if(nav=='Đánh giá'){
+                this.getCommentByIdProduct()
+            }
+        }
+        
+    },
+    mounted(){
         
     }
 }
