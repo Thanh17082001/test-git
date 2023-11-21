@@ -518,6 +518,7 @@ export default {
             products.map(product => {
                 if(product._id === id){
                     this.ordersProducts[index].priceRental=product.priceRental
+                    this.ordersProducts[index].priceImport=product.priceImport
                     this.ordersProducts[index].inputQuantity=product.inputQuantity
                     this.ordersProducts[index].nameProduct=product.name
                     this.ordersProducts[index].quantity=null

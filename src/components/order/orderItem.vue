@@ -286,6 +286,7 @@ export default {
                         productId:item._id,
                         nameProduct:item.name,
                         priceRental:item.priceRental,
+                        priceImport:item.priceImport,
                         quantity:item.quantityCart,
                     })
                 })
@@ -438,6 +439,7 @@ export default {
                         productId:item._id,
                         nameProduct:item.name,
                         priceSale:item.priceSale,
+                        priceImport:item.priceImport,
                         warrantyTime:item.warrantyTime,
                         typeProduct:item.typeProduct,
                         quantity:item.quantityCart,

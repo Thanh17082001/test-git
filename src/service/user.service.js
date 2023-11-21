@@ -43,10 +43,13 @@ class userService{
         this.api=createApiClient(baseUrl,headers)
         return await this.api.post('/reset-pass',data)
     }
-    async getAll(pageNumber, pageSize){
+    async getAll(data,pageNumber, pageSize){
+        const headers=undefined
+        const baseUrl= "http://localhost:3000/user"
+        this.api=createApiClient(baseUrl,headers)
         return pageNumber&&pageSize 
-            ? this.api.get(`/?pageNumber=${pageNumber}&pageSize=${pageSize}`)
-            : this.api.get('/')
+            ? this.api.post(`/?pageNumber=${pageNumber}&pageSize=${pageSize}`, data)
+            : this.api.post('/', data)
     }
     async filterByDate(day,month,year,field,pageNumber,pageSize){
         return await this.api.get(`/filter-date/?pageNumber=${pageNumber}&pageSize=${pageSize}&field=${field}&month=${month}&day=${day}&year=${year}`)

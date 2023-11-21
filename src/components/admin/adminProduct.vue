@@ -191,11 +191,10 @@
                             </div> -->
                         </div>
                     </th>
-                    <th class="column5-th">
-                        <span class="me-3 ms-3 text-left">Xem</span>
-                        <span class="me-3 ms-2 text-left">Sửa</span>
-                        <span class="ms-2">Thêm</span>
-                        <span class="ms-4">Xóa</span>
+                    <th class="column5-th text-center">
+                        <span class="me-4 text-left">Xem</span>
+                        <span class="me-4 text-left">Sửa</span>
+                        <span class="">Thêm</span>
                     </th>
                 </tr>
             </thead>
@@ -229,7 +228,6 @@
                         <div class="btn btn-outline-success me-3" @click="handleProductSpe(product._id)">
                             <i class="fa-solid fa-plus"></i>
                         </div>
-                        <div class="btn btn-outline-danger"><i class="fa-solid fa-trash"></i></div>
                     </td>
                 </tr>
             </tbody>

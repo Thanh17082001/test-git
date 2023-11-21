@@ -198,6 +198,9 @@ export default {
         try {
           const response = await productSevice.getProductById(this.id)
           this.infoProduct={...response.data}
+          this.infoProduct.brandId=this.infoProduct.brandId._id
+          this.infoProduct.typeId=this.infoProduct.typeId._id
+          this.infoProduct.categoryId=this.infoProduct.categoryId._id
           this.imgSrc='http://localhost:3000/'+this.infoProduct.image
         } catch (error) {
           console.log(error);

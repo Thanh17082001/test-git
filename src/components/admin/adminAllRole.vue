@@ -155,13 +155,11 @@ export default {
         },
         async getUsers() {
             try {
-                const length = await userService.getAll();
+                const length = await userService.getAll({isStaff:true});
+                console.log(length);
                 this.lengthPage = Math.ceil(length.data.length / this.pageSize);
-                const response = await userService.getAll(this.pageNumber, this.pageSize);
-
-                this.users = response.data.filter((user) => {
-                    return user.isStaff === true;
-                });
+                const response = await userService.getAll({isStaff:true}, this.pageNumber,this.pageSize);
+                this.users = response.data;
             } catch (error) {
                 console.log(error);
             }

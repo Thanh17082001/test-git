@@ -1,6 +1,6 @@
 
 function print(info = {}) {
-  const src= info.image ? 'data:image/jpg;base64,'+info.image.data :''
+  const src= info.image ? 'data:image/jpg;base64,'+ info.image.data : ''
     let productTemplate=''
     info.products.forEach((product, index) => {
         productTemplate+=` 
@@ -27,9 +27,9 @@ function print(info = {}) {
      `
     });
 
-   const print= 
+   let print= 
    `
-   <div style="height:100%">
+   <div style="height:90%">
         <h4 style=" margin: 20px; font-size: 18px;">Số: ${info._id}</h4>
         <div style="width: 100%;">
             <h4 style="text-align: center; font-size: 30px; margin: 0px;">Phiếu nhập kho</h4>
@@ -105,11 +105,13 @@ function print(info = {}) {
             </div>
         </div>
     </div>
-
-    <div style="height:90% ">
-        <img style="height:auto; width:100%;" src="${src}">
-    </div>
+     
 `
+    if(src!=''){
+        print+=`<div style="height:90%">
+            <img style="height:auto; width:100%;" src="${src}">
+        </div>`
+    }
 
     return print;
 }

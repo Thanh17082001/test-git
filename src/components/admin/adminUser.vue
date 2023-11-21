@@ -260,7 +260,8 @@ export default {
             try {
                 const length = await userService.getAll();
                 this.lengthPage = Math.ceil(length.data.length / this.pageSize);
-                const response = await userService.getAll(this.pageNumber, this.pageSize);
+                const response = await userService.getAll({},this.pageNumber, this.pageSize);
+                console.log(response);
                 this.users = [...response.data];
             } catch (error) {
                 console.log(error);

@@ -19,6 +19,9 @@ export default {
             type: Array,
             required: true,
         },
+        data2: {
+            type: Array,
+        },
         year:Number,
         month:Number,
         typeStatistical:String,
@@ -39,6 +42,12 @@ export default {
             },
             deep: true,
         },
+        data2: {
+            handler() {
+                this.updateChart();
+            },
+            deep: true,
+        },
         dynamicLabels: {
             handler() {
                 this.updateChart();
@@ -53,13 +62,28 @@ export default {
                 type: this.chartType,
                 data: {
                     labels: this.dynamicLabels,
-                    datasets: [
+                     datasets: this.data2?.length >0 ? 
+                     [
                         {
                             label: 'Doanh thu',
                             data: this.data,
                             borderWidth: 1,
                             backgroundColor : this.color
                         },
+                        {
+                            label: 'Chi phí',
+                            data: this.data2,
+                            borderWidth: 1,
+                            backgroundColor : '#87C4FF'
+                        }
+                    ] : 
+                    [
+                        {
+                            label: 'Doanh thu',
+                            data: this.data,
+                            borderWidth: 1,
+                            backgroundColor : this.color
+                        }, 
                     ],
                 },
                 options: {
@@ -76,10 +100,11 @@ export default {
                 },
             });
         },
-        updateChart() {
+        async updateChart() {
             if (Object.keys(this.chart).length>0) {
-                this.chart.destroy();
-                this.renderChart();
+                console.log('thien thanh');
+                 await this.chart.destroy();
+                 this.renderChart();
             }
         },
         exportPDF(e) {

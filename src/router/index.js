@@ -51,6 +51,7 @@ const routes = [
             header: headerVue,
             footer: footerVue,
         },
+        meta:{title:'Trang chủ'}
     },
     {
       path: '/home',
@@ -59,6 +60,7 @@ const routes = [
           header: headerVue,
           footer: footerVue,
       },
+      meta:{title:'Trang chủ'}
     },
     {
       path: '/product',
@@ -67,6 +69,7 @@ const routes = [
             header: headerVue,
             footer: footerVue,
         },
+        meta:{title:'Sản phẩm'}
     },
     {
         path: '/product-detail/:id',
@@ -77,6 +80,7 @@ const routes = [
               header: headerVue,
               footer: footerVue,
         },
+        meta:{title:'Chi tiết sản phẩm'}
     },
     {
         path:'/cart',
@@ -84,7 +88,8 @@ const routes = [
             default: cartPage,
             header: headerVue,
             footer: footerVue,
-        }
+        },
+        meta:{title:'Giỏ hàng'}
     },
     {
         path:'/order/:typeOrder',
@@ -94,7 +99,8 @@ const routes = [
             footer: footerVue,
         },
         name:'order',
-        props:true
+        props:true,
+        meta:{title:'Đơn hàng'}
     },
     {
         path:'/order-history',
@@ -102,7 +108,8 @@ const routes = [
             default: orderHistoryPage,
             header: headerVue,
             footer: footerVue,
-        }
+        },
+        meta:{title:'Lịch sử đơn hàng'}
     },
     {
         path:'/order-detail/:id',
@@ -112,7 +119,8 @@ const routes = [
             header: headerVue,
             footer: footerVue,
         },
-        props:true
+        props:true,
+        meta:{title:'Đơn hàng'}
     },
     {
         path:'/warranty',
@@ -120,7 +128,8 @@ const routes = [
             default: warrantyPage,
             header: headerVue,
             footer: footerVue,
-        }
+        },
+        meta:{title:'Bảo hành'}
     },
     {
         path:'/introduce',
@@ -128,7 +137,8 @@ const routes = [
             default: introducePage,
             header: headerVue,
             footer: footerVue,
-        }
+        },
+        meta:{title:'Giới thiệu'}
     },
     {
         path:'/news',
@@ -136,7 +146,8 @@ const routes = [
             default: newsPage,
             header: headerVue,
             footer: footerVue,
-        }
+        },
+        meta:{title:'Tin tức'}
     },
     {
         path:'/news-detail/:id',
@@ -146,7 +157,8 @@ const routes = [
             default: newsDetailPage,
             header: headerVue,
             footer: footerVue,
-        }
+        },
+        meta:{title:'Tin tức'}
     },
     {
         path:'/contact',
@@ -154,7 +166,8 @@ const routes = [
             default: contactPage,
             header: headerVue,
             footer: footerVue,
-        }
+        },
+        meta:{title:'Liên hệ'}
     },
     {
         path:'/service',
@@ -162,7 +175,8 @@ const routes = [
             default: servicePage,
             header: headerVue,
             footer: footerVue,
-        }
+        },
+        meta:{title:'Dịch vụ'}
     },
     {
         path:'/change-info',
@@ -170,12 +184,13 @@ const routes = [
             default: changeInfoUserPage,
             header: headerVue,
             footer: footerVue,
-        }
+        },
+        meta:{title:'Thông tin người dùng'}
     },
 
     // USER ROUTER
-    { path: '/register', component: registerVue },
-    { path: '/login', component: loginPage },
+    { path: '/register', component: registerVue , meta:{title:'Đăng ký'}},
+    { path: '/login', component: loginPage, meta:{title:'Đăng nhập'} },
 
     // ADMIN ROUTER
     {
@@ -285,9 +300,14 @@ const beforeEnter=(to,next)=>{
 }
 
 
+
 const router = createRouter({
     history: createWebHistory(),
     routes,
+});
+
+router.beforeEach((to) => {
+    document.title = to?.meta.title;
 });
 
 export default router;

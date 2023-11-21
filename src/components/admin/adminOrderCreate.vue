@@ -584,6 +584,7 @@ export default {
                 if(product._id === id){
                     this.ordersProducts[index].priceSale=product.priceSale
                     this.ordersProducts[index].inputQuantity=product.inputQuantity
+                    this.ordersProducts[index].priceImport=product.priceImport
                     this.ordersProducts[index].nameProduct=product.name
                     this.ordersProducts[index].warrantyTime=product.warrantyTime ? product.warrantyTime :null
                 }

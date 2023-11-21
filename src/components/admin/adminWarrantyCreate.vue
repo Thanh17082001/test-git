@@ -235,6 +235,7 @@ export default {
             this.accessorys.map((product) => {
                 if (product._id === id) {
                     this.infoAccessorys[index].priceSale = product.priceSale;
+                    this.infoAccessorys[index].priceImport = product.priceImport;
                     this.infoAccessorys[index].nameProduct = product.name;
                     this.infoAccessorys[index].inputQuantity=product.inputQuantity
                 } else {
