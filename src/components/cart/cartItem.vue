@@ -286,8 +286,8 @@ export default {
             else{
                 const response = await cartService.getByUserId(user._id)
                 const carts = response.data?.products || []
-                const index = carts.findIndex(item => item.id === id);
-                const index2 = this.cartList.findIndex(item => item._id === id)
+                const index = carts?.findIndex(item => item.id === id);
+                const index2 = this.cartList?.findIndex(item => item._id === id)
                 carts[index].quantityCart-=1
                 if(carts[index].quantityCart<=0){
                     await this.deleteCart(id)
