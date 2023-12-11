@@ -26,6 +26,9 @@
                     <button>Lọc</button>
                 </form>
                 <div class="admin-export">
+                    <div class="btn btn-danger" @click="chart">
+                        <i class="fa-solid fa-chart-line"></i> Chart
+                    </div>
                     <div class="btn btn-success" @click="exportToExcel">
                         <i class="fa-solid fa-file-excel"></i> Excel
                     </div>
@@ -40,7 +43,7 @@
             <thead>
                 <tr class="row gx-0">
                     <th class="col-1 text-center">STT</th>
-                    <th class="col-3">
+                    <th class="col-2">
                         <div class="admin-table-title">
                             <p>Tên phụ kiện</p>
                             <div class="admin-sort">
@@ -150,7 +153,7 @@
             <tbody>
                 <tr class="row gx-0" v-for="(acc, index) in accessorys" :key="acc._id">
                     <td class="col-1 text-center">{{ index + 1 }}</td>
-                    <td class="col-3"><span class="truncate-text" :title="acc.name">{{ acc.name }}</span></td>
+                    <td class="col-2"><span class="truncate-text" :title="acc.name">{{ acc.name }}</span></td>
                     <td class="col">{{ fomatCurency(acc.priceImport) }}</td>
                     <td class="col">{{ acc.inputQuantity }}</td>
                     <td class="col">{{ fomatCurency(acc.priceSale) }}</td>
@@ -530,6 +533,29 @@
             :idAcc="id"
             @closeDetail="activeDetail = false"
         ></admin-accessory-detail>
+
+        <div class="overlay" v-if="activeChart" @click="closeChart">
+            <div class="chart2" @click.stop>
+                <h3>Biểu đồ thống kê</h3>
+                <div class="chart-container">
+                    <admin-chart
+                    class="chart-size"
+                    v-if="activeChart"
+                    :data="data"
+                    :dynamic-labels="label"
+                    :chart-type="'bar'"
+                    :year="new Date().getFullYear()"
+                    :month="new Date().getMonth()+1"
+                    :typeStatistical="'month'"
+                    :color="'#F55050'"
+                    :name="'Số lượng bán và tồn kho'"
+                    :data2="data2"
+                    :label1="'Số lượng bán và thuê'"
+                    :label2="'Số lượng tồn kho'"
+                    ></admin-chart>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -542,12 +568,16 @@ import adminAccessoryDetail from './adminAccessoryDetail.vue';
 import typeAccService from '@/service/typeAcc.service'
 import brandService from '@/service/brand.service';
 import accessoryTemplate from '@/utils/templateAccessory'
+import adminChart from './adminChart.vue';
+
 export default {
     components: {
         adminAccessoryDetail,
+        adminChart
     },
     data() {
         return {
+            activeChart:false,
             products: [],
             accessorys: [],
             pageNumber: 1,
@@ -591,6 +621,25 @@ export default {
         };
     },
     methods: {
+        closeChart(){
+            this.data=[]
+            this.data2=[]
+            this.activeChart=false
+        },
+        chart(){
+            this.data=[]
+            this.data2=[]
+            this.label=[]
+            this.accessorys.forEach((product)=>{
+                this.data.push(product.soldQuantity+product.rentalQuantity)
+                this.label.push(product.name)
+            })
+            this.accessorys.forEach((product)=>{
+                this.data2.push(product.inputQuantity)
+            })
+           this.activeChart=true
+           
+        },
         closeFormType(){
             this.activeFormType=false
             this.mesFaildType=''
@@ -1106,4 +1155,24 @@ select {
     padding: 5px;             
   }
 
+  .chart2{
+    padding: 10,0;
+    width: 1300px;
+    height: 680px;
+    background: #fff;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
+.chart-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.chart-size{
+    width: 90%;
+}
 </style>
