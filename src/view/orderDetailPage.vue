@@ -233,6 +233,8 @@
                     </div>
                 </div>
             </div>
+
+            <div class="btn btn-danger" v-if="order.status=='Đang xử lý'" @click="cancelOrder(order._id,typeOrder)" >Hủy đơn hàng</div>
         <hr>
         <!-- Chi tiết đơn hàng -->
         <div class="row text-start">
@@ -367,6 +369,27 @@ export default {
         id:String
     },
     methods:{
+        async cancelOrder(id, typeOrder){
+            try {
+                const data={status:'Hủy đơn'}
+                if(typeOrder=='Buy'){
+                    const response =await orderService.update(id,data)
+                    if(response.data.status){
+                        alert("Thay đổi thành công")
+                        this.getOrderById()
+                    }
+                }
+                else{
+                    const response =await rentalService.update(id,data)
+                    if(response.data.status){
+                        alert("Thay đổi thành công")
+                        this.getOrderById()
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
         daysUntilDue(today, dueDate) {
             const todayDate = new Date(today);
             const dueDateObj = new Date(dueDate);
@@ -396,7 +419,6 @@ export default {
                 }
                 else{
                     const response = await rentalService.getById(this.id)
-                    console.log(response);
                     this.order = response.data
                     this.order.createdAt = format.formatDate(this.order.createdAt)
                     // this.order.datePay = format.formatDateNoTime(this.order.datePay)
