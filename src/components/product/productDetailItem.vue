@@ -472,10 +472,12 @@ export default {
                         if( indexInCart === -1){
                             productsInCart.unshift(cartItem)
                             this.$cookies.set('cart', JSON.stringify(productsInCart))
+                            this.$store.commit('addToCart')
                         }
                         else{
                             productsInCart[indexInCart].quantityCart+=cartItem.quantityCart
                             this.$cookies.set('cart', JSON.stringify(productsInCart))
+                            this.$store.commit('addToCart')
                         }
                     }
                     this.added=true
@@ -492,6 +494,7 @@ export default {
                         }
                         const response = await cartService.create(data)
                         if(response.data.status){
+                            this.$store.commit('addToCart', response.data.result.products)
                             this.added=true
                             setTimeout(()=>{
                                 this.added=false
