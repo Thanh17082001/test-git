@@ -25,6 +25,9 @@
                 <button>Lọc</button>
             </form>
             <div class="admin-export">
+                <div class="btn btn-danger" @click="chart">
+                    <i class="fa-solid fa-chart-line"></i> Chart
+                </div>
                 <div class="btn btn-success" @click="exportToExcel">
                     <i class="fa-solid fa-file-excel"></i> Excel
                 </div>
@@ -34,6 +37,7 @@
         <table class="table-product">
             <thead class="table-head">
                 <tr>
+                    <th class="STT">STT</th>
                     <th class="column1-th text-center">
                         <div class="admin-table-title">
                             <span v-if="isSort" @click="offSort" class="active-sort"> Lọc </span>
@@ -199,7 +203,8 @@
                 </tr>
             </thead>
             <tbody class="table-body">
-                <tr v-for="product in products" :key="product._id">
+                <tr v-for="(product, index) in products" :key="product._id">
+                    <td class="STT"> {{index+1}}</td>
                     <td class="column1">
                         {{ product.name }}
                     </td>
@@ -261,6 +266,29 @@
             :idProduct="id"
             @closeSpe="isActiveSpe = false"
         ></admin-specification-vue>
+
+        <div class="overlay" v-if="activeChart" @click="closeChart">
+            <div class="chart2" @click.stop>
+                <h3>Biểu đồ thống kê</h3>
+                <div class="chart-container">
+                    <admin-chart
+                    class="chart-size"
+                    v-if="activeChart"
+                    :data="data"
+                    :dynamic-labels="label"
+                    :chart-type="'bar'"
+                    :year="new Date().getFullYear()"
+                    :month="new Date().getMonth()+1"
+                    :typeStatistical="'month'"
+                    :color="'#F55050'"
+                    :name="'Số lượng bán và tồn kho'"
+                    :data2="data2"
+                    :label1="'Số lượng bán và thuê'"
+                    :label2="'Số lượng tồn kho'"
+                    ></admin-chart>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -271,13 +299,19 @@ import adminSpecificationVue from './adminSpecification.vue';
 import format from '@/utils/format';
 import printProduct from '@/utils/printTemplateProduct'
 import exportToExcel from '@/utils/exportToExcel';
+import adminChart from './adminChart.vue';
 export default {
     components: {
         adminProductDetail,
         adminSpecificationVue,
+        adminChart
     },
     data() {
         return {
+            data:[],// số lượng bán
+            data2:[],// số lượng nhập
+            label:[],// tên dưới
+            activeChart:false,
             activePage: 1,
             products: [],
             lengthPage: 1,
@@ -300,7 +334,35 @@ export default {
             },
         };
     },
+    watch:{
+        activeChart(){
+           if(this.activeChart==false){
+            this.data=[]
+            this.data2=[]
+            this.label=[]
+           }
+        }  
+    },
     methods: {
+        closeChart(){
+            this.data=[]
+            this.data2=[]
+            this.activeChart=false
+        },
+        chart(){
+            this.data=[]
+            this.data2=[]
+            this.label=[]
+            this.products.forEach((product)=>{
+                this.data.push(product.soldQuantity+product.rentalQuantity)
+                this.label.push(product.name)
+            })
+            this.products.forEach((product)=>{
+                this.data2.push(product.inputQuantity)
+            })
+           this.activeChart=true
+           
+        },
         handlePage(index) {
             this.activePage = index;
             this.pageNumber = index;
@@ -455,4 +517,28 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+    .chart2{
+        padding: 10,0;
+        width: 1300px;
+        height: 680px;
+        background: #fff;
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+    }
+    .STT{
+        width: 35px;
+        text-align: center;
+    }
+    .chart-container{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .chart-size{
+        width: 90%;
+    }
+</style>

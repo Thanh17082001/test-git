@@ -1070,7 +1070,7 @@
     right: 17px;
 }
 .admin-export-entry{
-    width: 90%;
+    width:90%;
 }
 .list-sort-entry{
     position: absolute;
@@ -1132,7 +1132,7 @@
     margin-right: 5px;
 }
 .admin-export{
-    width: 150px;
+    width:270px;
     display: flex;
     justify-content: space-around;
 }
