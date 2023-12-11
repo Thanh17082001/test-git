@@ -1,6 +1,7 @@
 <template>
     <div class="chart">
-        <button class="btn btn-warning px-2 d-flex" @click="exportPDF">InPDF</button>
+        <button class="btn btn-warning px-2 me-2" @click="exportPDF">InPDF</button>
+        <button class="btn btn-success px-2 " @click="exportToExcel">Excel</button>
         <canvas ref="chart" class="myChart1"></canvas>
     </div>
 </template>
@@ -9,6 +10,7 @@
 import Chart from 'chart.js/auto';
 import { jsPDF } from "jspdf"
 import unidecode from 'unidecode';
+import exportToExcel from '@/utils/exportToExcel';
 export default {
     props: {
         dynamicLabels: {
@@ -22,6 +24,8 @@ export default {
         data2: {
             type: Array,
         },
+        label1:String,
+        label2:String,
         year:Number,
         month:Number,
         typeStatistical:String,
@@ -54,6 +58,18 @@ export default {
             },
             deep: true,
         },
+        label1:{
+            handler() {
+                this.updateChart();
+            },
+            deep: true,
+        },
+        label2:{
+            handler() {
+                this.updateChart();
+            },
+            deep: true,
+        }
     },
     methods: {
         renderChart() {
@@ -65,13 +81,13 @@ export default {
                      datasets: this.data2?.length >0 ? 
                      [
                         {
-                            label: 'Doanh thu',
+                            label: this.label1, // doanh thu
                             data: this.data,
                             borderWidth: 1,
                             backgroundColor : this.color
                         },
                         {
-                            label: 'Chi phí',
+                            label: this.label2, // chi phí
                             data: this.data2,
                             borderWidth: 1,
                             backgroundColor : '#87C4FF'
@@ -113,14 +129,30 @@ export default {
             const pdf = new jsPDF();
             const image1 = canvas1.toDataURL("image/png", 1.0);
             if(this.typeStatistical=='month'){
-                pdf.text(`BIEU DO DOANH THU ${unidecode(this.name).toUpperCase()} THANG ${this.month} NAM ${this.year}`, 20, 0,)
+                pdf.text(`BIEU DO DOANH THU ${unidecode(this.name).toUpperCase()} THANG ${this.month} NAM ${this.year}`, 40, 10)
             }
             else{
                 pdf.text(`BIEU DO DOANH THU ${unidecode(this.name).toUpperCase()} NAM ${this.year}`, 50, 20)
             }
             pdf.addImage(image1, 'JPEG', 15, 30, 180, 100);
             pdf.save('chart.pdf');
-        }
+        },
+        exportToExcel() {
+            const dataConvert=[]
+            const title={}
+            if(this.typeStatistical =='month'){
+                this.data.forEach((item, index)=>{
+                    title['Ngày '+(index+1)+' '+'Tháng ' + this.month]=item
+                })
+            }
+            else{
+                this.data.forEach((item, index)=>{
+                    title['Tháng '+(index+1)+''+'Năm ' + this.year]=item
+                })
+            }
+            dataConvert.push({...title})
+            exportToExcel(dataConvert, 'Bieudo');
+        },
     },
     mounted() {
         this.renderChart();

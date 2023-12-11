@@ -148,7 +148,7 @@
                         <tbody class="order-scroll">
                             <tr class="row gx-0" v-for="(product, index) in order.products" :key="index">
                                 <td class="col-1 text-center">{{ index+1 }}</td>
-                                <td class="col-4">{{ product.nameProduct }}</td>
+                                <td class="col-4 ellipsis">{{ product.nameProduct }}</td>
                                 <td class="col-3">{{ product.priceSale }}</td>
                                 <td class="col-2">{{ product.quantity }}</td>
                                 <td class="col-2">{{ product.typeProduct =='product'? 'Máy' : 'Phụ kiện' }}</td>
@@ -474,5 +474,10 @@ thead{
 }
 .success-icon span i{
     font-size: 50px;
+}
+.ellipsis{
+    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

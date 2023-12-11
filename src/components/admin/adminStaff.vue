@@ -531,6 +531,7 @@ export default {
                     'Lương':format.formatCurrency(staff.salary)
                 })
             })
+            console.log(data);
             exportToExcel(data, 'NhanVien');
         },
         async exportToPDF(){

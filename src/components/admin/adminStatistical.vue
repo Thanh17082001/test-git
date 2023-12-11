@@ -80,6 +80,8 @@
             :color="'#F55050'"
             :name="'Tổng'"
             :data2="data2"
+            :label1="'Doanh thu'"
+            :label2="'Chi phí'"
         ></adminChart>
     </div>
     <div class="row mb-5">
@@ -198,7 +200,6 @@ export default {
                     this.data2.push(item.totalRevenue);
                     this.expence+=item.totalRevenue
                 });
-                console.log(response.data);
             } catch (error) {
                 console.log(error);
             }
