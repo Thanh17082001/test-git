@@ -8,15 +8,7 @@
             <h6 class="menu-name">{{ user.fullName }}</h6>
         </div>
         <ul class="sec-left__list accordion">
-            <!-- <li class="sec-left__menu">
-                <p>Menu</p>
-            </li> -->
-            <!-- <li class="sec-left__item">
-                <router-link to="/" class="sec-left__link" active-class="active" exact>
-                  <i class="fa-solid fa-house"></i>
-                    Trang chủ
-                </router-link>
-            </li> -->
+           
             <span class="menu-title">Thông tin Doanh nghiệp</span>
             <li class="sec-left__item">
                 <router-link to="/admin/profile-company" active-class="active" class="sec-left__link">
@@ -100,25 +92,25 @@
                 >Đơn hàng <i class="fa-solid fa-chevron-down ms-1"></i> </span
             >
             <div class="collapse" id="collapseExample3">
-                <li class="sec-left__item" v-if="user.isAdmin">
+                <li class="sec-left__item">
                     <router-link to="/admin/order" active-class="active" class="sec-left__link">
                         <i class="fa-solid fa-bag-shopping"></i>
                         Đơn hàng bán
                     </router-link>
                 </li>
-                <li class="sec-left__item" v-if="user.isAdmin">
+                <li class="sec-left__item">
                     <router-link to="/admin/order-create" active-class="active" class="sec-left__link">
                         <i class="fa-solid fa-cart-plus" id="icon4"></i>
                         Tạo đơn hàng bán
                     </router-link>
                 </li>
-                <li class="sec-left__item" v-if="user.isAdmin">
+                <li class="sec-left__item">
                     <router-link to="/admin/rental" active-class="active" class="sec-left__link">
                         <i class="fa-solid fa-bag-shopping"></i>
                         Đơn hàng thuê
                     </router-link>
                 </li>
-                <li class="sec-left__item" v-if="user.isAdmin">
+                <li class="sec-left__item">
                     <router-link to="/admin/rental-create" active-class="active" class="sec-left__link">
                         <i class="fa-solid fa-cart-plus" id="icon4"></i>
                         Tạo đơn hàng thuê
@@ -135,7 +127,7 @@
                 >Tin tức <i class="fa-solid fa-chevron-down ms-1"></i> </span
             >
             <div class="collapse" id="collapseExample4">
-                <li class="sec-left__item" v-if="user.isAdmin">
+                <li class="sec-left__item">
                     <router-link to="/admin/news-create" active-class="active" class="sec-left__link">
                         <i class="fa-solid fa-newspaper" id="icon2"></i>
                         Tạo tin tức
@@ -163,7 +155,7 @@
                        Dịch vụ
                     </router-link>
                 </li> -->
-                <li class="sec-left__item" v-if="user.isAdmin">
+                <li class="sec-left__item">
                     <router-link to="/admin/task" active-class="active" class="sec-left__link">
                         <i class="fa-solid fa-newspaper" id="icon3"></i>
                        Nhiệm vụ
@@ -181,13 +173,13 @@
                 >Bảo hành<i class="fa-solid fa-chevron-down ms-1"></i> </span
             >
             <div class="collapse" id="collapseExample6">
-                <li class="sec-left__item" v-if="user.isAdmin">
+                <li class="sec-left__item" >
                     <router-link to="/admin/warranty-search" active-class="active" class="sec-left__link">
                         <i class="fa-solid fa-magnifying-glass"></i>
                        Tra cứu
                     </router-link>
                 </li>
-                <li class="sec-left__item" v-if="user.isAdmin">
+                <li class="sec-left__item" >
                     <router-link to="/admin/warranty" active-class="active" class="sec-left__link">
                         <i class="fa-solid fa-hammer"></i>
                        Đơn bảo hành
@@ -225,7 +217,7 @@
             >
         
         <div class="collapse" id="collapseExample7">
-            <li class="sec-left__item" v-if="user.isAdmin">
+            <li class="sec-left__item">
                 <router-link to="/admin/statistical" active-class="active" class="sec-left__link">
                     <i class="fa-solid fa-magnifying-glass"></i>
                    Thống kê doanh thu

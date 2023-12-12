@@ -14,7 +14,7 @@
                 <i class="fa-solid fa-chevron-down ms-2" v-else></i>
             </span>
             <ul class="category-list" :class="{'active-list':activeBrand}">
-                <li @click="filter(brand._id,'idBrand')"  v-for="brand in brands" :key="brand._id">{{ brand.name }}</li>
+                <li @click="filter(brand._id,'brandId')"  v-for="brand in brands" :key="brand._id">{{ brand.name }}</li>
             </ul>
             <span @click="handeleShowList('type')">
                 Theo loại
@@ -22,7 +22,7 @@
                 <i class="fa-solid fa-chevron-down ms-2" v-else></i>
             </span>
             <ul class="category-list" :class="{'active-list':activeType}">
-                <li @click="filter(typeItem._id,'idType')"  v-for="typeItem in types" :key="typeItem._id">{{ typeItem.name }}</li>
+                <li @click="filter(typeItem._id,'typeId')"  v-for="typeItem in types" :key="typeItem._id">{{ typeItem.name }}</li>
             </ul>
         </div>
     </div>

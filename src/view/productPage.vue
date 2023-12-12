@@ -152,7 +152,6 @@ export default {
                 else{
                     response = await accessoryService.filterProduct(this.keyFilter.type, this.keyFilter.field, this.pageNumber, this.pageSize)
                 }
-                console.log(response);
                 this.products=[]
                 this.products= [...response.data]
             } catch (error) {
