@@ -418,7 +418,7 @@ const beforeEnter = (to, next) => {
         return next();
     } else {
         alert('Bạn không có quyền truy cập');
-        return next('/admin');
+        return;
     }
 };
 
