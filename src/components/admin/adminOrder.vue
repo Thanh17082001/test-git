@@ -34,10 +34,10 @@
         </div>
 
         <div class="order-status d-flex mb-3">
-            <span @click="sort('Đang xử lý','status')" class="order-status-item me-3" style="--color:#1e90ff">Đang xử lý <span>{{ orders.filter(order => order.status =='Đang xử lý').length }}</span></span>
-            <span @click="sort('Đang vận chuyển','status')" class="order-status-item me-3" style="--color:#C63D2F">Đang vận chuyển <span>{{ orders.filter(order => order.status =='Đang vận chuyển').length }}</span></span>
-            <span @click="sort('Đã giao hàng','status')" class="order-status-item me-3" style="--color:green">Đã giao hàng <span>{{ orders.filter(order => order.status =='Đã giao hàng').length }}</span></span>
-            <span @click="sort('Hủy đơn','status')" class="order-status-item me-3" style="--color:#FE0000">Hủy đơn <span>{{ orders.filter(order => order.status =='Hủy đơn').length }}</span></span>
+            <span @click="sort3('Đang xử lý','status')" class="order-status-item me-3" style="--color:#1e90ff">Đang xử lý <span>{{ data.filter(order => order.status =='Đang xử lý').length }}</span></span>
+            <span @click="sort3('Đang vận chuyển','status')" class="order-status-item me-3" style="--color:#C63D2F">Đang vận chuyển <span>{{ data.filter(order => order.status =='Đang vận chuyển').length }}</span></span>
+            <span @click="sort3('Đã giao hàng','status')" class="order-status-item me-3" style="--color:green">Đã giao hàng <span>{{ data.filter(order => order.status =='Đã giao hàng').length }}</span></span>
+            <span @click="sort3('Hủy đơn','status')" class="order-status-item me-3" style="--color:#FE0000">Hủy đơn <span>{{ data.filter(order => order.status =='Hủy đơn').length }}</span></span>
         </div>
         <div class="isSort" :class="{ 'isSort-active': isSort }">
             <span @click="offSort">Đang lọc</span>
@@ -223,7 +223,8 @@ export default {
             isSort:false,
             activeDetail:false,
             paymentSuccess:null,
-            id:''
+            id:'',
+            data:[]
         }
     },
     methods:{
@@ -285,6 +286,7 @@ export default {
         },
         async getAll(){
             const length = await orderService.getAll()
+            this.data=[...length.data]
             this.lengthPage = Math.ceil(length.data.length / this.pageSize);
             const response = await orderService.getAll(this.pageNumber,this.pageSize)
             this.orders=[
@@ -318,10 +320,30 @@ export default {
                     }
                 });
             }
+            else if(field === 'paymentMethod'){
+                if(type=='COD'){
+                    // await this.getAll();
+                    this.orders = this.orders.filter((order) => order[field] == type);
+                }
+                else{
+                    // await this.getAll();
+                    this.orders = this.orders.filter((order) => order[field] != 'COD');
+                }
+                return;
+            }
             else{
-                await this.getAll();
+                // await this.getAll();
                 this.orders = this.orders.filter((order) => order[field] == type);
             }
+            
+        },
+
+        async sort3(type, field) {
+            this.type = type;
+            this.field = field;
+            this.isSort = true;
+            await this.getAll();
+            this.orders = this.data.filter((order) => order[field] == type);
             
         },
         handleFitter(name) {
@@ -329,7 +351,7 @@ export default {
                 this.isSort=false
             }
             clearTimeout(this.idTimeOut);
-            this.getAll();
+            // this.getAll();
             this.idTimeOut = setTimeout(() => {
                 this.filter(name);
             }, 500);

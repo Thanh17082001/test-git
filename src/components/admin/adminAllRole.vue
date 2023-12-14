@@ -2,7 +2,7 @@
     <div class="alert alert-success admin-alert" role="alert" v-if="alert">Thay đổi quyền thành công</div>
     <h3>Phân quyền cho tài khoản nhân viên</h3>
     <div class="d-flex justify-content-between my-3">
-        <button class="btn btn-info" @click="activeAddRole = true">Thêm Quyền</button>
+        <!-- <button class="btn btn-info" @click="activeAddRole = true">Thêm Quyền</button> -->
        <div>
            <button class="btn btn-warning me-1" @click="handelRole('pre')">Các quyền trước đó</button>
             <button class="btn btn-info" @click="handelRole('next')">Các quyền tiếp theo</button>

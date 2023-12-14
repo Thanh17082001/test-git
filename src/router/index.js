@@ -190,9 +190,7 @@ const routes = [
 
     // USER ROUTER
     { path: '/register', component: registerVue, meta: { title: 'Đăng ký' } },
-    { path: '/login', components: {
-        default: loginPage,
-        header: headerVue,}, meta: { title: 'Đăng nhập' }, beforeEnter(to, from, next){
+    { path: '/login', component: loginPage, meta: { title: 'Đăng nhập' }, beforeEnter(to, from, next){
         const getUser = JSON.parse(sessionStorage.getItem('user'))
         if(getUser?.user == undefined){
             return next();
@@ -220,6 +218,7 @@ const routes = [
             }
         },
         component: adminPage,
+        meta: { title: 'Admin' },
         children: [
             { path: 'profile-company', component: adminCompanyVue, meta: { title: 'Admin' } },
             { path: 'add', component: adminProductForm, meta: { title: 'Admin' } },

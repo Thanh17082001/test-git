@@ -170,11 +170,11 @@
                         </div>
                         <div class="entry-group col-4">
                             <label for="">Giá nhập sản phẩm</label>
-                            <input required placeholder="Giá nhập" v-model="product.priceImport" type="number" />
+                            <input required placeholder="Giá nhập" v-model="product.priceImport" type="number"  min="0"/>
                         </div>
                         <div class="entry-group col-4">
                             <label for="">Số lượng nhập</label>
-                            <input required placeholder="Số lượng nhập" v-model="product.inputQuantity" type="number" />
+                            <input required placeholder="Số lượng nhập" v-model="product.inputQuantity" type="number" min="0" />
                         </div>
                     </div>
                 </div>
