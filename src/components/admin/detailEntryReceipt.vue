@@ -139,11 +139,11 @@ export default {
 
 <style scoped>
 .detail-entry{
-    width: 50%;
+    width: 90%;
     position: relative;
-    top: 0px;
+    top: 50%;
     left: 50%;
-    transform: translate(-40%,0%);
+    transform: translate(-50%,-50%);
     box-sizing: border-box;
     border-top:10px solid #9f181c;
     border-bottom:10px solid #ccc;
@@ -169,7 +169,7 @@ export default {
     width: 95%;
     text-align: left;
     margin-left: 20px;
-   height: 210px;
+   height: 280px;
 }
 .entry-total{
     width: 100%;
@@ -193,6 +193,6 @@ export default {
     height: 80px;
 }
 .entry-products{
-    height: 90px;
+    height: 80%;
 }
 </style>

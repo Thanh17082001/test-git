@@ -207,7 +207,7 @@
                 </div>
             </div>
 
-            <div class="btn btn-danger mt-5 me-2 mb-1" v-if="order.status ==='Đang xử lý'" @click="update(order._id,{status:'Hủy đơn'})">Hủy đơn hàng</div>
+            <div class="btn btn-danger mt-5 me-2 mb-1" v-if="order.status ==='Đang xử lý' && order.isPayment==false" @click="update(order._id,{status:'Hủy đơn'})">Hủy đơn hàng</div>
             <div class="btn btn-warning mt-5 mb-1" v-if="order.status ==='Đang xử lý'" @click="update(order._id,{status:'Đang vận chuyển'})">Cập nhật</div>
             <div class="btn btn-warning mt-5 mb-1" v-else-if="order.status ==='Đang vận chuyển'" @click="update(order._id,{status:'Đã giao hàng'})">Cập nhật</div>
             <div class="btn btn-warning mt-5 mb-1" v-else-if="order.status ==='Đã giao hàng'" @click="update(order._id,{status:'Đang sử dụng'})">Cập nhật</div>

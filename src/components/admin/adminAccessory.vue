@@ -550,7 +550,7 @@
                     :color="'#F55050'"
                     :name="'Số lượng bán và tồn kho'"
                     :data2="data2"
-                    :label1="'Số lượng bán và thuê'"
+                    :label1="'Số lượng bán'"
                     :label2="'Số lượng tồn kho'"
                     ></admin-chart>
                 </div>
@@ -577,6 +577,9 @@ export default {
     },
     data() {
         return {
+            data:[],// số lượng bán
+            data2:[],// số lượng nhập
+            label:[],// tên dưới
             activeChart:false,
             products: [],
             accessorys: [],
@@ -631,7 +634,7 @@ export default {
             this.data2=[]
             this.label=[]
             this.accessorys.forEach((product)=>{
-                this.data.push(product.soldQuantity+product.rentalQuantity)
+                this.data.push(product.soldQuantity)
                 this.label.push(product.name)
             })
             this.accessorys.forEach((product)=>{

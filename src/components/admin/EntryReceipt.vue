@@ -149,31 +149,33 @@
                             </select>
                         </div>
                     </div>
-                    <div class="entry-group col-4" v-if="product.typeProduct == 'product'">
-                        <label for="">Chọn sản phẩm </label>
-                        <select v-model="product.idProduct" name="" id="" required>
-                            <option value="">---Chọn tên sản phẩm---</option>
-                            <option v-for="item in productsName" :key="item._id" :value="item._id">
-                                {{ item.name }}
-                            </option>
-                        </select>
-                    </div>
-                    <div class="entry-group col-4" v-if="product.typeProduct == 'accessory'">
-                        <label for="">Chọn Phụ kiện</label>
-                        <select v-model="product.idProduct" name="" id="" required>
-                            <option value="">---Chọn phụ kiện---</option>
-                            <option v-for="item in accessorys" :key="item._id" :value="item._id">
-                                {{ item.name }}
-                            </option>
-                        </select>
-                    </div>
-                    <div class="entry-group col-4">
-                        <label for="">Giá nhập sản phẩm</label>
-                        <input required placeholder="Giá nhập" v-model="product.priceImport" type="number" />
-                    </div>
-                    <div class="entry-group col-4">
-                        <label for="">Số lượng nhập</label>
-                        <input required placeholder="Số lượng nhập" v-model="product.inputQuantity" type="number" />
+                    <div class="row">
+                        <div class="entry-group col-4" v-if="product.typeProduct == 'product'">
+                            <label for="">Chọn sản phẩm </label>
+                            <select v-model="product.idProduct" name="" id="" required>
+                                <option value="">---Chọn tên sản phẩm---</option>
+                                <option v-for="item in productsName" :key="item._id" :value="item._id">
+                                    {{ item.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="entry-group col-4" v-if="product.typeProduct == 'accessory'">
+                            <label for="">Chọn Phụ kiện</label>
+                            <select v-model="product.idProduct" name="" id="" required>
+                                <option value="">---Chọn phụ kiện---</option>
+                                <option v-for="item in accessorys" :key="item._id" :value="item._id">
+                                    {{ item.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="entry-group col-4">
+                            <label for="">Giá nhập sản phẩm</label>
+                            <input required placeholder="Giá nhập" v-model="product.priceImport" type="number" />
+                        </div>
+                        <div class="entry-group col-4">
+                            <label for="">Số lượng nhập</label>
+                            <input required placeholder="Số lượng nhập" v-model="product.inputQuantity" type="number" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -252,7 +254,7 @@ export default {
     },
     data() {
         return {
-            products: [{ idProduct: '', typeProduct:'product' }],
+            products: [{ idProduct: '', typeProduct:'' }],
             accessorys:[],
             Idsupplier:'',
             supplier:{},
@@ -313,7 +315,7 @@ export default {
             }
         },
         addinput() {
-            this.products.push({ idProduct: '', typeProduct:'product' });
+            this.products.push({ idProduct: '', typeProduct:'' });
         },
         removeinput() {
             if (this.products.length > 1) {
@@ -378,7 +380,7 @@ export default {
             };
             const response = await entryReceiptService.create(data);
             if (response.data.status) {
-                this.products = [{ idProduct: '' }];
+                this.products = [{ idProduct: '', typeProduct:'product' }];
                 this.Idsupplier=''
                 this.mesSuccess = response.data.mes;
                 this.mesFail = '';

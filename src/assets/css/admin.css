@@ -987,20 +987,19 @@
 }
 
 .entry-form{
-    width: 650px;
+    width: 1200px;
     background-color: #fff;
-    max-height: 500px;
-    min-height: 500px;
+    min-height: 600px;
     position: relative;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%,-50%);
     padding: 20px;
 }
 .entry-info{
-    max-height: 190px;
-    min-height: 190px;
-    width: 600px;
+    max-height: 300px;
+    min-height: 300px;
+    width: 100%;
 }
 .entry-scroll{
     overflow-y: scroll;
