@@ -41,6 +41,8 @@ export default {
             try {
                 await userService.logout();
                 sessionStorage.removeItem('user');
+                this.$store.commit('addToCart')
+                this.$store.commit('changeInfo', {})
                 this.$router.push('/login');
             } catch (error) {
                 console.log(error);

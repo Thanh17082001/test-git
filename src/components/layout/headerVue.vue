@@ -79,7 +79,8 @@
 
                 <div class="header-user" v-if="Object.keys(test2).length>0">
                     <div class="logined" v-if="islogin && !!test2" @click="isActive = !isActive">
-                        <img v-if="!!test2" :src="'http://localhost:3000/' + test2.avatar" alt="" class="header-avt" />
+                        <img v-if=" test2.isGoogle" :src="test2.avatar" alt="" class="header-avt" />
+                        <img v-if="!test2.isGoogle " :src="'http://localhost:3000/' + test2.avatar" alt="" class="header-avt" />
                         <span class="header-name">{{ test2.fullName }}</span>
                         <i class="fa-solid fa-sort-down"></i>
                         <ul class="user-drop-down" v-if="islogin && isActive">
@@ -150,12 +151,14 @@ export default {
             } else {
                 this.infoUser = '';
             }
+            this.$store.commit('changeInfo', this.infoUser)
         },
         async getInfoUser() {
             try {
                 const response = await userService.getInfo();
                 const user = JSON.stringify(response.data);
                 sessionStorage.setItem('user', user);
+                this.$store.commit('changeInfo', response.data.user)
                 this.Checklogin();
             } catch (error) {
                 console.log(error);
@@ -199,8 +202,8 @@ export default {
         }
     },
     mounted() {
-        this.Checklogin();
         this.getInfoUser();
+        this.Checklogin();
     },
 };
 </script>

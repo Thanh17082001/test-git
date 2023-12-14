@@ -110,6 +110,7 @@ export default {
                             this.messageFailure = '';
                             const user = JSON.stringify(response.data.user);
                             sessionStorage.setItem('user', user);
+                            console.log( response.data.user.user);
                             this.$store.commit('changeInfo', response.data.user.user)
                             const inforUser= response.data.user
                             if(inforUser.user.isAdmin || inforUser.user.roles.length>0){
