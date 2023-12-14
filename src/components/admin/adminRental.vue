@@ -172,6 +172,10 @@
                         <!-- <i v-if="order.totalAmount > order.pricePayed && order.isPayment=='Chưa thanh toán'" class="fa-solid fa-xmark text-danger"></i> -->
                         <i  class="fa-solid fa-check"></i>
                     </td>
+                    
+                    <!-- <td v-else-if="daysUntilDue(new Date(), order.datePay) <3 && daysUntilDue(new Date(), order.datePay) >0" class="col text-center p-0">
+                       Còn {{ Math.abs(daysUntilDue(new Date(), order.datePay)) }} ngày đến hạn
+                    </td> -->
                     <td v-else-if="daysUntilDue(new Date(), order.datePay) ==0" class="col text-center p-0">
                         Đến hạn thanh toán
                     </td>
@@ -365,10 +369,23 @@ export default {
                         return b.customerId[field].localeCompare(a.customerId[field]);
                     }
                 });
+                return;
+            }
+            else if(field === 'paymentMethod'){
+                if(type=='COD'){
+                    await this.getAll();
+                    this.orders = this.orders.filter((order) => order[field] == type);
+                }
+                else{
+                    await this.getAll();
+                    this.orders = this.orders.filter((order) => order[field] != 'COD');
+                }
+                return;
             }
             else{
                 await this.getAll();
                 this.orders = this.orders.filter((order) => order[field] == type);
+                return;
             }
             
         },
