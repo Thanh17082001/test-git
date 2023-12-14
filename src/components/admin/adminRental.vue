@@ -164,12 +164,13 @@
                     <td class="col">{{ order.IsOnlineOrder ? ' Trực tuyến' : 'Tại của hàng' }}</td>
                     <td class="col">{{ order.paymentMethod }}</td>
                     <td class="col text-center p-0 fs-4 " v-if="order.payInFull || order.totalAmount == order.pricePayed">
-                        <i v-if="order.totalAmount > order.pricePayed" class="fa-solid fa-xmark text-danger"></i>
+                        <span class="fs-6" v-if="order.totalAmount > order.pricePayed" >Chưa thanh toán</span>
+                        <!-- <i v-if="order.totalAmount > order.pricePayed" class="fa-solid fa-xmark text-danger"></i> -->
                         <i v-else class="fa-solid fa-check text-success"></i>
                     </td>
                     <td v-else-if="daysUntilDue(new Date(), order.datePay) >0 && !order.payInFull && order.totalAmount > order.pricePayed" class="col text-center p-0 fs-4 text-success">
-                        <i v-if="order.totalAmount > order.pricePayed && order.isPayment=='Chưa thanh toán'" class="fa-solid fa-xmark text-danger"></i>
-                        <i v-else class="fa-solid fa-check"></i>
+                        <!-- <i v-if="order.totalAmount > order.pricePayed && order.isPayment=='Chưa thanh toán'" class="fa-solid fa-xmark text-danger"></i> -->
+                        <i  class="fa-solid fa-check"></i>
                     </td>
                     <td v-else-if="daysUntilDue(new Date(), order.datePay) ==0" class="col text-center p-0">
                         Đến hạn thanh toán
@@ -177,6 +178,7 @@
                     <td v-else-if="daysUntilDue(new Date(), order.datePay) <0" class="col text-center p-0">
                         Quá hạn thanh toán {{ Math.abs(daysUntilDue(new Date(), order.datePay)) }} ngày
                     </td>
+                  
                     <td class="col">{{ !order.payInFull ? order.totalAmount > order.pricePayed ? formatDate(order.datePay) : 'Thanh toán xong' :'Thanh toán toàn bộ' }}</td>
                     <td class="col text-center">
                         <span class="btn btn-outline-info" @click="openDetail(order._id)"><i class="fa-solid fa-circle-info"></i></span>

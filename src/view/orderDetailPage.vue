@@ -234,7 +234,7 @@
                 </div>
             </div>
 
-            <div class="btn btn-danger" v-if="order.status=='Đang xử lý'" @click="cancelOrder(order._id,typeOrder)" >Hủy đơn hàng</div>
+            <div class="btn btn-danger" v-if="order.status=='Đang xử lý' && !order.isPayment" @click="cancelOrder(order._id,typeOrder)" >Hủy đơn hàng</div>
         <hr>
         <!-- Chi tiết đơn hàng -->
         <div class="row text-start">
@@ -287,7 +287,7 @@
             <tbody>
                 <tr class="row text-start" v-for="(product, index) in order.products" :key="index">
                     <td class="col-2 img text-center"><img :src="'http://localhost:3000' + product.productId.image" alt=""></td>
-                    <td class="col">{{product.nameProduct}}</td>
+                    <td class="col"><router-link :to="{name:'product.detail', params:{id:product.productId._id}, query:{typeProduct:product.typeProduct}}">{{product.nameProduct}}</router-link></td>
                     <td class="col-2"> {{typeOrder=='Buy'? formatPrice(product.priceSale): formatPrice(product.priceRental) }}</td>
                     <td class="col-1">{{ product.quantity }}</td>
                     <td class="col-1" v-if="typeOrder =='Buy'">{{product.typeProduct=='product'? 'Máy': 'Phụ kiện'}}</td>

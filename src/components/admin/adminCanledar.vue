@@ -1692,7 +1692,9 @@ export default {
             this.infoAccessorys.forEach(item =>{
                 this.totalOfAccessory+=item.priceSale*item.quantity || 0
             })
-            this.totalAmount=this.totalOfAccessory+ this.infoTask.wage
+            if(this.infoTask.wage>=0){
+                this.totalAmount=this.totalOfAccessory+ this.infoTask.wage
+            }
             if(this.totalAmount>0){
                 this.isSubmit=true
             }

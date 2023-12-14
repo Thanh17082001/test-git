@@ -34,7 +34,7 @@
                 />
                 <span class="err-pass" v-if="!!valid.phoneNumber">{{ valid.phoneNumber }}</span>
                 <input
-                    type="text"
+                    type="password"
                     v-model="inforUser.password"
                     class="form-pass"
                     name="password"
@@ -42,7 +42,7 @@
                 />
                 <span class="err-pass" v-if="!!valid.passWord">{{ valid.passWord }}</span>
                 <input
-                    type="text"
+                    type="password"
                     v-model="inforUser.confirmPass"
                     class="form-pass-confirm"
                     placeholder="Nhập lại mật khẩu"

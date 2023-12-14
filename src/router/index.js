@@ -190,7 +190,16 @@ const routes = [
 
     // USER ROUTER
     { path: '/register', component: registerVue, meta: { title: 'Đăng ký' } },
-    { path: '/login', component: loginPage, meta: { title: 'Đăng nhập' } },
+    { path: '/login', component: loginPage, meta: { title: 'Đăng nhập' }, beforeEnter(to, from, next){
+        const getUser = JSON.parse(sessionStorage.getItem('user'))
+        if(getUser?.user == undefined){
+            return next();
+        }
+        else{
+            alert('Bạn đã đăng nhập')
+            return next('/');
+        }
+    } },
 
     // ADMIN ROUTER
     {

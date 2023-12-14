@@ -78,7 +78,9 @@ export default {
             try {
                 if(Object.keys(this.user)<=0){
                     const response = await orderService.search({phone: this.phone})
+                    const response2 = await rentalService.search({phone: this.phone})
                     this.orders=response.data
+                    this.rentals=response2.data
                 }
                 else{
                     const response = await orderService.search({createBy: this.user._id})
@@ -96,7 +98,12 @@ export default {
         async filter(status){
             await this.search()
             if(status !== 'Tất cả'){
-                this.orders = this.orders.filter(item => item.status == status)
+                if(this.typeOrder=='Buy'){
+                   this.orders = this.orders.filter(item => item.status == status)
+                }
+                else{
+                   this.rentals = this.rentals.filter(item => item.status == status)
+                }
             }
             this.statusActive=status
         }
